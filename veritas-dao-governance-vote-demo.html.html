@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS – DAO Governance Live Vote Demo</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #00121f 0, #00040a 55%);
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .card {
+      background: rgba(2, 10, 20, 0.96);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(45, 212, 191, 0.2);
+      box-shadow: 0 0 35px rgba(15, 23, 42, 0.9);
+      padding: 1.4rem 1.5rem;
+    }
+    .header-title {
+      letter-spacing: 0.24em;
+      background: linear-gradient(120deg, #22c55e, #22d3ee);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 20px rgba(34, 197, 94, 0.6),
+        0 0 40px rgba(8, 145, 178, 0.55);
+    }
+    .tag-pill {
+      font-size: 0.65rem;
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+    .tag-open {
+      border-color: rgba(34, 197, 94, 0.8);
+      color: #bbf7d0;
+    }
+    .tag-queued {
+      border-color: rgba(56, 189, 248, 0.8);
+      color: #e0f2fe;
+    }
+    .tag-executed {
+      border-color: rgba(129, 140, 248, 0.8);
+      color: #e0e7ff;
+    }
+    .tag-failed {
+      border-color: rgba(248, 113, 113, 0.8);
+      color: #fecaca;
+    }
+    .btn {
+      background: radial-gradient(circle at 0 0, #22c55e, #0ea5e9 60%, #0369a1 100%);
+      border-radius: 0.9rem;
+      padding: 0.55rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid rgba(45, 212, 191, 0.7);
+      color: #f9fafb;
+      transition: transform 0.15s, filter 0.15s;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+    .btn-ghost {
+      background: transparent;
+      border-radius: 0.9rem;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #e5e7eb;
+    }
+    .proposal-row {
+      border-radius: 1rem;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(30, 64, 175, 0.5);
+      padding: 0.8rem 0.85rem;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    }
+    .proposal-row:hover {
+      border-color: rgba(56, 189, 248, 0.8);
+      transform: translateY(-1px);
+    }
+    .proposal-active {
+      border-color: rgba(45, 212, 191, 0.9);
+      box-shadow: 0 0 18px rgba(34, 197, 94, 0.5);
+    }
+    .progress-track {
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .progress-fill-yes {
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      box-shadow: 0 0 16px rgba(34, 197, 94, 0.9);
+    }
+    .progress-fill-no {
+      background: linear-gradient(90deg, #f97373, #fb7185);
+      box-shadow: 0 0 14px rgba(248, 113, 113, 0.75);
+    }
+    .progress-fill-abstain {
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.8);
+    }
+    .health-pill {
+      font-size: 0.7rem;
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid;
+    }
+    .health-good {
+      border-color: rgba(34, 197, 94, 0.9);
+      color: #bbf7d0;
+    }
+    .health-watch {
+      border-color: rgba(250, 204, 21, 0.9);
+      color: #fef9c3;
+    }
+    .health-risk {
+      border-color: rgba(248, 113, 113, 0.9);
+      color: #fee2e2;
+    }
+    .log-box {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 0.9rem;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 0.75rem;
+      padding: 0.9rem;
+      white-space: pre-wrap;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body class="min-h-screen px-4 sm:px-6 lg:px-10 py-8">
+
+  <!-- HEADER -->
+  <header class="max-w-6xl mx-auto mb-10">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="text-3xl sm:text-4xl md:text-5xl font-semibold header-title uppercase">
+          VERITAS
+        </div>
+        <p class="text-xs sm:text-sm text-cyan-200/90 tracking-[0.26em] uppercase mt-2">
+          DAO Governance · Live Voting Demo
+        </p>
+        <p class="text-xs text-slate-400 mt-3 max-w-xl">
+          This page simulates a VERITAS style governance surface where proposals, quorum,
+          voting power, and on chain linked metadata are visible in one place.
+        </p>
+      </div>
+      <div class="card max-w-xs w-full">
+        <p class="text-[0.7rem] text-slate-400 uppercase tracking-wide mb-2">
+          Governance snapshot (simulated)
+        </p>
+        <div class="flex justify-between text-xs mb-1">
+          <span class="text-slate-400">Total supply represented</span>
+          <span class="text-emerald-300 font-semibold">1 000 000 000 VERITAS</span>
+        </div>
+        <div class="flex justify-between text-xs mb-1">
+          <span class="text-slate-400">Tokens staked in governance</span>
+          <span class="text-emerald-200 font-semibold">315 420 000 VERITAS</span>
+        </div>
+        <div class="flex justify-between text-xs">
+          <span class="text-slate-400">Unique wallets participating</span>
+          <span class="text-cyan-200 font-semibold">1 823 wallets</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN GRID -->
+  <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT: PROPOSAL LIST -->
+    <aside class="lg:col-span-3 space-y-3">
+      <div class="card">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold text-emerald-300">Active proposals</h2>
+          <span class="tag-pill text-slate-300 border-slate-600">Simulation only</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">
+          These entries mimic on chain proposals. In production each one would link to a
+          Solana account and an IPFS or Arweave metadata document.
+        </p>
+        <div id="proposalList" class="space-y-2 text-xs"></div>
+      </div>
+    </aside>
+
+    <!-- CENTER: DETAILS AND VOTE -->
+    <main class="lg:col-span-6 space-y-4">
+
+      <!-- Proposal detail -->
+      <section class="card">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div>
+            <p id="proposalTitle" class="text-sm sm:text-base font-semibold text-emerald-300">
+              Select a proposal to view details
+            </p>
+            <p id="proposalId" class="text-[0.7rem] text-slate-500 mt-1">
+              —
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-[0.65rem] text-slate-400 uppercase tracking-wide">
+              Proposal status
+            </p>
+            <span id="proposalStatus" class="tag-pill tag-open mt-1 inline-block">
+              —
+            </span>
+          </div>
+        </div>
+
+        <p id="proposalDescription" class="text-xs text-slate-300/90 mt-2 mb-4">
+          Choose a proposal on the left to see its scope, quorum target, and live vote weights.
+        </p>
+
+        <!-- Metadata row -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-[0.72rem] mb-4">
+          <div>
+            <p class="text-slate-400">Quorum required</p>
+            <p id="proposalQuorum" class="text-emerald-200 font-semibold">—</p>
+          </div>
+          <div>
+            <p class="text-slate-400">Voting power counted</p>
+            <p id="proposalVoted" class="text-cyan-200 font-semibold">—</p>
+          </div>
+          <div>
+            <p class="text-slate-400">Time remaining</p>
+            <p id="proposalTime" class="text-slate-200 font-semibold">—</p>
+          </div>
+          <div>
+            <p class="text-slate-400">View on chain (simulated)</p>
+            <a id="proposalLink" href="#" target="_blank"
+               class="text-[0.7rem] text-sky-300 underline underline-offset-2">
+              —
+            </a>
+          </div>
+        </div>
+
+        <!-- Vote distribution -->
+        <div class="space-y-2 text-[0.72rem] mb-4">
+          <div class="flex justify-between">
+            <span class="text-slate-300">Support</span>
+            <span id="yesPct" class="text-emerald-200 font-semibold">0 percent</span>
+          </div>
+          <div class="w-full h-2 rounded-full overflow-hidden progress-track">
+            <div id="yesBar" class="h-2 progress-fill-yes rounded-full" style="width: 0%;"></div>
+          </div>
+
+          <div class="flex justify-between mt-2">
+            <span class="text-slate-300">Against</span>
+            <span id="noPct" class="text-rose-300 font-semibold">0 percent</span>
+          </div>
+          <div class="w-full h-2 rounded-full overflow-hidden progress-track">
+            <div id="noBar" class="h-2 progress-fill-no rounded-full" style="width: 0%;"></div>
+          </div>
+
+          <div class="flex justify-between mt-2">
+            <span class="text-slate-300">Abstain</span>
+            <span id="absPct" class="text-sky-300 font-semibold">0 percent</span>
+          </div>
+          <div class="w-full h-2 rounded-full overflow-hidden progress-track">
+            <div id="absBar" class="h-2 progress-fill-abstain rounded-full" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Health and quorum -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 text-[0.7rem]">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400">Governance health</span>
+            <span id="healthBadge" class="health-pill health-good">
+              No proposal selected
+            </span>
+          </div>
+          <div id="quorumText" class="text-slate-300">
+            —
+          </div>
+        </div>
+
+        <!-- Vote controls -->
+        <div class="border-t border-slate-700/70 pt-4 mt-2">
+          <p class="text-[0.7rem] text-slate-400 mb-2">
+            Cast a simulated vote with your wallet voting power. On mainnet this would sign and
+            submit a transaction to the governance program.
+          </p>
+
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button id="voteYes" class="btn text-xs">
+              Vote for
+            </button>
+            <button id="voteNo" class="btn-ghost">
+              Vote against
+            </button>
+            <button id="voteAbstain" class="btn-ghost">
+              Abstain
+            </button>
+          </div>
+
+          <p id="voteHint" class="text-[0.7rem] text-slate-400">
+            Connect a wallet on the right panel to receive a simulated voting weight.
+          </p>
+        </div>
+      </section>
+
+      <!-- Websocket like activity log -->
+      <section class="card">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-xs font-semibold text-emerald-300">Real time activity stream</h2>
+          <span class="tag-pill text-[0.6rem] text-emerald-100 border-emerald-300/80">
+            Simulated listener
+          </span>
+        </div>
+        <p class="text-[0.7rem] text-slate-400 mb-3">
+          In production this would subscribe to logs and gossip for the governance program and
+          update all open dashboards through websockets or a push channel.
+        </p>
+        <div id="activityLog" class="log-box">
+          Waiting for events…
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RIGHT: WALLET AND VOTING POWER -->
+    <aside class="lg:col-span-3 space-y-4">
+
+      <section class="card">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold text-emerald-300">Your governance wallet</h2>
+        </div>
+        <p class="text-[0.7rem] text-slate-400 mb-3">
+          This wallet panel is simulated devnet style. On chain the voting weight would derive
+          from staked VERITAS and delegation settings.
+        </p>
+
+        <button id="connectWallet" class="btn w-full mb-3 text-xs">
+          Connect wallet (simulated Phantom)
+        </button>
+
+        <div class="text-[0.7rem] space-y-2">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Wallet address</span>
+            <span id="walletAddr" class="text-slate-200 truncate max-w-[10rem] text-right">
+              Not connected
+            </span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Voting weight</span>
+            <span id="walletPower" class="text-emerald-200 font-semibold">
+              0 VERITAS
+            </span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Delegation</span>
+            <span class="text-slate-200">
+              Direct voting
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 border-t border-slate-700/70 pt-3">
+          <p class="text-[0.7rem] text-slate-400 mb-2">
+            Recent votes (local simulation)
+          </p>
+          <ul id="recentVotes" class="space-y-1 text-[0.7rem] text-slate-300">
+            <li class="text-slate-500">No local votes yet.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="text-xs font-semibold text-emerald-300 mb-1">What this page demonstrates</h2>
+        <ul class="text-[0.7rem] text-slate-300 space-y-1.5">
+          <li>• Professional governance surface with clear quorum and vote weights.</li>
+          <li>• Wallet linked voting with visible accountability for each proposal.</li>
+          <li>• Real time updates that mirror on chain events and program logs.</li>
+          <li>• Clear integration points for compliance and entity based voting.</li>
+        </ul>
+      </section>
+
+    </aside>
+
+  </div>
+
+  <!-- SCRIPT: SIMULATION LOGIC -->
+  <script>
+    // Simulated governance proposals
+    const proposals = [
+      {
+        id: "VER-GOV-001",
+        title: "Adopt VERITAS Legal Wrapper v1 as default compliance module",
+        description:
+          "Formal adoption of the VERITAS Legal Wrapper as the preferred compliance layer " +
+          "for new payroll, RWA, and NFT credit integrations on Solana. Grants the DAO " +
+          "authority to maintain reference templates and jurisdiction mappings.",
+        status: "Active",
+        quorumRequired: 150_000_000,
+        votingPowerCounted: 87_300_000,
+        timeRemaining: "2 days 6 hours",
+        onchainLink: "https://explorer.solana.com/address/VER1taSPr0p001?cluster=devnet",
+        votesYes: 62_000_000,
+        votesNo: 18_000_000,
+        votesAbstain: 7_300_000
+      },
+      {
+        id: "VER-GOV-002",
+        title: "Enable Oracle backed payroll risk scoring for enterprise tier",
+        description:
+          "Proposal to activate the compliance oracle module for enterprise payroll clients. " +
+          "Scores are used to adjust monitoring intensity and reporting frequency while " +
+          "preserving client privacy and regulatory alignment.",
+        status: "Active",
+        quorumRequired: 120_000_000,
+        votingPowerCounted: 95_400_000,
+        timeRemaining: "4 days 1 hour",
+        onchainLink: "https://explorer.solana.com/address/VER1taSPr0p002?cluster=devnet",
+        votesYes: 71_500_000,
+        votesNo: 12_400_000,
+        votesAbstain: 11_500_000
+      },
+      {
+        id: "VER-GOV-003",
+        title: "Authorize RWA pilot for invoice backed credit lines",
+        description:
+          "Launch a restricted RWA pilot for verified businesses using tokenized invoices as " +
+          "collateral. Caps exposure, defines reporting duties, and requires external legal " +
+          "review before expansion.",
+        status: "Queued",
+        quorumRequired: 90_000_000,
+        votingPowerCounted: 93_800_000,
+        timeRemaining: "Queued for execution window",
+        onchainLink: "https://explorer.solana.com/address/VER1taSPr0p003?cluster=devnet",
+        votesYes: 76_000_000,
+        votesNo: 10_800_000,
+        votesAbstain: 7_000_000
+      }
+    ];
+
+    let selectedIndex = null;
+    let wallet = {
+      connected: false,
+      address: null,
+      power: 0
+    };
+    const activityQueue = [];
+
+    function formatNumber(n) {
+      return n.toLocaleString();
+    }
+
+    function pct(part, total) {
+      if (!total || total <= 0) return 0;
+      return (part / total) * 100;
+    }
+
+    // Render proposal list
+    function renderProposalList() {
+      const list = document.getElementById("proposalList");
+      list.innerHTML = "";
+      proposals.forEach((p, idx) => {
+        const total = p.votesYes + p.votesNo + p.votesAbstain;
+        const yesPercent = pct(p.votesYes, total).toFixed(1);
+        const row = document.createElement("div");
+        row.className = "proposal-row";
+        row.dataset.index = idx;
+        row.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <p class="font-semibold text-[0.78rem] text-slate-100">${p.title}</p>
+              <p class="text-[0.7rem] text-slate-400 mt-1">${p.id}</p>
+            </div>
+            <div class="text-right">
+              <span class="tag-pill ${
+                p.status === "Active"
+                  ? "tag-open"
+                  : p.status === "Queued"
+                  ? "tag-queued"
+                  : p.status === "Executed"
+                  ? "tag-executed"
+                  : "tag-failed"
+              }">${p.status}</span>
+              <p class="text-[0.65rem] text-slate-400 mt-1">
+                Support ${yesPercent} percent
+              </p>
+            </div>
+          </div>
+        `;
+        row.addEventListener("click", () => selectProposal(idx));
+        list.appendChild(row);
+      });
+    }
+
+    // Select proposal
+    function selectProposal(idx) {
+      selectedIndex = idx;
+      document
+        .querySelectorAll(".proposal-row")
+        .forEach(el => el.classList.remove("proposal-active"));
+      const activeRow = document.querySelector(`.proposal-row[data-index="${idx}"]`);
+      if (activeRow) activeRow.classList.add("proposal-active");
+
+      const p = proposals[idx];
+      const total = p.votesYes + p.votesNo + p.votesAbstain;
+
+      document.getElementById("proposalTitle").textContent = p.title;
+      document.getElementById("proposalId").textContent = p.id;
+      document.getElementById("proposalDescription").textContent = p.description;
+      document.getElementById("proposalQuorum").textContent =
+        formatNumber(p.quorumRequired) + " VERITAS";
+      document.getElementById("proposalVoted").textContent =
+        formatNumber(p.votingPowerCounted) + " VERITAS";
+      document.getElementById("proposalTime").textContent = p.timeRemaining;
+      const statusEl = document.getElementById("proposalStatus");
+      statusEl.textContent = p.status;
+      statusEl.className = "tag-pill " +
+        (p.status === "Active"
+          ? "tag-open"
+          : p.status === "Queued"
+          ? "tag-queued"
+          : p.status === "Executed"
+          ? "tag-executed"
+          : "tag-failed");
+      const link = document.getElementById("proposalLink");
+      link.textContent = "View proposal account";
+      link.href = p.onchainLink;
+
+      const yesPercent = pct(p.votesYes, total);
+      const noPercent = pct(p.votesNo, total);
+      const absPercent = pct(p.votesAbstain, total);
+
+      document.getElementById("yesPct").textContent = yesPercent.toFixed(1) + " percent";
+      document.getElementById("noPct").textContent = noPercent.toFixed(1) + " percent";
+      document.getElementById("absPct").textContent = absPercent.toFixed(1) + " percent";
+
+      document.getElementById("yesBar").style.width = yesPercent + "%";
+      document.getElementById("noBar").style.width = noPercent + "%";
+      document.getElementById("absBar").style.width = absPercent + "%";
+
+      const quorumText = document.getElementById("quorumText");
+      const healthBadge = document.getElementById("healthBadge");
+
+      if (p.votingPowerCounted >= p.quorumRequired) {
+        quorumText.textContent =
+          "Quorum met. Final outcome depends on support versus against plus abstain.";
+      } else {
+        const remaining = p.quorumRequired - p.votingPowerCounted;
+        quorumText.textContent =
+          "Quorum not yet met. " + formatNumber(remaining) + " VERITAS still required.";
+      }
+
+      const supportRatio = total > 0 ? p.votesYes / total : 0;
+      if (supportRatio >= 0.7) {
+        healthBadge.textContent = "Strong support trend";
+        healthBadge.className = "health-pill health-good";
+      } else if (supportRatio >= 0.5) {
+        healthBadge.textContent = "Contested outcome";
+        healthBadge.className = "health-pill health-watch";
+      } else {
+        healthBadge.textContent = "Low support, at risk of failure";
+        healthBadge.className = "health-pill health-risk";
+      }
+
+      if (wallet.connected) {
+        document.getElementById("voteHint").textContent =
+          "Your vote will be recorded locally with a simulated weight of " +
+          formatNumber(wallet.power) + " VERITAS.";
+      } else {
+        document.getElementById("voteHint").textContent =
+          "Connect a wallet on the right panel to receive a simulated voting weight.";
+      }
+    }
+
+    // Simulated wallet connect
+    function connectWallet() {
+      if (wallet.connected) return;
+
+      const randSuffix = Math.random().toString(16).slice(2, 10);
+      wallet.connected = true;
+      wallet.address = "VER1tASWal" + randSuffix;
+      const base = 10_000;
+      const extra = Math.floor(Math.random() * 490_000);
+      wallet.power = base + extra;
+
+      document.getElementById("walletAddr").textContent = wallet.address;
+      document.getElementById("walletPower").textContent =
+        formatNumber(wallet.power) + " VERITAS";
+
+      if (selectedIndex !== null) {
+        document.getElementById("voteHint").textContent =
+          "Your vote will be recorded locally with a simulated weight of " +
+          formatNumber(wallet.power) + " VERITAS.";
+      }
+
+      pushActivity(
+        "Wallet " + wallet.address.slice(0, 10) +
+        " connected with " + formatNumber(wallet.power) + " voting power."
+      );
+    }
+
+    // Vote actions
+    function castVote(kind) {
+      if (selectedIndex === null) {
+        alert("Select a proposal first.");
+        return;
+      }
+      if (!wallet.connected) {
+        alert("Connect a wallet to simulate voting power.");
+        return;
+      }
+
+      const p = proposals[selectedIndex];
+      const weight = wallet.power;
+
+      if (kind === "yes") p.votesYes += weight;
+      else if (kind === "no") p.votesNo += weight;
+      else p.votesAbstain += weight;
+
+      p.votingPowerCounted =
+        p.votesYes + p.votesNo + p.votesAbstain;
+
+      const list = document.getElementById("recentVotes");
+      const item = document.createElement("li");
+      item.textContent =
+        new Date().toLocaleTimeString() +
+        " — " + p.id + " — " + kind.toUpperCase() +
+        " with " + formatNumber(weight) + " VERITAS";
+      if (list.firstChild && list.firstChild.textContent.includes("No local votes yet")) {
+        list.innerHTML = "";
+      }
+      list.prepend(item);
+
+      pushActivity(
+        "New vote on " + p.id + " from " +
+        wallet.address.slice(0, 10) + " marked as " +
+        kind.toUpperCase() + " with " + formatNumber(weight) + " voting power."
+      );
+
+      selectProposal(selectedIndex);
+    }
+
+    // Activity log
+    function pushActivity(msg) {
+      const timestamp = new Date().toLocaleTimeString();
+      activityQueue.push("[" + timestamp + "] " + msg);
+      if (activityQueue.length > 20) activityQueue.shift();
+      renderActivity();
+    }
+
+    function renderActivity() {
+      const logEl = document.getElementById("activityLog");
+      if (!activityQueue.length) {
+        logEl.textContent = "Waiting for events…";
+        return;
+      }
+      logEl.textContent = activityQueue.slice().reverse().join("\n");
+    }
+
+    // Simulated websocket style background updates
+    function startSimulationFeed() {
+      setInterval(() => {
+        const idx = Math.floor(Math.random() * proposals.length);
+        const p = proposals[idx];
+        const jitter = Math.floor(Math.random() * 300_000);
+        const bucket = Math.random();
+
+        if (bucket < 0.5) p.votesYes += jitter;
+        else if (bucket < 0.8) p.votesNo += jitter;
+        else p.votesAbstain += jitter;
+
+        p.votingPowerCounted =
+          p.votesYes + p.votesNo + p.votesAbstain;
+
+        pushActivity(
+          "Program event: governance vote update on " +
+          p.id + " affecting " + formatNumber(jitter) + " voting power."
+        );
+
+        renderProposalList();
+        if (selectedIndex !== null) selectProposal(selectedIndex);
+      }, 8500);
+    }
+
+    // Event wiring
+    function init() {
+      renderProposalList();
+
+      document
+        .getElementById("connectWallet")
+        .addEventListener("click", connectWallet);
+
+      document
+        .getElementById("voteYes")
+        .addEventListener("click", () => castVote("yes"));
+      document
+        .getElementById("voteNo")
+        .addEventListener("click", () => castVote("no"));
+      document
+        .getElementById("voteAbstain")
+        .addEventListener("click", () => castVote("abstain"));
+
+      startSimulationFeed();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>

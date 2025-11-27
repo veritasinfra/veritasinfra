@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS — FINRA Regulatory Briefing</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #00121f 0%, #00060d 60%, #000207 100%);
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .header-title {
+      background: linear-gradient(120deg, #22c55e, #06b6d4);
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: 0.22em;
+      text-shadow:
+        0 0 20px rgba(34, 197, 94, 0.5),
+        0 0 35px rgba(6, 182, 212, 0.45);
+    }
+    .card {
+      background: rgba(2, 10, 20, 0.96);
+      border-radius: 1.4rem;
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      padding: 1.6rem;
+      box-shadow: 0 0 40px rgba(0, 40, 70, 0.8);
+    }
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #22c55e;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      white-space: nowrap;
+    }
+    .pill-ok { border-color: rgba(34,197,94,0.85); color: #bbf7d0; }
+    .pill-warn { border-color: rgba(250,204,21,0.95); color: #fef9c3; }
+    .pill-info { border-color: rgba(59,130,246,0.9); color: #bfdbfe; }
+
+    .brief-block {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 0.9rem;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 0.9rem 1.1rem;
+      font-size: 0.78rem;
+    }
+
+    .two-col-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      border: 1px solid rgba(51,65,85,0.9);
+    }
+    .two-col-table th {
+      padding: 0.55rem 0.75rem;
+      text-align: left;
+      background: rgba(15,23,42,1);
+      color: #e5e7eb;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+    .two-col-table td {
+      padding: 0.55rem 0.75rem;
+      border-top: 1px solid rgba(30,64,175,0.5);
+    }
+    .two-col-table tr:nth-child(even) td {
+      background: rgba(15,23,42,0.92);
+    }
+    .two-col-table tr:nth-child(odd) td {
+      background: rgba(15,23,42,0.84);
+    }
+
+    .link-btn {
+      background: linear-gradient(120deg, #22c55e, #06b6d4, #0369a1);
+      padding: 0.8rem 1.2rem;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(34, 197, 94, 0.45);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ffffff;
+      transition: all 0.16s ease;
+      text-decoration: none;
+    }
+    .link-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.15);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen px-5 sm:px-8 lg:px-10 py-8">
+
+  <!-- HEADER -->
+  <header class="max-w-6xl mx-auto mb-10">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-semibold header-title uppercase">
+          VERITAS
+        </h1>
+        <p class="text-xs md:text-sm text-cyan-200 tracking-[0.26em] uppercase mt-2">
+          FINRA Regulatory Briefing
+        </p>
+        <p class="text-xs text-slate-400 mt-3 max-w-3xl leading-relaxed">
+          VERITAS is a compliance infrastructure layer for businesses using digital assets
+          for payroll, vendor payments and real world assets. It focuses on verification,
+          logging and reporting, while avoiding activities that would classify it as a
+          broker dealer or investment adviser.
+        </p>
+      </div>
+      <div class="flex flex-col items-end gap-2 text-[0.7rem]">
+        <span class="pill pill-info">
+          Informational briefing draft
+        </span>
+        <span class="pill">
+          Non binding, subject to counsel review
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto space-y-10">
+
+    <!-- EXECUTIVE POSITIONING -->
+    <section class="card space-y-3">
+      <h2 class="section-title">Executive Positioning</h2>
+      <p class="text-sm text-slate-300 leading-relaxed">
+        VERITAS is designed to help lawful businesses use digital assets in a way that fits
+        into existing regulatory expectations rather than attempting to bypass them.
+        The protocol does not solicit investors, does not match buyers and sellers,
+        does not provide investment recommendations and does not handle customer funds.
+        Instead, it provides a standardized framework for identity, source of funds
+        visibility and audit grade reporting across wallets and entities.
+      </p>
+      <div class="flex flex-wrap gap-2 text-[0.7rem] mt-2">
+        <span class="pill pill-ok">Infrastructure only</span>
+        <span class="pill pill-info">Non custodial</span>
+        <span class="pill">Enterprise grade recordkeeping</span>
+      </div>
+    </section>
+
+    <!-- WHAT VERITAS DOES AND DOES NOT DO -->
+    <section class="card space-y-4">
+      <h2 class="section-title">What VERITAS Is and Is Not</h2>
+      <p class="text-sm text-slate-300">
+        The goal is to clearly separate VERITAS from activities that require
+        broker dealer registration or similar status, while emphasizing how it
+        supports transparency and investor protection at the infrastructure layer.
+      </p>
+
+      <table class="two-col-table mt-2">
+        <thead>
+          <tr>
+            <th class="w-1/2">VERITAS DOES</th>
+            <th class="w-1/2">VERITAS DOES NOT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Provide standardized identity and entity verification rails for businesses and employees.</td>
+            <td>Act as an intermediary for securities or crypto asset trades.</td>
+          </tr>
+          <tr>
+            <td>Log payments, payroll events and RWA transactions in immutable PDAs for audit.</td>
+            <td>Custody or pool customer assets or hold private keys.</td>
+          </tr>
+          <tr>
+            <td>Surface risk flags and compliance states as data to the business.</td>
+            <td>Guarantee returns, structure investment products or promote token speculation.</td>
+          </tr>
+          <tr>
+            <td>Support compliant real world use cases like payroll, invoicing and credit management.</td>
+            <td>Operate an exchange, marketplace or order book for customers.</td>
+          </tr>
+          <tr>
+            <td>Provide a verifiable trail aligned with books and records expectations.</td>
+            <td>Provide personalized investment advice or recommendations.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ALIGNMENT WITH INVESTOR PROTECTION GOALS -->
+    <section class="card space-y-4">
+      <h2 class="section-title">Alignment with Investor Protection Goals</h2>
+      <p class="text-sm text-slate-300">
+        Although VERITAS does not intermediate securities, it is designed so that regulated
+        firms can use it as an additional layer of discipline around digital asset flows.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[0.78rem] text-slate-300">
+        <div class="brief-block">
+          <span class="font-semibold text-emerald-200 text-xs block mb-1">Transparency</span>
+          Every payment and credit event can be mapped to a verified entity, a wallet
+          and a timestamp, making after the fact investigations and supervision easier.
+        </div>
+        <div class="brief-block">
+          <span class="font-semibold text-emerald-200 text-xs block mb-1">Segregation of Roles</span>
+          VERITAS focuses on attestation and logging, leaving custody, advice and execution
+          to properly licensed institutions where required.
+        </div>
+        <div class="brief-block">
+          <span class="font-semibold text-emerald-200 text-xs block mb-1">Audit Trail</span>
+          The protocol treats every action as evidence that can be reconciled with
+          traditional accounting systems and regulatory reporting structures.
+        </div>
+      </div>
+    </section>
+
+    <!-- RISK AND SUPERVISION MODEL -->
+    <section class="card space-y-4">
+      <h2 class="section-title">Risk and Supervision Model</h2>
+      <p class="text-sm text-slate-300">
+        VERITAS can be integrated into a firm’s existing compliance program without
+        replacing supervisory responsibilities. The system surfaces structured data
+        that compliance teams can monitor, rather than making decisions for them.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[0.78rem] text-slate-300">
+        <div class="brief-block">
+          <span class="pill pill-ok mb-1">For broker dealer partners</span><br />
+          Use VERITAS to obtain structured visibility into wallets, payments and RWA collateral
+          that relate to client accounts, while maintaining your own supervisory procedures.
+        </div>
+        <div class="brief-block">
+          <span class="pill pill-warn mb-1">For compliance teams</span><br />
+          Treat VERITAS as a telemetry and evidence layer. Internal policies still control
+          suitability, product approval, communications and conduct standards.
+        </div>
+      </div>
+    </section>
+
+    <!-- REQUESTED OUTCOME -->
+    <section class="card space-y-4">
+      <h2 class="section-title">Requested Outcome</h2>
+      <p class="text-sm text-slate-300">
+        VERITAS seeks a dialogue and non binding comfort that providing
+        identity verification, audit logging and reporting rails for
+        digital asset business activity, without custody, execution or
+        advice, can be operated without broker dealer registration,
+        recognizing that individual integrations may require separate review.
+      </p>
+      <ul class="list-disc list-inside text-[0.78rem] text-slate-300 space-y-1">
+        <li>Confirm that infrastructure only services, as described, do not in themselves trigger broker dealer status.</li>
+        <li>Establish a framework for how regulated firms can integrate VERITAS within their existing compliance programs.</li>
+        <li>Invite ongoing exchange as VERITAS expands to support broader real world asset collateralization and credit.</li>
+      </ul>
+    </section>
+
+    <!-- LINK BACK -->
+    <section class="flex justify-end">
+      <a href="veritas-demo-hub.html" class="link-btn">
+        ← Back to VERITAS Demo Hub
+      </a>
+    </section>
+
+  </main>
+</body>
+</html>

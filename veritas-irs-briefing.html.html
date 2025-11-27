@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS — IRS Compliance Briefing</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #00121f 0%, #00060d 60%, #000207 100%);
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .header-title {
+      background: linear-gradient(120deg, #22c55e, #06b6d4);
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: 0.22em;
+      text-shadow:
+        0 0 20px rgba(34, 197, 94, 0.5),
+        0 0 35px rgba(6, 182, 212, 0.45);
+    }
+    .card {
+      background: rgba(2, 10, 20, 0.96);
+      border-radius: 1.4rem;
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      padding: 1.6rem;
+      box-shadow: 0 0 40px rgba(0, 40, 70, 0.8);
+    }
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #22c55e;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      white-space: nowrap;
+    }
+    .pill-ok { border-color: rgba(34,197,94,0.85); color: #bbf7d0; }
+    .pill-warn { border-color: rgba(250,204,21,0.95); color: #fef9c3; }
+    .pill-info { border-color: rgba(59,130,246,0.9); color: #bfdbfe; }
+
+    .brief-block {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 0.9rem;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 0.9rem 1.1rem;
+      font-size: 0.78rem;
+    }
+
+    .table-irs {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      border: 1px solid rgba(51,65,85,0.9);
+    }
+    .table-irs th {
+      padding: 0.55rem 0.75rem;
+      text-align: left;
+      background: rgba(15,23,42,1);
+      color: #e5e7eb;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+    }
+    .table-irs td {
+      padding: 0.55rem 0.75rem;
+      border-top: 1px solid rgba(30,64,175,0.5);
+    }
+    .table-irs tr:nth-child(even) td {
+      background: rgba(15,23,42,0.92);
+    }
+    .table-irs tr:nth-child(odd) td {
+      background: rgba(15,23,42,0.84);
+    }
+
+    .link-btn {
+      background: linear-gradient(120deg, #22c55e, #06b6d4, #0369a1);
+      padding: 0.8rem 1.2rem;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(34, 197, 94, 0.45);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ffffff;
+      transition: all 0.16s ease;
+      text-decoration: none;
+    }
+    .link-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.15);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen px-5 sm:px-8 lg:px-10 py-8">
+
+  <!-- HEADER -->
+  <header class="max-w-6xl mx-auto mb-10">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-semibold header-title uppercase">
+          VERITAS
+        </h1>
+        <p class="text-xs md:text-sm text-cyan-200 tracking-[0.26em] uppercase mt-2">
+          IRS Compliance Briefing
+        </p>
+        <p class="text-xs text-slate-400 mt-3 max-w-3xl leading-relaxed">
+          VERITAS provides recordkeeping, identity attestation and payment classification
+          for companies using digital assets. Its core purpose is to simplify accurate
+          reporting, reduce tax ambiguity and align digital payroll with existing U.S.
+          tax regulations without serving as an intermediary or custodian.
+        </p>
+      </div>
+      <div class="flex flex-col items-end gap-2 text-[0.7rem]">
+        <span class="pill pill-info">
+          Informational briefing draft
+        </span>
+        <span class="pill">
+          Non binding, subject to counsel review
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto space-y-10">
+
+    <!-- POSITIONING -->
+    <section class="card space-y-3">
+      <h2 class="section-title">Purpose and Positioning</h2>
+      <p class="text-sm text-slate-300 leading-relaxed">
+        VERITAS does not calculate taxes, custody assets or perform withholding.
+        Instead, it creates a forensic trail for every crypto wage or business payment
+        so that companies can classify income, deduce fair market value at send-time,
+        and reconcile these payments in existing payroll and accounting systems.
+      </p>
+      <div class="flex flex-wrap gap-2 text-[0.7rem] mt-2">
+        <span class="pill pill-ok">Non custodial</span>
+        <span class="pill pill-info">Classification only</span>
+        <span class="pill">FMV timestamp logging</span>
+      </div>
+    </section>
+
+    <!-- ALIGNMENT TABLE -->
+    <section class="card space-y-4">
+      <h2 class="section-title">Alignment with IRS Rules</h2>
+      <table class="table-irs mt-2">
+        <thead>
+          <tr>
+            <th>IRS Requirement</th>
+            <th>How VERITAS Supports</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Taxable events must be reported at fair market value at time of transaction.</td>
+            <td>Every payment is logged with FMV and timestamp directly linked to a verified entity.</td>
+          </tr>
+          <tr>
+            <td>Crypto wages count as income.</td>
+            <td>VERITAS tags payments as wage, vendor payment or collateral within PDAs.</td>
+          </tr>
+          <tr>
+            <td>Transaction records must be auditable.</td>
+            <td>All actions write immutable evidence into PDAs mapped to wallets and business entities.</td>
+          </tr>
+          <tr>
+            <td>Employers remain responsible for classification and withholding.</td>
+            <td>VERITAS does not replace payroll; it surfaces structured data for employers to integrate.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- AUDIT EVIDENCE MODEL -->
+    <section class="card space-y-4">
+      <h2 class="section-title">Audit Evidence Model</h2>
+      <p class="text-sm text-slate-300">
+        By separating reporting infrastructure from tax computation, VERITAS provides
+        a neutral evidentiary layer that IRS audits can reference, without creating
+        tax advisory risk or third party obligations for the protocol.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[0.78rem] text-slate-300">
+        <div class="brief-block">
+          <span class="font-semibold text-emerald-200 text-xs block mb-1">Timestamped FMV</span>
+          Each event logs valuation data at the moment of transfer, reducing audit disputes.
+        </div>
+        <div class="brief-block">
+          <span class="font-semibold text-emerald-200 text-xs block mb-1">Intent Classification</span>
+          Wages, vendor payments, loans and collateral are marked distinctly at send-time.
+        </div>
+        <div class="brief-block">
+          <span class="font-semibold text-emerald-200 text-xs block mb-1">Identity Mapping</span>
+          Every payer and payee must be a verified entity or employee before interaction.
+        </div>
+      </div>
+    </section>
+
+    <!-- REQUESTED OUTCOME -->
+    <section class="card space-y-4">
+      <h2 class="section-title">Requested Outcome</h2>
+      <p class="text-sm text-slate-300">
+        VERITAS requests acknowledgment that an infrastructure-only recordkeeping
+        service that does not perform tax withholding, custody or computation can
+        operate as a neutral reporting tool for businesses using digital assets.
+      </p>
+      <ul class="list-disc list-inside text-[0.78rem] text-slate-300 space-y-1">
+        <li>Classification, identity verification and FMV documentation can remain protocol-level.</li>
+        <li>Employers retain responsibility for withholding and tax payment.</li>
+        <li>The IRS may use PDAs as evidence during audits or examinations.</li>
+      </ul>
+    </section>
+
+    <!-- LINK BACK -->
+    <section class="flex justify-end">
+      <a href="veritas-demo-hub.html" class="link-btn">
+        ← Back to VERITAS Demo Hub
+      </a>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS – Legal Wrapper Composer (Demo)</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root { color-scheme: dark; }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* VERITAS background – matte, breathing glow */
+    body.veritas-bg {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(34, 197, 94, 0.18), transparent 55%),
+        radial-gradient(circle at 80% 0%, rgba(56, 189, 248, 0.16), transparent 55%),
+        radial-gradient(circle at 50% 120%, rgba(16, 185, 129, 0.22), transparent 60%),
+        #020617;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      animation: veritasPulse 9s ease-in-out infinite;
+      position: relative;
+      overflow-x: hidden;
+      color: #e2e8f0;
+    }
+
+    @keyframes veritasPulse {
+      0% {
+        background-position:
+          20% 0%,
+          80% 0%,
+          50% 120%,
+          0 0;
+        filter: brightness(0.98);
+      }
+      50% {
+        background-position:
+          18% 2%,
+          82% -2%,
+          52% 118%,
+          0 0;
+        filter: brightness(1.03);
+      }
+      100% {
+        background-position:
+          20% 0%,
+          80% 0%,
+          50% 120%,
+          0 0;
+        filter: brightness(0.98);
+      }
+    }
+
+    body.veritas-bg::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(15,23,42,0.6) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,23,42,0.6) 1px, transparent 1px);
+      background-size: 140px 140px, 140px 140px;
+      opacity: 0.22;
+      mix-blend-mode: soft-light;
+      z-index: -1;
+      animation: veritasGridDrift 24s linear infinite;
+    }
+
+    @keyframes veritasGridDrift {
+      0% {
+        transform: translate3d(0, 0, 0);
+        opacity: 0.18;
+      }
+      50% {
+        transform: translate3d(-12px, -10px, 0);
+        opacity: 0.26;
+      }
+      100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 0.18;
+      }
+    }
+
+    .card-veritas {
+      background: linear-gradient(145deg, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+      border: 1px solid rgba(56,189,248,0.25);
+      box-shadow:
+        0 0 30px rgba(15,118,110,0.25),
+        0 0 80px rgba(15,23,42,0.85);
+      border-radius: 1.5rem;
+    }
+
+    .section-shell {
+      position: relative;
+      overflow: hidden;
+    }
+    .section-shell::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.09), transparent 60%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .text-gradient-veritas {
+      background: linear-gradient(120deg, #22c55e, #a5f3fc, #22c55e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: titleGlow 7s ease-in-out infinite;
+    }
+    .logo-emboss {
+      text-shadow:
+        0 0 18px rgba(34,197,94,0.6),
+        0 0 40px rgba(8,145,178,0.7),
+        0 2px 0 rgba(0,0,0,0.9);
+      letter-spacing: 0.22em;
+    }
+    @keyframes titleGlow {
+      0% {
+        text-shadow:
+          0 0 12px rgba(34,197,94,0.4),
+          0 0 28px rgba(8,145,178,0.45),
+          0 0 60px rgba(8,47,73,0.9);
+        filter: drop-shadow(0 0 8px rgba(8,47,73,0.8));
+      }
+      50% {
+        text-shadow:
+          0 0 24px rgba(45,212,191,0.9),
+          0 0 60px rgba(8,145,178,0.9),
+          0 0 80px rgba(8,47,73,1);
+        filter: drop-shadow(0 0 16px rgba(8,145,178,0.9));
+      }
+      100% {
+        text-shadow:
+          0 0 12px rgba(34,197,94,0.4),
+          0 0 28px rgba(8,145,178,0.45),
+          0 0 60px rgba(8,47,73,0.9);
+        filter: drop-shadow(0 0 8px rgba(8,47,73,0.8));
+      }
+    }
+
+    .subtitle-soft {
+      text-shadow: 0 0 12px rgba(59,130,246,0.55);
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at 20% 0%, #22c55e 0%, #0284c7 40%, #0369a1 100%);
+      box-shadow:
+        0 0 18px rgba(34,197,94,0.65),
+        0 0 32px rgba(8,145,178,0.75);
+      border-radius: 0.9rem;
+      border: 1px solid rgba(45,212,191,0.85);
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+      box-shadow:
+        0 0 28px rgba(34,197,94,0.8),
+        0 0 46px rgba(8,145,178,0.9);
+    }
+    .btn-ghost {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.94);
+      font-size: 0.8rem;
+      padding: 0.5rem 0.9rem;
+      color: #e5e7eb;
+    }
+
+    .step-pill {
+      font-size: 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      padding: 0.25rem 0.75rem;
+      background: rgba(15,23,42,0.9);
+      color: #cbd5f5;
+    }
+    .step-pill-active {
+      border-color: rgba(45,212,191,0.9);
+      background: radial-gradient(circle at 0 0, rgba(16,185,129,0.32), rgba(15,23,42,0.96));
+      color: #a5f3fc;
+      box-shadow: 0 0 16px rgba(8,145,178,0.75);
+    }
+
+    .badge-locked {
+      border-radius: 999px;
+      border: 1px solid rgba(251,191,36,0.95);
+      background: rgba(120,53,15,0.85);
+      color: #fef3c7;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.6rem;
+    }
+
+    .badge-draft {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.95);
+      color: #e5e7eb;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.6rem;
+    }
+
+    .field-label {
+      font-size: 0.75rem;
+      color: rgba(148,163,184,0.95);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .input-base {
+      border-radius: 0.85rem;
+      background: rgba(2,6,23,0.9);
+      border: 1px solid rgba(51,65,85,0.9);
+      font-size: 0.85rem;
+      padding: 0.5rem 0.7rem;
+      color: #e5e7eb;
+      width: 100%;
+    }
+    .input-base:focus {
+      outline: none;
+      border-color: rgba(45,212,191,0.85);
+      box-shadow: 0 0 0 1px rgba(45,212,191,0.4);
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.7rem;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.9);
+      cursor: pointer;
+      user-select: none;
+    }
+    .chip-selected {
+      border-color: rgba(45,212,191,0.9);
+      background: radial-gradient(circle at 0 0, rgba(16,185,129,0.35), rgba(15,23,42,0.98));
+      color: #a5f3fc;
+      box-shadow: 0 0 10px rgba(8,145,178,0.6);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15,23,42,0.98);
+      border-radius: 999px;
+      padding: 0.5rem 1.1rem;
+      border: 1px solid rgba(45,212,191,0.7);
+      font-size: 0.75rem;
+      color: #a5f3fc;
+      display: none;
+      box-shadow:
+        0 0 18px rgba(34,197,94,0.65),
+        0 0 32px rgba(8,145,178,0.8);
+      z-index: 40;
+    }
+  </style>
+</head>
+
+<body class="veritas-bg">
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 relative">
+    <!-- HEADER -->
+    <header class="mb-8 md:mb-10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+        <div>
+          <div class="inline-flex flex-col">
+            <span class="text-gradient-veritas logo-emboss text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[0.24em] uppercase">
+              VERITAS
+            </span>
+            <span class="mt-2 text-sm sm:text-base text-cyan-200/85 subtitle-soft">
+              Legal Wrapper Composer · Demo UI
+            </span>
+          </div>
+          <div class="mt-3 text-[0.7rem] sm:text-xs uppercase tracking-[0.28em] text-emerald-300/70">
+            Non-custodial compliance infrastructure for digital payments
+          </div>
+        </div>
+
+        <div class="flex flex-col items-end gap-2">
+          <div class="flex flex-wrap gap-1.5 justify-end">
+            <span class="step-pill step-pill-active">1. Entity</span>
+            <span class="step-pill step-pill-active">2. Scope</span>
+            <span class="step-pill step-pill-active">3. Attest</span>
+            <span class="step-pill step-pill-active" id="stepLockPill">4. Lock Preview</span>
+          </div>
+          <p class="text-[0.7rem] text-slate-400 max-w-xs text-right">
+            This interface shows how a legal wrapper could be prepared, locked and handed to an oracle for verification.
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN GRID -->
+    <main class="grid grid-cols-1 lg:grid-cols-2 gap-7 items-start">
+
+      <!-- LEFT: FORM -->
+      <section class="section-shell card-veritas px-5 sm:px-7 py-5 sm:py-6 space-y-5">
+        <div class="flex items-center justify-between mb-1">
+          <h2 class="text-lg sm:text-xl font-semibold text-emerald-300">
+            Wrapper Parameters
+          </h2>
+          <span class="badge-draft">
+            Draft – Demo Only
+          </span>
+        </div>
+        <p class="text-[0.8rem] text-slate-300 mb-2">
+          Provide the minimum legal and technical context needed for a neutral “wrapper” around your payment or identity system.
+          In production this data would be reviewed by counsel and attested through a VERITAS oracle.
+        </p>
+
+        <!-- Entity Block -->
+        <div class="border border-slate-700/80 rounded-2xl p-4 space-y-3 bg-slate-950/60">
+          <div class="flex items-center justify-between">
+            <p class="field-label">Legal entity</p>
+            <p class="text-[0.7rem] text-slate-500">
+              Required for wrapper issuance
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="field-label mb-1 block">Registered entity name</label>
+              <input id="entityName" type="text" class="input-base" placeholder="Atlas Web3 Studios Inc" />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="field-label mb-1 block">Entity type</label>
+                <select id="entityType" class="input-base">
+                  <option value="">Select entity type</option>
+                  <option>LLC (U.S.)</option>
+                  <option>C-Corporation (U.S.)</option>
+                  <option>DAO LLC (Wyoming)</option>
+                  <option>Foundation Company (Cayman)</option>
+                  <option>GmbH (Germany)</option>
+                  <option>Ltd (UK)</option>
+                  <option>Registered Non-Profit</option>
+                  <option>Licensed Payment Institution</option>
+                  <option>Other / Hybrid Structure</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label mb-1 block">Primary jurisdiction</label>
+                <input id="jurisdiction" type="text" class="input-base" placeholder="Delaware, United States" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="field-label mb-1 block">Registration / company number</label>
+                <input id="regNumber" type="text" class="input-base" placeholder="File No. 1234567" />
+              </div>
+              <div>
+                <label class="field-label mb-1 block">Primary contact email</label>
+                <input id="contactEmail" type="email" class="input-base" placeholder="legal@company.com" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scope Block -->
+        <div class="border border-slate-700/80 rounded-2xl p-4 space-y-3 bg-slate-950/60">
+          <div class="flex items-center justify-between">
+            <p class="field-label">Scope of wrapper</p>
+            <p class="text-[0.7rem] text-slate-500">
+              What this wrapper is meant to cover
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="field-label mb-1 block">Primary system wrapped</label>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="chip" data-scope="Payroll engine">Payroll engine</button>
+                <button type="button" class="chip" data-scope="Vendor payment router">Vendor payment router</button>
+                <button type="button" class="chip" data-scope="NFT credit card program">NFT credit card program</button>
+                <button type="button" class="chip" data-scope="RWA / invoice vault">RWA / invoice vault</button>
+                <button type="button" class="chip" data-scope="Identity and KYC graph">Identity and KYC graph</button>
+                <button type="button" class="chip" data-scope="Treasury accounting views">Treasury accounting views</button>
+                <button type="button" class="chip" data-scope="Other (described below)">Other (described below)</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="field-label mb-1 block">On-chain programs in scope (Solana)</label>
+              <textarea
+                id="programIds"
+                class="input-base"
+                rows="2"
+                placeholder="Example: Payroll program ID, vendor router program ID, oracle program ID"
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="field-label mb-1 block">Plain-language description</label>
+              <textarea
+                id="scopeDescription"
+                class="input-base"
+                rows="3"
+                placeholder="Describe how funds move, who is paying whom, and what decisions are automated vs. controlled by humans."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Regulatory Context -->
+        <div class="border border-slate-700/80 rounded-2xl p-4 space-y-3 bg-slate-950/60">
+          <div class="flex items-center justify-between">
+            <p class="field-label">Regulatory context</p>
+            <p class="text-[0.7rem] text-slate-500">
+              High-level regimes you design for
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="field-label mb-1 block">Primary regimes / frameworks</label>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="chip" data-regime="IRS wage and vendor reporting">IRS wage and vendor reporting</button>
+                <button type="button" class="chip" data-regime="FinCEN / BSA (U.S.)">FinCEN / BSA (U.S.)</button>
+                <button type="button" class="chip" data-regime="SEC disclosure and classification">SEC disclosure and classification</button>
+                <button type="button" class="chip" data-regime="EU MiCA / AMLD">EU MiCA / AMLD</button>
+                <button type="button" class="chip" data-regime="FATF travel rule expectations">FATF travel rule expectations</button>
+                <button type="button" class="chip" data-regime="GDPR-aligned identity handling">GDPR-aligned identity handling</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="field-label mb-1 block">Additional notes (optional)</label>
+              <textarea
+                id="regulatoryNotes"
+                class="input-base"
+                rows="2"
+                placeholder="Example: entity is already registered as a VASP in EU; payroll reporting handled by third-party provider, etc."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attestations -->
+        <div class="border border-slate-700/80 rounded-2xl p-4 space-y-3 bg-slate-950/60">
+          <p class="field-label mb-1">Attestations (demo-level)</p>
+          <p class="text-[0.75rem] text-slate-400 mb-2">
+            These statements show the intended posture of the wrapper. In a live system they would be signed and anchored to an oracle.
+          </p>
+
+          <div class="space-y-2 text-[0.8rem] text-slate-200">
+            <label class="flex gap-2 items-start">
+              <input id="attestNonCustodial" type="checkbox" class="mt-[2px]" />
+              <span>
+                The system described above is designed as a <span class="text-emerald-300 font-medium">non-custodial technology provider</span>,
+                not as a bank, exchange, or money service business.
+              </span>
+            </label>
+            <label class="flex gap-2 items-start">
+              <input id="attestIdentity" type="checkbox" class="mt-[2px]" />
+              <span>
+                All users who trigger regulated payment flows are subject to <span class="text-emerald-300 font-medium">KYC or KYB</span>
+                managed by the integrator or their regulated partners.
+              </span>
+            </label>
+            <label class="flex gap-2 items-start">
+              <input id="attestRecords" type="checkbox" class="mt-[2px]" />
+              <span>
+                Off-chain records, contracts and internal policies exist to support the on-chain wrapper and can be provided to regulators or auditors.
+              </span>
+            </label>
+            <label class="flex gap-2 items-start">
+              <input id="attestTruthful" type="checkbox" class="mt-[2px]" />
+              <span>
+                To the best of our knowledge, the information in this wrapper preview is <span class="text-emerald-300 font-medium">accurate and in good faith</span>
+                for compliance and supervisory discussions.
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
+          <button
+            id="generateBtn"
+            class="btn-primary w-full sm:w-auto px-5 py-2.5 flex items-center justify-center gap-2"
+          >
+            <span id="generateBtnLabel">Generate Legal Wrapper (Demo)</span>
+            <span id="generateBtnSpinner" class="hidden animate-spin text-xs">⟳</span>
+          </button>
+          <button
+            type="button"
+            id="resetBtn"
+            class="btn-ghost w-full sm:w-auto text-[0.75rem]"
+          >
+            Reset form
+          </button>
+        </div>
+
+        <p class="text-[0.7rem] text-slate-500 pt-1">
+          This view is for demonstration only. In a production deployment, a generated wrapper would be signed, anchored to a VERITAS oracle,
+          and made available to regulators, banks and partners as an attested artifact.
+        </p>
+      </section>
+
+      <!-- RIGHT: PREVIEW -->
+      <section class="section-shell card-veritas px-5 sm:px-7 py-5 sm:py-6 space-y-4">
+        <div class="flex items-center justify-between mb-1">
+          <div>
+            <h2 class="text-lg sm:text-xl font-semibold text-emerald-300">
+              Locked Wrapper Preview
+            </h2>
+            <p class="text-[0.75rem] text-slate-400">
+              What an oracle-ready wrapper snapshot could look like.
+            </p>
+          </div>
+          <div class="flex flex-col items-end gap-1">
+            <span id="lockStatusBadge" class="badge-draft">
+              No wrapper generated
+            </span>
+            <span id="wrapperIdShort" class="text-[0.7rem] text-slate-500">
+              Wrapper ID: —
+            </span>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="previewEmpty" class="mt-2 text-[0.8rem] text-slate-400 border border-dashed border-slate-700 rounded-2xl px-4 py-5 bg-slate-950/50">
+          Provide entity details, scope, and attestations on the left, then click
+          <span class="text-emerald-300 font-medium">Generate Legal Wrapper (Demo)</span>
+          to see a locked preview here. In production, this view would be exported as a PDF and anchored to a VERITAS oracle.
+        </div>
+
+        <!-- Preview Content -->
+        <div id="previewContent" class="hidden text-[0.8rem] sm:text-[0.85rem] space-y-4">
+
+          <div class="border border-slate-700/80 rounded-2xl p-4 bg-slate-950/70 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <p class="text-[0.7rem] text-slate-400 uppercase tracking-[0.18em]">
+                  Wrapper header
+                </p>
+                <p class="text-slate-100 font-medium" id="previewEntityName">
+                  —
+                </p>
+              </div>
+              <div class="text-right">
+                <span id="previewLockBadge" class="badge-locked">
+                  LOCKED – Awaiting Oracle Verification
+                </span>
+                <p class="text-[0.7rem] text-slate-500 mt-1" id="previewTimestamp">
+                  Generated: —
+                </p>
+              </div>
+            </div>
+            <p class="text-[0.75rem] text-slate-400" id="previewEntityMeta">
+              —
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Scope -->
+            <div class="border border-slate-700/80 rounded-2xl p-3.5 bg-slate-950/70 space-y-2">
+              <p class="text-[0.7rem] text-slate-400 uppercase tracking-[0.18em]">
+                Scope of wrapper
+              </p>
+              <p class="text-slate-100 font-medium" id="previewScopeTitle">
+                —
+              </p>
+              <p class="text-[0.78rem] text-slate-300" id="previewScopeDescription">
+                —
+              </p>
+              <p class="text-[0.7rem] text-slate-500" id="previewPrograms">
+                —
+              </p>
+            </div>
+
+            <!-- Regulatory -->
+            <div class="border border-slate-700/80 rounded-2xl p-3.5 bg-slate-950/70 space-y-2">
+              <p class="text-[0.7rem] text-slate-400 uppercase tracking-[0.18em]">
+                Regulatory context
+              </p>
+              <p class="text-slate-100 font-medium" id="previewRegimes">
+                —
+              </p>
+              <p class="text-[0.78rem] text-slate-300" id="previewRegNotes">
+                —
+              </p>
+              <p class="text-[0.7rem] text-slate-500">
+                This summary does not create or replace legal advice. It standardizes the way context is presented to supervisors.
+              </p>
+            </div>
+          </div>
+
+          <!-- Attestation snapshot -->
+          <div class="border border-slate-700/80 rounded-2xl p-3.5 bg-slate-950/70 space-y-2">
+            <p class="text-[0.7rem] text-slate-400 uppercase tracking-[0.18em]">
+              Attestation snapshot
+            </p>
+            <ul class="list-disc list-inside text-[0.78rem] text-slate-200 space-y-1" id="previewAttestations">
+              <!-- populated by script -->
+            </ul>
+            <p class="text-[0.7rem] text-slate-500">
+              In a live deployment, these attestations would be signed by an authorized representative of the entity and cryptographically bound to this wrapper.
+            </p>
+          </div>
+
+          <!-- Hash + Oracle anchor -->
+          <div class="border border-emerald-500/50 rounded-2xl p-3.5 bg-slate-950/80 space-y-2">
+            <p class="text-[0.7rem] text-emerald-300 uppercase tracking-[0.18em]">
+              Oracle locking and traceability
+            </p>
+            <p class="text-[0.78rem] text-slate-200" id="previewHashLine">
+              —
+            </p>
+            <p class="text-[0.78rem] text-slate-300">
+              The hash represents a deterministic summary of the form inputs at the time of locking. A VERITAS oracle can store this hash,
+              along with a reference to the entity’s Verified Business profile, to provide a stable anchor for supervisory review.
+            </p>
+            <p class="text-[0.7rem] text-slate-500">
+              Status: <span class="text-amber-300 font-medium">Pending oracle verification and optional third-party legal review</span>.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="mt-10 border-t border-slate-800 pt-4">
+      <p class="text-[0.7rem] text-slate-500 leading-relaxed">
+        This page is a visual and structural demonstration of a potential VERITAS legal wrapper flow.
+        It does not form a contract, does not file with any regulator, and does not replace jurisdiction-specific legal advice.
+      </p>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast">
+    Wrapper snapshot locked (demo only). No real filing has been created.
+  </div>
+
+  <script>
+    // Chip multi-select (scope + regimes)
+    const scopeChips = document.querySelectorAll('.chip[data-scope]');
+    const regimeChips = document.querySelectorAll('.chip[data-regime]');
+    let selectedScopes = [];
+    let selectedRegimes = [];
+
+    scopeChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const value = chip.getAttribute('data-scope');
+        if (selectedScopes.includes(value)) {
+          selectedScopes = selectedScopes.filter(v => v !== value);
+          chip.classList.remove('chip-selected');
+        } else {
+          selectedScopes.push(value);
+          chip.classList.add('chip-selected');
+        }
+      });
+    });
+
+    regimeChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const value = chip.getAttribute('data-regime');
+        if (selectedRegimes.includes(value)) {
+          selectedRegimes = selectedRegimes.filter(v => v !== value);
+          chip.classList.remove('chip-selected');
+        } else {
+          selectedRegimes.push(value);
+          chip.classList.add('chip-selected');
+        }
+      });
+    });
+
+    // Generate pseudo hash
+    function generateHash() {
+      const chars = 'abcdef0123456789';
+      let out = '';
+      for (let i = 0; i < 64; i++) {
+        out += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return out;
+    }
+
+    function shortIdFromHash(hash) {
+      return 'WRAP-' + hash.slice(0, 8).toUpperCase();
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2600);
+    }
+
+    const generateBtn = document.getElementById('generateBtn');
+    const generateBtnLabel = document.getElementById('generateBtnLabel');
+    const generateBtnSpinner = document.getElementById('generateBtnSpinner');
+    const resetBtn = document.getElementById('resetBtn');
+
+    generateBtn.addEventListener('click', () => {
+      // Collect values
+      const entityName = document.getElementById('entityName').value.trim();
+      const entityType = document.getElementById('entityType').value.trim();
+      const jurisdiction = document.getElementById('jurisdiction').value.trim();
+      const regNumber = document.getElementById('regNumber').value.trim();
+      const contactEmail = document.getElementById('contactEmail').value.trim();
+      const programIds = document.getElementById('programIds').value.trim();
+      const scopeDescription = document.getElementById('scopeDescription').value.trim();
+      const regulatoryNotes = document.getElementById('regulatoryNotes').value.trim();
+      const attestNonCustodial = document.getElementById('attestNonCustodial').checked;
+      const attestIdentity = document.getElementById('attestIdentity').checked;
+      const attestRecords = document.getElementById('attestRecords').checked;
+      const attestTruthful = document.getElementById('attestTruthful').checked;
+
+      // Minimal validation (demo-level but feels real)
+      const requiredMissing =
+        !entityName ||
+        !entityType ||
+        !jurisdiction ||
+        !contactEmail ||
+        selectedScopes.length === 0 ||
+        selectedRegimes.length === 0 ||
+        !attestNonCustodial ||
+        !attestIdentity ||
+        !attestRecords ||
+        !attestTruthful;
+
+      if (requiredMissing) {
+        alert(
+          "To generate a wrapper preview, please:\n\n" +
+          "• Provide entity name, type, jurisdiction and contact email\n" +
+          "• Select at least one scope item and one regulatory framework\n" +
+          "• Confirm all four attestations"
+        );
+        return;
+      }
+
+      // Simulate "locking"
+      generateBtn.disabled = true;
+      generateBtnSpinner.classList.remove('hidden');
+      generateBtnLabel.textContent = 'Locking wrapper preview…';
+
+      setTimeout(() => {
+        const hash = generateHash();
+        const wrapperId = shortIdFromHash(hash);
+        const now = new Date();
+        const timestamp = now.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+
+        // Header
+        document.getElementById('previewEntityName').textContent = entityName;
+        document.getElementById('previewTimestamp').textContent = 'Generated: ' + timestamp;
+        document.getElementById('previewEntityMeta').textContent =
+          entityType + ' · ' + jurisdiction + (regNumber ? ' · Reg. ' + regNumber : '');
+
+        // Scope
+        const scopeTitle = selectedScopes.join(' • ');
+        document.getElementById('previewScopeTitle').textContent = scopeTitle;
+        document.getElementById('previewScopeDescription').textContent =
+          scopeDescription || 'Scope description not provided. In a production wrapper this field is expected to be populated in plain language.';
+        document.getElementById('previewPrograms').textContent =
+          programIds
+            ? 'On-chain programs in view: ' + programIds
+            : 'On-chain programs: To be attached by technical integrator.';
+
+        // Regulatory
+        document.getElementById('previewRegimes').textContent =
+          selectedRegimes.join(' • ');
+        document.getElementById('previewRegNotes').textContent =
+          regulatoryNotes || 'Additional regulatory notes can be attached here for supervisors or bank partners.';
+
+        // Attestations
+        const attList = document.getElementById('previewAttestations');
+        attList.innerHTML = '';
+        if (attestNonCustodial) {
+          const li = document.createElement('li');
+          li.textContent = 'System is positioned as non-custodial technology rather than a money transmitter or exchange.';
+          attList.appendChild(li);
+        }
+        if (attestIdentity) {
+          const li = document.createElement('li');
+          li.textContent = 'All regulated flows are expected to sit behind KYC/KYB controls managed by regulated partners or the entity itself.';
+          attList.appendChild(li);
+        }
+        if (attestRecords) {
+          const li = document.createElement('li');
+          li.textContent = 'Supporting off-chain contracts, policies and records exist or are planned to back this wrapper.';
+          attList.appendChild(li);
+        }
+        if (attestTruthful) {
+          const li = document.createElement('li');
+          li.textContent = 'Information is supplied in good faith for supervisory and compliance design purposes.';
+          attList.appendChild(li);
+        }
+
+        // Hash
+        document.getElementById('previewHashLine').textContent =
+          'Wrapper hash (demo, non-binding): 0x' + hash +
+          '  ·  Derived from the fields above at the time of locking.';
+
+        // Status / wrapper ID
+        document.getElementById('lockStatusBadge').textContent =
+          'LOCKED – Oracle Pending (Demo)';
+        document.getElementById('lockStatusBadge').className = 'badge-locked';
+        document.getElementById('wrapperIdShort').textContent =
+          'Wrapper ID: ' + wrapperId;
+
+        // Show preview
+        document.getElementById('previewEmpty').classList.add('hidden');
+        document.getElementById('previewContent').classList.remove('hidden');
+
+        // Update button + toast
+        generateBtn.disabled = false;
+        generateBtnSpinner.classList.add('hidden');
+        generateBtnLabel.textContent = 'Regenerate Wrapper Preview (Demo)';
+
+        showToast();
+      }, 650);
+    });
+
+    // Reset form + preview
+    resetBtn.addEventListener('click', () => {
+      ['entityName','jurisdiction','regNumber','contactEmail','programIds','scopeDescription','regulatoryNotes']
+        .forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
+      document.getElementById('entityType').value = '';
+
+      document.getElementById('attestNonCustodial').checked = false;
+      document.getElementById('attestIdentity').checked = false;
+      document.getElementById('attestRecords').checked = false;
+      document.getElementById('attestTruthful').checked = false;
+
+      selectedScopes = [];
+      selectedRegimes = [];
+      scopeChips.forEach(c => c.classList.remove('chip-selected'));
+      regimeChips.forEach(c => c.classList.remove('chip-selected'));
+
+      document.getElementById('previewEmpty').classList.remove('hidden');
+      document.getElementById('previewContent').classList.add('hidden');
+      document.getElementById('lockStatusBadge').textContent = 'No wrapper generated';
+      document.getElementById('lockStatusBadge').className = 'badge-draft';
+      document.getElementById('wrapperIdShort').textContent = 'Wrapper ID: —';
+
+      generateBtnLabel.textContent = 'Generate Legal Wrapper (Demo)';
+      generateBtn.disabled = false;
+      generateBtnSpinner.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

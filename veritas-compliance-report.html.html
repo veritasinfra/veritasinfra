@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS — Compliance Report Generator</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #00121f 0%, #00060d 60%, #000207 100%);
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .card {
+      background: rgba(2, 10, 20, 0.96);
+      border-radius: 1.4rem;
+      border: 1px solid rgba(34, 197, 94, 0.28);
+      padding: 1.6rem;
+      box-shadow: 0 0 40px rgba(0, 40, 70, 0.8);
+    }
+
+    .title-gradient {
+      background: linear-gradient(120deg, #22c55e, #06b6d4);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 25px rgba(34, 197, 94, 0.6),
+        0 0 40px rgba(8, 145, 178, 0.55);
+      letter-spacing: 0.22em;
+    }
+
+    .btn {
+      background: radial-gradient(circle at top left, #22c55e, #06b6d4, #0369a1 90%);
+      padding: 0.7rem 1.1rem;
+      border-radius: 0.85rem;
+      color: white;
+      font-weight: 600;
+      border: 1px solid rgba(34, 197, 94, 0.45);
+      transition: all 0.15s ease;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.12);
+    }
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.7);
+      color: #e5e7eb;
+    }
+
+    .input-field {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 0.7rem;
+      padding: 0.6rem 0.8rem;
+      width: 100%;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(148,163,184,0.8);
+    }
+    .pill-ok {
+      border-color: rgba(34,197,94,0.8);
+      color: #bbf7d0;
+    }
+    .pill-warn {
+      border-color: rgba(250,204,21,0.95);
+      color: #fef9c3;
+    }
+    .pill-risk {
+      border-color: rgba(248,113,113,0.95);
+      color: #fee2e2;
+    }
+
+    .badge-type {
+      font-size: 0.7rem;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+    }
+    .badge-payroll { background: rgba(34,197,94,0.16); color: #bbf7d0; }
+    .badge-kyc { background: rgba(59,130,246,0.2); color: #bfdbfe; }
+    .badge-entity { background: rgba(45,212,191,0.15); color: #a5f3fc; }
+    .badge-risk { background: rgba(248,113,113,0.16); color: #fecaca; }
+
+    .table-wrapper {
+      border-radius: 1rem;
+      border: 1px solid rgba(51,65,85,0.9);
+      background: rgba(2, 12, 23, 0.98);
+      max-height: 420px;       /* scrollable audit trail */
+      overflow-y: auto;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    thead {
+      background: rgba(15,23,42,1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    th, td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid rgba(30,64,175,0.5);
+      vertical-align: top;
+    }
+    tbody tr:nth-child(even) {
+      background: rgba(15,23,42,0.92);
+    }
+    tbody tr:nth-child(odd) {
+      background: rgba(15,23,42,0.82);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen px-4 sm:px-6 lg:px-10 py-8">
+
+  <!-- HEADER -->
+  <header class="max-w-6xl mx-auto mb-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-semibold title-gradient uppercase">
+          VERITAS
+        </h1>
+        <p class="text-xs md:text-sm text-cyan-200 tracking-[0.26em] uppercase mt-2">
+          End to End Compliance Report Generator
+        </p>
+        <p class="text-xs text-slate-400 mt-3 max-w-2xl">
+          This demo shows how a business can generate a complete 90 day audit
+          report with payroll events, logs, KYC checks, entity mappings, risk notices,
+          and exportable summaries. Presentation grade for enterprises and regulators.
+        </p>
+      </div>
+      <div class="flex flex-col items-end gap-2 text-xs">
+        <span class="pill">
+          Simulated devnet environment, no real funds
+        </span>
+        <span id="reportMeta" class="text-slate-400 text-[0.7rem]">
+          No report generated yet
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN GRID -->
+  <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-7">
+
+    <!-- LEFT: CONTROLS -->
+    <section class="card lg:col-span-1 space-y-5">
+      <div>
+        <h2 class="text-base font-semibold text-emerald-300 mb-1">
+          Report parameters
+        </h2>
+        <p class="text-xs text-slate-400">
+          Choose a time frame and scope. For demos, use the one click 90 day option.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">
+            Period
+          </label>
+          <select id="periodSelect" class="input-field">
+            <option value="30">Last 30 days</option>
+            <option value="90" selected>Last 90 days</option>
+            <option value="365">Last 12 months</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">
+            Business entity
+          </label>
+          <select id="entitySelect" class="input-field">
+            <option value="APEX-HOLDINGS">APEX Holdings LLC</option>
+            <option value="NOVA-LABS">Nova Labs Inc</option>
+            <option value="HORIZON-GLOBAL">Horizon Global Services Pte Ltd</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">
+            Risk detail level
+          </label>
+          <select id="riskLevel" class="input-field">
+            <option value="summary">Summary only</option>
+            <option value="standard" selected>Standard</option>
+            <option value="deep">Deep with granular notes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-3 mt-4">
+        <button id="btnGenerate90" class="btn">
+          Generate audit report, last 90 days
+        </button>
+        <button id="btnGenerateCustom" class="btn btn-secondary">
+          Generate with selected filters
+        </button>
+      </div>
+
+      <div class="mt-4 text-[0.7rem] text-slate-400 space-y-1">
+        <p class="font-semibold text-emerald-200">
+          What this demo simulates
+        </p>
+        <p>
+          The generator assembles a synthetic audit trail from:
+        </p>
+        <ul class="list-disc list-inside">
+          <li>Payroll events linked to employees and wallets</li>
+          <li>KYC verification checks and outcomes</li>
+          <li>Entity structure and jurisdictions</li>
+          <li>Compliance risk notices and mitigations</li>
+        </ul>
+        <p>
+          In production, the same structure is written from on chain PDAs and indexer data.
+        </p>
+      </div>
+    </section>
+
+    <!-- RIGHT: RESULTS -->
+    <section class="lg:col-span-2 space-y-6">
+
+      <!-- SUMMARY STATS -->
+      <div class="card">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-base font-semibold text-emerald-300">
+              Report summary
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">
+              High level view of payroll flows, checks and risk posture for the selected window.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2 text-[0.7rem]">
+            <span id="summaryStatusBadge" class="pill">
+              Waiting for report
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div class="rounded-xl bg-slate-950/70 border border-slate-700/80 p-3">
+            <div class="text-slate-400 mb-1">Payroll events</div>
+            <div id="statPayroll" class="text-lg font-semibold text-emerald-300">0</div>
+            <div id="statPayrollVolume" class="text-[0.7rem] text-slate-400 mt-1">
+              Total volume: $0
+            </div>
+          </div>
+          <div class="rounded-xl bg-slate-950/70 border border-slate-700/80 p-3">
+            <div class="text-slate-400 mb-1">KYC checks</div>
+            <div id="statKyc" class="text-lg font-semibold text-sky-300">0</div>
+            <div id="statKycPass" class="text-[0.7rem] text-slate-400 mt-1">
+              Approved: 0
+            </div>
+          </div>
+          <div class="rounded-xl bg-slate-950/70 border border-slate-700/80 p-3">
+            <div class="text-slate-400 mb-1">Entities mapped</div>
+            <div id="statEntities" class="text-lg font-semibold text-cyan-300">0</div>
+            <div id="statJurisdictions" class="text-[0.7rem] text-slate-400 mt-1">
+              Jurisdictions: 0
+            </div>
+          </div>
+          <div class="rounded-xl bg-slate-950/70 border border-slate-700/80 p-3">
+            <div class="text-slate-400 mb-1">Risk notices</div>
+            <div id="statRisk" class="text-lg font-semibold text-red-300">0</div>
+            <div id="statRiskLevel" class="text-[0.7rem] text-slate-400 mt-1">
+              Overall posture: —
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3 items-center mt-4 pt-3 border-t border-slate-700/80">
+          <button id="btnExportCsv" class="btn btn-secondary">
+            Export CSV summary
+          </button>
+          <button id="btnExportPdf" class="btn btn-secondary">
+            Export text, PDF style report
+          </button>
+          <p class="text-[0.7rem] text-slate-400">
+            These exports are simulated local downloads to show structure and fields.
+          </p>
+        </div>
+      </div>
+
+      <!-- DETAIL: TIMELINE -->
+      <div class="card">
+        <h3 class="text-sm font-semibold text-emerald-300 mb-2">
+          Timeline, payroll events and compliance logs
+        </h3>
+        <p class="text-xs text-slate-400 mb-3">
+          Unified view of payroll runs, KYC decisions, entity updates and risk actions.
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr class="text-[0.7rem] text-slate-300 uppercase tracking-wide">
+                <th class="w-20">Date</th>
+                <th class="w-24">Type</th>
+                <th class="w-24">Employee / Entity</th>
+                <th>Detail</th>
+                <th class="w-24">Amount</th>
+                <th class="w-24">Risk</th>
+              </tr>
+            </thead>
+            <tbody id="eventsBody">
+              <tr>
+                <td colspan="6" class="text-center text-[0.75rem] text-slate-500 py-4">
+                  No report yet. Generate to populate the audit trail.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- DETAIL: KYC MATRIX AND RISK NOTES -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="card">
+          <h3 class="text-sm font-semibold text-emerald-300 mb-2">
+            KYC and entity coverage
+          </h3>
+          <p class="text-xs text-slate-400 mb-2">
+            Coverage summary for employees and business entities in scope.
+          </p>
+          <ul id="kycMatrix" class="text-[0.75rem] text-slate-300 space-y-1.5">
+            <li>Waiting for report.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 class="text-sm font-semibold text-emerald-300 mb-2">
+            Risk notices and findings
+          </h3>
+          <p class="text-xs text-slate-400 mb-2">
+            Simulated notices that would appear in an automated VERITAS audit run.
+          </p>
+          <ul id="riskList" class="text-[0.75rem] text-slate-300 space-y-1.5">
+            <li>No data yet.</li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- SCRIPT -->
+  <script>
+    const reportMeta = document.getElementById("reportMeta");
+    const summaryStatusBadge = document.getElementById("summaryStatusBadge");
+    const statPayroll = document.getElementById("statPayroll");
+    const statPayrollVolume = document.getElementById("statPayrollVolume");
+    const statKyc = document.getElementById("statKyc");
+    const statKycPass = document.getElementById("statKycPass");
+    const statEntities = document.getElementById("statEntities");
+    const statJurisdictions = document.getElementById("statJurisdictions");
+    const statRisk = document.getElementById("statRisk");
+    const statRiskLevel = document.getElementById("statRiskLevel");
+    const eventsBody = document.getElementById("eventsBody");
+    const kycMatrix = document.getElementById("kycMatrix");
+    const riskList = document.getElementById("riskList");
+
+    const periodSelect = document.getElementById("periodSelect");
+    const entitySelect = document.getElementById("entitySelect");
+    const riskLevelSel = document.getElementById("riskLevel");
+    const btnGenerate90 = document.getElementById("btnGenerate90");
+    const btnGenerateCustom = document.getElementById("btnGenerateCustom");
+    const btnExportCsv = document.getElementById("btnExportCsv");
+    const btnExportPdf = document.getElementById("btnExportPdf");
+
+    let currentReport = null;
+
+    function formatDate(d) {
+      return d.toISOString().slice(0,10);
+    }
+
+    function randomBetween(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function choose(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function generateReport(periodDays, entityCode, riskDepth) {
+      const now = new Date();
+      const start = new Date(now.getTime() - periodDays * 24 * 60 * 60 * 1000);
+      const employees = [
+        "Alice Carter",
+        "David Chen",
+        "Maria Lopez",
+        "James Okafor",
+        "Sofia Müller",
+        "Kenji Sato"
+      ];
+      const entities = {
+        "APEX-HOLDINGS": {
+          name: "APEX Holdings LLC",
+          regions: ["US"],
+        },
+        "NOVA-LABS": {
+          name: "Nova Labs Inc",
+          regions: ["US","UK"],
+        },
+        "HORIZON-GLOBAL": {
+          name: "Horizon Global Services Pte Ltd",
+          regions: ["SG","EU"],
+        }
+      };
+
+      const entity = entities[entityCode] || entities["APEX-HOLDINGS"];
+
+      // Payroll events
+      const payrollEvents = [];
+      const payrollCount = randomBetween(8, 16);
+      let payrollVolume = 0;
+
+      for (let i = 0; i < payrollCount; i++) {
+        const d = new Date(start.getTime() + Math.random() * (now.getTime() - start.getTime()));
+        const emp = choose(employees);
+        const amount = randomBetween(2000, 16000) * 100; // cents
+        payrollVolume += amount;
+
+        payrollEvents.push({
+          date: d,
+          type: "PAYROLL",
+          employee: emp,
+          detail: `Salary disbursement, period close`,
+          amount: amount / 100,
+          risk: "Low"
+        });
+      }
+
+      // KYC checks
+      const kycEvents = [];
+      const kycCount = randomBetween(4, 8);
+      let kycApproved = 0;
+
+      for (let i = 0; i < kycCount; i++) {
+        const d = new Date(start.getTime() + Math.random() * (now.getTime() - start.getTime()));
+        const emp = choose(employees);
+        const status = Math.random() < 0.85 ? "Approved" : "Review";
+        if (status === "Approved") kycApproved++;
+
+        kycEvents.push({
+          date: d,
+          type: "KYC",
+          employee: emp,
+          detail: `KYC review, outcome: ${status}`,
+          amount: 0,
+          risk: status === "Approved" ? "Low" : "Medium"
+        });
+      }
+
+      // Entity mapping
+      const entityEvents = [];
+      entity.regions.forEach(regionCode => {
+        const d = new Date(start.getTime() + Math.random() * (now.getTime() - start.getTime()));
+        let regionLabel;
+        if (regionCode === "US") regionLabel = "United States, FinCEN and IRS scope";
+        else if (regionCode === "EU") regionLabel = "European Union, ESMA and AMLD";
+        else if (regionCode === "UK") regionLabel = "United Kingdom, FCA and HMRC";
+        else if (regionCode === "SG") regionLabel = "Singapore, MAS scope";
+        else regionLabel = regionCode;
+
+        entityEvents.push({
+          date: d,
+          type: "ENTITY_MAP",
+          employee: entity.name,
+          detail: `Entity mapped to region: ${regionLabel}`,
+          amount: 0,
+          risk: "Low"
+        });
+      });
+
+      // Risk notices
+      const riskEvents = [];
+      let riskCount = 0;
+      const riskDepthFactor = riskDepth === "deep" ? 3 : riskDepth === "standard" ? 2 : 1;
+
+      for (let i = 0; i < riskDepthFactor; i++) {
+        const d = new Date(start.getTime() + Math.random() * (now.getTime() - start.getTime()));
+        const templates = [
+          {
+            label: "Payroll threshold monitoring",
+            level: "Medium",
+            note: "Detected payroll cluster above normal seasonal baseline, flagged for review, no violations found."
+          },
+          {
+            label: "Jurisdiction data completeness",
+            level: "Low",
+            note: "Periodic check of KYB information for all regions in scope shows no missing documents."
+          },
+          {
+            label: "Travel rule readiness",
+            level: "Medium",
+            note: "Cross border payments simulated, counterparty identification mapped according to upcoming rules."
+          },
+          {
+            label: "Sanctions and watchlist scan",
+            level: "Low",
+            note: "Weekly scan against major sanctions lists returned no matches for this entity."
+          }
+        ];
+        const t = choose(templates);
+
+        riskEvents.push({
+          date: d,
+          type: "RISK_NOTICE",
+          employee: entity.name,
+          detail: `${t.label}, ${t.note}`,
+          amount: 0,
+          risk: t.level
+        });
+        riskCount++;
+      }
+
+      // Combine and sort
+      const allEvents = [...payrollEvents, ...kycEvents, ...entityEvents, ...riskEvents]
+        .sort((a, b) => a.date - b.date);
+
+      // Overall risk
+      let overallRisk = "Low";
+      if (riskCount > 2) overallRisk = "Medium";
+      if (riskDepth === "deep" && riskCount >= 3) overallRisk = "Medium to detailed review";
+
+      currentReport = {
+        entity,
+        periodDays,
+        start,
+        end: now,
+        payrollCount,
+        payrollVolume,
+        kycCount,
+        kycApproved,
+        entityRegions: entity.regions,
+        riskCount,
+        overallRisk,
+        events: allEvents
+      };
+
+      renderReport();
+    }
+
+    function renderReport() {
+      if (!currentReport) return;
+
+      const r = currentReport;
+
+      reportMeta.textContent =
+        `Report for ${r.entity.name}, period ${formatDate(r.start)} to ${formatDate(r.end)} (${r.periodDays} days).`;
+
+      // Summary badge
+      summaryStatusBadge.textContent = "Report generated";
+      summaryStatusBadge.className = "pill pill-ok";
+
+      // Stats
+      statPayroll.textContent = r.payrollCount.toString();
+      statPayrollVolume.textContent =
+        "Total volume: $" + r.payrollVolume.toLocaleString(undefined, { maximumFractionDigits: 2 });
+
+      statKyc.textContent = r.kycCount.toString();
+      statKycPass.textContent = "Approved: " + r.kycApproved.toString();
+
+      statEntities.textContent = "1";
+      statJurisdictions.textContent = "Jurisdictions: " + r.entityRegions.length.toString();
+
+      statRisk.textContent = r.riskCount.toString();
+      statRiskLevel.textContent = "Overall posture: " + r.overallRisk;
+
+      // Events table
+      if (r.events.length === 0) {
+        eventsBody.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center text-[0.75rem] text-slate-500 py-4">
+              No activity in this window.
+            </td>
+          </tr>`;
+      } else {
+        const rows = r.events.map(ev => {
+          let badgeClass = "badge-type";
+          if (ev.type === "PAYROLL") badgeClass += " badge-payroll";
+          else if (ev.type === "KYC") badgeClass += " badge-kyc";
+          else if (ev.type === "ENTITY_MAP") badgeClass += " badge-entity";
+          else if (ev.type === "RISK_NOTICE") badgeClass += " badge-risk";
+
+          let riskBadge = "";
+          if (ev.risk === "Low") {
+            riskBadge = `<span class="pill pill-ok">Low</span>`;
+          } else if (ev.risk === "Medium" || ev.risk === "Medium to detailed review") {
+            riskBadge = `<span class="pill pill-warn">${ev.risk}</span>`;
+          } else {
+            riskBadge = `<span class="pill pill-risk">${ev.risk}</span>`;
+          }
+
+          const amountText = ev.amount > 0 ? "$" + ev.amount.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—";
+
+          return `
+            <tr>
+              <td>${formatDate(ev.date)}</td>
+              <td><span class="${badgeClass}">${ev.type}</span></td>
+              <td>${ev.employee}</td>
+              <td>${ev.detail}</td>
+              <td>${amountText}</td>
+              <td>${riskBadge}</td>
+            </tr>
+          `;
+        }).join("");
+        eventsBody.innerHTML = rows;
+      }
+
+      // KYC matrix
+      const coverageRate = r.kycCount ? Math.round((r.kycApproved / r.kycCount) * 100) : 0;
+      kycMatrix.innerHTML = `
+        <li><span class="pill pill-ok">Employee coverage</span> ${coverageRate}% of reviewed employees fully approved in this window.</li>
+        <li><span class="pill">Entity</span> ${r.entity.name}, mapped to ${r.entityRegions.length} region(s): ${r.entityRegions.join(", ")}.</li>
+        <li><span class="pill">Scope</span> Payroll, KYC, entity mapping, risk notices for the selected period.</li>
+      `;
+
+      // Risk list
+      if (r.riskCount === 0) {
+        riskList.innerHTML = `
+          <li><span class="pill pill-ok">No material risks detected</span> in this window.</li>
+        `;
+      } else {
+        const sample = r.events.filter(e => e.type === "RISK_NOTICE").slice(0, 4);
+        const items = sample.map(ev => {
+          return `
+            <li>
+              <span class="pill pill-warn">Notice</span>
+              <span class="text-slate-300"> ${formatDate(ev.date)}, ${ev.detail}</span>
+            </li>
+          `;
+        }).join("");
+        riskList.innerHTML = items;
+      }
+    }
+
+    function exportCsv() {
+      if (!currentReport) {
+        alert("Generate a report first.");
+        return;
+      }
+      const r = currentReport;
+      const header = [
+        "date",
+        "type",
+        "employee_or_entity",
+        "detail",
+        "amount",
+        "risk"
+      ];
+      const rows = r.events.map(ev => [
+        formatDate(ev.date),
+        ev.type,
+        `"${ev.employee.replace(/"/g, '""')}"`,
+        `"${ev.detail.replace(/"/g, '""')}"`,
+        ev.amount.toFixed(2),
+        ev.risk
+      ]);
+      const csvLines = [header.join(","), ...rows.map(row => row.join(","))];
+      const csvContent = csvLines.join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "veritas_audit_report.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportPdfStyle() {
+      if (!currentReport) {
+        alert("Generate a report first.");
+        return;
+      }
+      const r = currentReport;
+      let text = "";
+      text += "VERITAS, End to End Compliance Report\n";
+      text += "Entity: " + r.entity.name + "\n";
+      text += "Period: " + formatDate(r.start) + " to " + formatDate(r.end) +
+              " (" + r.periodDays + " days)\n\n";
+      text += "Summary\n";
+      text += "Payroll events: " + r.payrollCount + " (volume $" +
+              r.payrollVolume.toLocaleString(undefined, { maximumFractionDigits: 2 }) + ")\n";
+      text += "KYC checks: " + r.kycCount + " (approved " + r.kycApproved + ")\n";
+      text += "Regions: " + r.entityRegions.join(", ") + "\n";
+      text += "Risk notices: " + r.riskCount + " (posture " + r.overallRisk + ")\n\n";
+      text += "Events\n";
+      r.events.forEach(ev => {
+        text += [
+          formatDate(ev.date),
+          ev.type,
+          ev.employee,
+          ev.detail,
+          ev.amount > 0 ? "$" + ev.amount.toFixed(2) : "—",
+          "Risk " + ev.risk
+        ].join(" | ") + "\n";
+      });
+
+      const blob = new Blob([text], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "veritas_audit_report_text.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    btnGenerate90.addEventListener("click", () => {
+      periodSelect.value = "90";
+      const entityCode = entitySelect.value;
+      const riskDepth = riskLevelSel.value;
+      generateReport(90, entityCode, riskDepth);
+    });
+
+    btnGenerateCustom.addEventListener("click", () => {
+      const days = parseInt(periodSelect.value, 10);
+      const entityCode = entitySelect.value;
+      const riskDepth = riskLevelSel.value;
+      generateReport(days, entityCode, riskDepth);
+    });
+
+    btnExportCsv.addEventListener("click", exportCsv);
+    btnExportPdf.addEventListener("click", exportPdfStyle);
+  </script>
+</body>
+</html>

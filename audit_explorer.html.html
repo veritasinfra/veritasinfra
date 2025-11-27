@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS – Automated Audit Explorer</title>
+
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .bg-veritas {
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 40%, #001b1f 75%, #000814 100%);
+    }
+    .card-veritas {
+      background: linear-gradient(145deg, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+      border: 1px solid rgba(56,189,248,0.20);
+      box-shadow:
+        0 0 30px rgba(15,118,110,0.25),
+        0 0 80px rgba(15,23,42,0.85);
+    }
+    .text-gradient-veritas {
+      background: linear-gradient(120deg, #22c55e, #a5f3fc, #22c55e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: titleGlow 7s ease-in-out infinite;
+    }
+    .logo-emboss {
+      text-shadow:
+        0 0 18px rgba(34,197,94,0.6),
+        0 0 40px rgba(8,145,178,0.7),
+        0 2px 0 rgba(0,0,0,0.9);
+      letter-spacing: 0.22em;
+    }
+    .glass-line {
+      background: radial-gradient(circle, rgba(34,197,94,0.35), transparent 70%);
+      opacity: 0.7;
+    }
+    .btn-primary {
+      background: radial-gradient(circle at 20% 0%, #22c55e 0%, #0284c7 40%, #0369a1 100%);
+      box-shadow:
+        0 0 18px rgba(34,197,94,0.65),
+        0 0 32px rgba(8,145,178,0.75);
+    }
+    .btn-primary:hover {
+      filter: brightness(1.05);
+    }
+    @keyframes titleGlow {
+      0% {
+        text-shadow:
+          0 0 12px rgba(34,197,94,0.4),
+          0 0 28px rgba(8,145,178,0.45),
+          0 0 60px rgba(8,47,73,0.9);
+        filter: drop-shadow(0 0 8px rgba(8,47,73,0.8));
+      }
+      50% {
+        text-shadow:
+          0 0 24px rgba(45,212,191,0.9),
+          0 0 60px rgba(8,145,178,0.9),
+          0 0 80px rgba(8,47,73,1);
+        filter: drop-shadow(0 0 16px rgba(8,145,178,0.9));
+      }
+      100% {
+        text-shadow:
+          0 0 12px rgba(34,197,94,0.4),
+          0 0 28px rgba(8,145,178,0.45),
+          0 0 60px rgba(8,47,73,0.9);
+        filter: drop-shadow(0 0 8px rgba(8,47,73,0.8));
+      }
+    }
+    .pill-badge {
+      background: radial-gradient(circle at 0 0, rgba(16,185,129,0.30), rgba(8,47,73,0.96));
+      border: 1px solid rgba(45,212,191,0.70);
+    }
+    .risk-pill {
+      font-size: 0.65rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.9);
+    }
+    .risk-low {
+      border-color: rgba(34,197,94,0.7);
+      color: #bbf7d0;
+    }
+    .risk-medium {
+      border-color: rgba(234,179,8,0.8);
+      color: #facc15;
+    }
+    .risk-high {
+      border-color: rgba(248,113,113,0.85);
+      color: #fecaca;
+    }
+    .table-row {
+      cursor: pointer;
+      transition: background 0.12s ease-out, transform 0.08s ease-out;
+    }
+    .table-row:hover {
+      background: rgba(15,23,42,0.9);
+      transform: translateY(-1px);
+    }
+    .table-row-selected {
+      background: rgba(8,47,73,0.95);
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.80);
+    }
+    .log-box {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+  </style>
+</head>
+
+<body class="bg-veritas text-slate-100 antialiased min-h-screen">
+
+  <!-- Decorative background -->
+  <div class="fixed inset-0 pointer-events-none opacity-40">
+    <div class="glass-line w-1 h-40 absolute left-10 top-32 blur-xl"></div>
+    <div class="glass-line w-1 h-48 absolute right-16 top-80 blur-xl"></div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 relative">
+    <!-- HEADER -->
+    <header class="flex flex-col gap-6 mb-10 md:mb-12">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <div class="inline-flex flex-col">
+            <span class="text-gradient-veritas logo-emboss text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[0.24em] uppercase">
+              VERITAS
+            </span>
+            <span class="mt-2 text-sm sm:text-base text-cyan-200/85">
+              Automated Audit Explorer for compliant on chain payroll and payments
+            </span>
+          </div>
+          <div class="mt-3 text-xs sm:text-sm uppercase tracking-[0.28em] text-emerald-300/70">
+            Audit and Compliance Dashboard · Devnet demo
+          </div>
+        </div>
+
+        <div class="flex flex-col items-end gap-2">
+          <div class="flex flex-wrap gap-2 justify-end">
+            <span class="pill-badge px-3 py-1 rounded-full text-[0.7rem] sm:text-xs text-emerald-100">
+              Backed by on chain events
+            </span>
+            <span class="pill-badge px-3 py-1 rounded-full text-[0.7rem] sm:text-xs text-cyan-100">
+              Same day audit, by design
+            </span>
+          </div>
+          <p class="text-[0.7rem] text-slate-400 max-w-xs text-right">
+            In a production deployment this view would read directly from the VERITAS indexer and Solana program logs.
+          </p>
+        </div>
+      </div>
+
+      <!-- High level audit KPIs -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="card-veritas rounded-2xl px-4 py-3 flex flex-col gap-1">
+          <span class="text-xs uppercase tracking-widest text-slate-300/70">Events in current view</span>
+          <span id="statTotalEvents" class="text-lg sm:text-xl font-semibold text-emerald-300">—</span>
+          <span class="text-[0.7rem] text-slate-400">Filtered by date, type, jurisdiction and free text search.</span>
+        </div>
+        <div class="card-veritas rounded-2xl px-4 py-3 flex flex-col gap-1">
+          <span class="text-xs uppercase tracking-widest text-slate-300/70">Flagged events</span>
+          <span id="statFlaggedEvents" class="text-lg sm:text-xl font-semibold text-amber-300">—</span>
+          <span class="text-[0.7rem] text-slate-400">Elevated or high risk patterns for further review.</span>
+        </div>
+        <div class="card-veritas rounded-2xl px-4 py-3 flex flex-col gap-1">
+          <span class="text-xs uppercase tracking-widest text-slate-300/70">Jurisdictions represented</span>
+          <span id="statJurisdictions" class="text-lg sm:text-xl font-semibold text-cyan-200">—</span>
+          <span class="text-[0.7rem] text-slate-400">Shows geographic coverage of the current audit slice.</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN LAYOUT -->
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <!-- LEFT COLUMN: FILTERS AND NOTES -->
+      <aside class="space-y-5">
+        <!-- Filters card -->
+        <section class="card-veritas rounded-3xl px-5 py-5">
+          <h2 class="text-lg sm:text-xl font-semibold text-emerald-300 mb-2">Audit filters</h2>
+          <p class="text-[0.75rem] text-slate-300/90 mb-3">
+            Narrow the audit surface by time, type, jurisdiction and risk. In production these values map to indexed on chain events.
+          </p>
+
+          <div class="space-y-3 text-sm">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[0.7rem] text-slate-300 mb-1">From date</label>
+                <input
+                  id="filterFromDate"
+                  type="date"
+                  class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                />
+              </div>
+              <div>
+                <label class="block text-[0.7rem] text-slate-300 mb-1">To date</label>
+                <input
+                  id="filterToDate"
+                  type="date"
+                  class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[0.7rem] text-slate-300 mb-1">Event type</label>
+              <select
+                id="filterType"
+                class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+              >
+                <option value="">All types</option>
+                <option value="Payroll">Payroll</option>
+                <option value="CardSpend">Card spend</option>
+                <option value="RwaUpdate">RWA update</option>
+                <option value="OracleWrite">Oracle write</option>
+                <option value="ConfigChange">Config change</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[0.7rem] text-slate-300 mb-1">Jurisdiction</label>
+              <select
+                id="filterJurisdiction"
+                class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+              >
+                <option value="">All regions</option>
+                <option value="US">United States</option>
+                <option value="EU">European Union</option>
+                <option value="UK">United Kingdom</option>
+                <option value="SG">Singapore</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[0.7rem] text-slate-300 mb-1">Risk level</label>
+              <select
+                id="filterRisk"
+                class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+              >
+                <option value="">Any risk</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[0.7rem] text-slate-300 mb-1">Search memo, entity or hash</label>
+              <input
+                id="filterSearch"
+                type="text"
+                placeholder="employee, tx id, reference"
+                class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+              />
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <button
+                id="btnResetFilters"
+                class="text-[0.75rem] text-slate-300 underline-offset-2 hover:underline"
+              >
+                Reset filters
+              </button>
+              <span id="filterCountLabel" class="text-[0.7rem] text-slate-400">
+                Awaiting input – apply filters to load events
+              </span>
+            </div>
+
+            <div class="pt-4">
+              <button
+                id="btnGenerateAudit"
+                class="w-full rounded-xl py-2.5 text-sm font-semibold border border-emerald-300/70 bg-emerald-900/60 text-emerald-100 hover:bg-emerald-800/70"
+              >
+                Generate Audit Results
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Auditor notes / developer notes -->
+        <section class="card-veritas rounded-3xl px-5 py-5 text-[0.75rem] text-slate-300/90">
+          <h2 class="text-sm font-semibold text-emerald-300 mb-2">How this view works</h2>
+          <p class="mb-2">
+            In a full deployment the VERITAS indexer listens to TransactionLogged events and writes normalized records
+            to a queryable store. This page reads those records and provides a consistent view for finance, risk and
+            regulators.
+          </p>
+          <p class="mb-2">
+            Every row in the table represents a single on chain event with a deterministic mapping to a Solana
+            transaction, program log and compliance context.
+          </p>
+          <p class="text-[0.7rem] text-slate-400">
+            This demo uses simulated data in memory. Wiring it to a real indexer only requires replacing the
+            <code class="text-cyan-300">auditEvents</code> array with data from an API or direct indexer client.
+          </p>
+        </section>
+      </aside>
+
+      <!-- RIGHT COLUMN: TABLE AND DETAILS -->
+      <section class="lg:col-span-2 space-y-6">
+        <!-- Events table -->
+        <div class="card-veritas rounded-3xl px-4 sm:px-5 py-4 sm:py-5">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h2 class="text-lg sm:text-xl font-semibold text-emerald-300">Indexed events</h2>
+              <p class="text-[0.75rem] text-slate-300/90">
+                Click a row for the full compliance view. Sorting is by newest first.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-3 border border-slate-700/80 rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+              <div class="min-w-[720px]">
+                <div class="hidden md:grid grid-cols-12 gap-2 px-3 py-2 text-[0.7rem] uppercase tracking-widest bg-slate-950/70 text-slate-400">
+                  <div class="col-span-3">Transaction id</div>
+                  <div class="col-span-2">Event type</div>
+                  <div class="col-span-2">Payer</div>
+                  <div class="col-span-2">Jurisdiction</div>
+                  <div class="col-span-2 text-right">Amount</div>
+                  <div class="col-span-1 text-right">Risk</div>
+                </div>
+                <div
+                  id="eventsTableBody"
+                  class="max-h-[420px] overflow-y-auto divide-y divide-slate-800/80 text-xs sm:text-[0.8rem]"
+                >
+                  <!-- rows injected by script -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event detail panel -->
+        <div class="card-veritas rounded-3xl px-4 sm:px-5 py-4 sm:py-5">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h2 class="text-lg sm:text-xl font-semibold text-emerald-300">Event detail</h2>
+              <p class="text-[0.75rem] text-slate-300/90">
+                Full view of the selected event including entities, jurisdiction and raw log output.
+              </p>
+            </div>
+            <div class="text-right">
+              <div class="text-[0.7rem] text-slate-400">Selected transaction</div>
+              <div id="detailTxIdShort" class="text-[0.7rem] text-cyan-200 truncate max-w-[180px]">
+                None selected
+              </div>
+            </div>
+          </div>
+
+          <div id="detailEmptyState" class="text-[0.8rem] text-slate-400 py-4">
+            Choose a row from the table above to see complete context for that transaction.
+          </div>
+
+          <div id="detailContent" class="hidden space-y-4 text-[0.8rem]">
+            <!-- Summary grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Event type</div>
+                <div id="detailType" class="font-semibold text-emerald-200"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Timestamp</div>
+                <div id="detailTimestamp" class="font-semibold text-slate-100"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Payer</div>
+                <div id="detailPayer" class="font-mono text-[0.7rem] text-slate-100 break-all"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Employee or counterparty</div>
+                <div id="detailEmployee" class="font-mono text-[0.7rem] text-slate-100 break-all"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Jurisdiction and entity</div>
+                <div id="detailJurisdiction" class="text-slate-100"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Amount and currency</div>
+                <div id="detailAmount" class="text-slate-100"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Risk and flags</div>
+                <div id="detailRisk" class="flex items-center gap-2"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">KYC or KYB status</div>
+                <div id="detailKyc" class="text-slate-100"></div>
+              </div>
+            </div>
+
+            <!-- Memo and audit notes -->
+            <div class="border border-slate-700/80 rounded-2xl px-3 py-3">
+              <div class="text-[0.7rem] text-slate-400 mb-1">Business memo</div>
+              <div id="detailMemo" class="text-slate-100 mb-2"></div>
+              <div class="text-[0.7rem] text-slate-400 mb-1">Audit interpretation</div>
+              <div id="detailAuditNote" class="text-slate-200"></div>
+            </div>
+
+            <!-- Raw log output -->
+            <div class="border border-slate-700/80 rounded-2xl px-3 py-3">
+              <div class="flex items-center justify-between mb-1">
+                <div class="text-[0.7rem] text-slate-400">Raw program log snapshot</div>
+                <span id="detailSlot" class="text-[0.7rem] text-slate-500"></span>
+              </div>
+              <pre
+                id="detailRawLog"
+                class="log-box text-[0.7rem] leading-relaxed bg-slate-950/80 rounded-xl px-3 py-2 max-h-48 overflow-y-auto text-slate-200/90"
+              ></pre>
+            </div>
+
+            <!-- Hash and traceability -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="border border-slate-700/80 rounded-2xl px-3 py-3">
+                <div class="text-[0.7rem] text-slate-400 mb-1">Transaction id</div>
+                <div id="detailTxId" class="log-box text-[0.7rem] text-cyan-200 break-all">
+                  <!-- full tx id injected on selection -->
+                </div>
+              </div>
+              <div class="border border-slate-700/80 rounded-2xl px-3 py-3">
+                <div class="text-[0.7rem] text-slate-400 mb-1">Traceability notes</div>
+                <div id="detailTrace" class="text-[0.75rem] text-slate-200">
+                  Each audited event maps deterministically to a Solana transaction, slot and VERITAS indexer record.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ---------------------------
+    // Globals
+    // ---------------------------
+    let allAuditEvents = [];
+    let currentFilteredEvents = [];
+    let selectedRowElement = null;
+
+    // ---------------------------
+    // Utility functions
+    // ---------------------------
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function pickRandom(arr) {
+      return arr[randomInt(0, arr.length - 1)];
+    }
+
+    function pad2(n) {
+      return n < 10 ? "0" + n : "" + n;
+    }
+
+    function formatUtcTimestamp(date) {
+      const y = date.getUTCFullYear();
+      const m = pad2(date.getUTCMonth() + 1);
+      const d = pad2(date.getUTCDate());
+      const hh = pad2(date.getUTCHours());
+      const mm = pad2(date.getUTCMinutes());
+      return y + "-" + m + "-" + d + " " + hh + ":" + mm + " UTC";
+    }
+
+    function makeRandomTxId() {
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let out = "";
+      for (let i = 0; i < 20; i++) {
+        out += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+      }
+      return out;
+    }
+
+    // ---------------------------
+    // Mock event generator
+    // ---------------------------
+    function generateMockEvents(fromStr, toStr) {
+      let fromDate, toDate;
+      const now = new Date();
+
+      if (fromStr && toStr) {
+        fromDate = new Date(fromStr + "T00:00:00Z");
+        toDate = new Date(toStr + "T23:59:59Z");
+        if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime()) || toDate < fromDate) {
+          // fallback: last 90 days
+          toDate = now;
+          fromDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        }
+      } else {
+        // If no dates provided, simulate last quarter (90 days)
+        toDate = now;
+        fromDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      }
+
+      const msFrom = fromDate.getTime();
+      const msTo = toDate.getTime();
+      const diffDays = Math.max(1, Math.round((msTo - msFrom) / (24 * 60 * 60 * 1000)));
+
+      // Stress test but still browser-safe:
+      // ~4 events per day, cap at 500
+      const baseCount = diffDays * 4;
+      const count = Math.min(500, Math.max(25, baseCount));
+
+      const eventTypes = ["Payroll", "CardSpend", "RwaUpdate", "OracleWrite", "ConfigChange"];
+      const jurisdictions = ["US", "EU", "UK", "SG"];
+      const risks = ["Low", "Medium", "High"];
+
+      const payers = {
+        Payroll: [
+          "Atlas Labs US Inc",
+          "Atlas Labs EU GmbH",
+          "Atlas Labs UK Ltd",
+          "Atlas Labs APAC Pte Ltd"
+        ],
+        CardSpend: [
+          "Atlas Labs Web3 Card #0001",
+          "Atlas Labs Web3 Card #0024",
+          "Atlas Labs Web3 Card #0103"
+        ],
+        RwaUpdate: [
+          "RWA Vault Manager",
+          "Treasury PDA",
+          "Custodial Bank Oracle"
+        ],
+        OracleWrite: [
+          "Oracle PDA",
+          "Jurisdiction Oracle",
+          "Risk Engine PDA"
+        ],
+                ConfigChange: [
+          "Admin Multisig",
+          "Compliance Configurator",
+          "Treasury Authority"
+        ]
+      };
+
+      const employees = [
+        "A. Nakamoto",
+        "M. Vital",
+        "E. Torres",
+        "Z. Harper",
+        "Protocol Infra Vendor",
+        "System",
+        "—"
+      ];
+
+      const auditNotes = {
+        Low: [
+          "Fully compliant. Jurisdiction match validated.",
+          "Taxes and regulatory checks complete.",
+          "Normal employer disbursement. KYC matched.",
+          "Vendor approved and risk cleared.",
+          "Routine event. No issues detected."
+        ],
+        Medium: [
+          "Awaiting rule oracle validation.",
+          "Contractor classification pending.",
+          "Vendor jurisdiction mismatch – review required.",
+          "Requires additional KYB verification.",
+          "Policy change under pending review."
+        ],
+        High: [
+          "Regulatory mismatch – manual review required.",
+          "Jurisdiction uncertainty – further validation necessary.",
+          "Entity flagged pending proper documentation.",
+          "Potential fraud or AML breach. Escalate.",
+          "Unknown vendor origin. Immediate review advised."
+        ]
+      };
+
+      let out = [];
+
+      for (let i = 0; i < count; i++) {
+        const type = pickRandom(eventTypes);
+        const jurisdiction = pickRandom(jurisdictions);
+        const risk = pickRandom(risks);
+        const payer = pickRandom(payers[type]);
+        const employee = type === "Payroll" ? pickRandom(employees) : "System";
+
+        // amount simulation
+        let amount = "—";
+        if (type === "Payroll") {
+          amount = randomInt(2000, 12000).toLocaleString() + " USDC";
+        } else if (type === "CardSpend") {
+          amount = randomInt(100, 6000).toLocaleString() + " USDC";
+        }
+
+        // timestamp
+        const ts = new Date(randomInt(msFrom, msTo));
+
+        out.push({
+          txId: makeRandomTxId(),
+          type,
+          payer,
+          jurisdiction,
+          amount,
+          risk,
+          employee,
+          timestamp: formatUtcTimestamp(ts),
+          memo: type === "Payroll" ? "Bi-monthly salary disbursement"
+                : type === "CardSpend" ? "Corporate purchase"
+                : type === "RwaUpdate" ? "Updated collateral metrics"
+                : type === "ConfigChange" ? "Compliance config update"
+                : "Oracle computation rule update",
+          auditNote: pickRandom(auditNotes[risk]),
+          rawLog: `PROGRAM LOG: simulated_${type.toLowerCase()} event`,
+          slot: "" + randomInt(196000000, 199999999)
+        });
+      }
+
+      return out.sort((a, b) => (new Date(b.timestamp) - new Date(a.timestamp)));
+    }
+
+    // ---------------------------
+    // Populate Table UI
+    // ---------------------------
+    function renderEvents(events) {
+      const body = document.getElementById("eventsTableBody");
+      body.innerHTML = "";
+
+      events.forEach((e, idx) => {
+        const row = document.createElement("div");
+        row.className = "table-row grid grid-cols-12 gap-2 px-3 py-2";
+        row.innerHTML = `
+          <div class="col-span-3 truncate">${e.txId}</div>
+          <div class="col-span-2">${e.type}</div>
+          <div class="col-span-2">${e.payer}</div>
+          <div class="col-span-2">${e.jurisdiction}</div>
+          <div class="col-span-2 text-right">${e.amount}</div>
+          <div class="col-span-1 text-right">
+            <span class="risk-pill risk-${e.risk.toLowerCase()}">${e.risk}</span>
+          </div>
+        `;
+        row.onclick = () => {
+          highlightRow(row);
+          showDetail(e);
+        };
+        body.appendChild(row);
+      });
+
+      // KPIs
+      document.getElementById("statTotalEvents").textContent = events.length;
+      document.getElementById("statFlaggedEvents").textContent =
+        events.filter(e => e.risk === "High").length;
+      document.getElementById("statJurisdictions").textContent =
+        new Set(events.map(e => e.jurisdiction)).size;
+    }
+
+    function highlightRow(row) {
+      if (selectedRowElement) selectedRowElement.classList.remove("table-row-selected");
+      selectedRowElement = row;
+      row.classList.add("table-row-selected");
+    }
+
+    // ---------------------------
+    // Populate Detail Panel
+    // ---------------------------
+    function showDetail(e) {
+      document.getElementById("detailEmptyState").classList.add("hidden");
+      document.getElementById("detailContent").classList.remove("hidden");
+
+      document.getElementById("detailTxIdShort").textContent = e.txId;
+      document.getElementById("detailType").textContent = e.type;
+      document.getElementById("detailTimestamp").textContent = e.timestamp;
+      document.getElementById("detailPayer").textContent = e.payer;
+      document.getElementById("detailEmployee").textContent = e.employee;
+      document.getElementById("detailJurisdiction").textContent = e.jurisdiction;
+      document.getElementById("detailAmount").textContent = e.amount;
+      document.getElementById("detailKyc").textContent = e.type === "Payroll" ? "Verified, tax-mapped" : "N/A";
+      document.getElementById("detailMemo").textContent = e.memo;
+      document.getElementById("detailAuditNote").textContent = e.auditNote;
+      document.getElementById("detailRawLog").textContent = e.rawLog;
+      document.getElementById("detailSlot").textContent = "Slot: " + e.slot;
+      document.getElementById("detailTxId").textContent = e.txId;
+    }
+
+    // ---------------------------
+    // Apply Filters to Stored Events
+    // ---------------------------
+    function applyFilters() {
+      const type = document.getElementById("filterType").value;
+      const jurisdiction = document.getElementById("filterJurisdiction").value;
+      const risk = document.getElementById("filterRisk").value;
+      const search = document.getElementById("filterSearch").value.toLowerCase();
+
+      let filtered = [...allAuditEvents];
+
+      if (type) filtered = filtered.filter(e => e.type === type);
+      if (jurisdiction) filtered = filtered.filter(e => e.jurisdiction === jurisdiction);
+      if (risk) filtered = filtered.filter(e => e.risk === risk);
+      if (search)
+        filtered = filtered.filter(e =>
+          e.memo.toLowerCase().includes(search) ||
+          e.txId.toLowerCase().includes(search) ||
+          e.payer.toLowerCase().includes(search)
+        );
+
+      currentFilteredEvents = filtered;
+      renderEvents(filtered);
+
+      document.getElementById("filterCountLabel").textContent =
+        `${filtered.length} event(s) match filters`;
+    }
+
+    // ---------------------------
+    // Initialize & Bind Controls
+    // ---------------------------
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("btnGenerateAudit").addEventListener("click", () => {
+        const from = document.getElementById("filterFromDate").value;
+        const to = document.getElementById("filterToDate").value;
+
+        allAuditEvents = generateMockEvents(from, to);
+        applyFilters();
+      });
+
+      document.getElementById("btnResetFilters").addEventListener("click", () => {
+        document.getElementById("filterType").value = "";
+        document.getElementById("filterJurisdiction").value = "";
+        document.getElementById("filterRisk").value = "";
+        document.getElementById("filterSearch").value = "";
+
+        applyFilters();
+      });
+
+      ["filterType", "filterJurisdiction", "filterRisk", "filterSearch"]
+        .forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
+    });
+  </script>
+</body>
+</html>

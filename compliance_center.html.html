@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VERITAS — Compliance Center</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body {
+  background: radial-gradient(circle at top left, #00121f 0%, #00060d 60%, #000207 100%);
+  color: #e2e8f0;
+  font-family: system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+}
+.section-card {
+  background: rgba(2,10,20,0.9);
+  border: 1px solid rgba(34,197,94,0.3);
+  border-radius: 1.3rem;
+  padding: 2rem;
+  box-shadow: 0 0 50px rgba(0,40,70,0.6);
+}
+.title-gradient {
+  background: linear-gradient(120deg,#22c55e,#06b6d4);
+  -webkit-background-clip:text;
+  color:transparent;
+  text-shadow:0px 0px 22px rgba(4,120,87,0.75);
+}
+.link-box {
+  background: rgba(15,23,42,0.85);
+  border:1px solid rgba(56,189,248,0.25);
+  border-radius:0.9rem;
+  padding:1rem;
+  transition:all 0.2s ease;
+  box-shadow:0 0 18px rgba(0,90,120,0.35);
+}
+.link-box:hover {
+  border-color:#22c55e;
+  box-shadow:0 0 22px rgba(34,197,94,0.45);
+  transform:translateY(-2px);
+}
+a.documentation {
+  color:#93c5fd;
+}
+a.documentation:hover {
+  color:#22c55e;
+}
+</style>
+</head>
+
+<body class="min-h-screen">
+
+<!-- HEADER -->
+<section class="max-w-6xl mx-auto pt-16 pb-10 px-6 text-center">
+  <h1 class="text-4xl sm:text-6xl font-bold title-gradient uppercase tracking-wide mb-4">
+    Compliance Center
+  </h1>
+  <p class="text-slate-300 text-sm sm:text-base max-w-3xl mx-auto">
+    Central regulatory disclosures for the VERITAS compliance infrastructure.  
+    These materials outline how VERITAS supports lawful digital payroll and payments without custodial risk.
+  </p>
+</section>
+
+<!-- CORE SUMMARY -->
+<section class="max-w-6xl mx-auto px-6 py-10 section-card">
+  <h2 class="text-xl font-semibold text-emerald-300 mb-4">Regulatory Position Overview</h2>
+  <p class="text-sm text-slate-300 leading-relaxed mb-3">
+    VERITAS functions as a <strong>non-custodial compliance infrastructure</strong>, not a wallet, not an exchange, and
+ not a payroll payment processor. The protocol classifies payments, verifies entities, and produces on-chain audit records.
+  </p>
+  <p class="text-sm text-slate-300 leading-relaxed mb-3">
+    All payments remain external to VERITAS, executed through standard crypto wallets. The protocol only evaluates
+    identity, classification, and attestation requirements to align with IRS, FinCEN, AML, and Travel Rule standards.
+  </p>
+  <p class="text-sm text-slate-300 leading-relaxed">
+    These documents represent proactive compliance efforts to secure regulatory clarity and ensure Veritas deployments
+    meet legal expectations across multiple jurisdictions.
+  </p>
+</section>
+
+<!-- BRIEFINGS LINKS -->
+<section class="max-w-6xl mx-auto px-6 py-16">
+  <h2 class="text-xl font-semibold text-emerald-300 mb-6 text-center">Regulatory Briefings</h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
+    <a href="veritas-fincen-briefing.html" class="link-box text-center block">
+      <p class="font-semibold text-emerald-300 mb-1">FinCEN Compliance</p>
+      <p class="text-xs text-slate-400">Non-custodial compliance classification</p>
+    </a>
+
+    <a href="veritas-irs-briefing.html" class="link-box text-center block">
+      <p class="font-semibold text-emerald-300 mb-1">IRS Classification Brief</p>
+      <p class="text-xs text-slate-400">On-chain wage and contractor tax reporting</p>
+    </a>
+
+    <a href="veritas-finra-briefing.html" class="link-box text-center block">
+      <p class="font-semibold text-emerald-300 mb-1">FINRA / Broker Clarification</p>
+      <p class="text-xs text-slate-400">Non-securities posture and issuer exemptions</p>
+    </a>
+  </div>
+</section>
+
+<!-- NOTE -->
+<section class="max-w-6xl mx-auto px-6 pb-20 text-center text-xs text-slate-400">
+  <p>This compliance hub will expand as additional jurisdictions and regulatory engagements progress.</p>
+</section>
+
+</body>
+</html>

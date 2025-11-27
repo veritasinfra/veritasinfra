@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS · RWA Tokenization Demo</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    body { font-family: "Inter", sans-serif; }
+
+    .bg-veritas {
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 40%, #001b1f 75%, #000814 100%);
+    }
+
+    .card-veritas {
+      background: linear-gradient(145deg, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+      border: 1px solid rgba(56,189,248,0.20);
+      box-shadow: 0 0 26px rgba(8,47,73,0.55);
+    }
+
+    .header-title {
+      background: linear-gradient(120deg, #22c55e, #a5f3fc, #22c55e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 18px rgba(34,197,94,0.7);
+      letter-spacing: .25em;
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at 20% 0%, #22c55e 0%, #0284c7 50%, #0369a1 100%);
+      border: 1px solid rgba(45,212,191,0.6);
+      color: white;
+      font-weight: 600;
+      border-radius: .8rem;
+      padding: .6rem 1.2rem;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.09);
+    }
+
+    .pill {
+      padding: .25rem .6rem;
+      border-radius: 999px;
+      font-size: .65rem;
+      border: 1px solid;
+    }
+
+    .risk-low { color: #bbf7d0; border-color: rgba(34,197,94,0.65); }
+    .risk-medium { color: #fef08a; border-color: rgba(234,179,8,0.75); }
+    .risk-high { color: #fecaca; border-color: rgba(248,113,113,0.75); }
+
+    .nft-card {
+      background: linear-gradient(140deg, rgba(3,7,18,0.85), rgba(6,95,70,0.35));
+      border: 1px solid rgba(34,197,94,0.40);
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      box-shadow: 0 0 25px rgba(34,197,94,0.25);
+    }
+
+    .glass {
+      background: rgba(2,6,23,0.92);
+      border: 1px solid rgba(148,163,184,0.3);
+      border-radius: 1rem;
+    }
+  </style>
+</head>
+
+<body class="bg-veritas text-slate-100 min-h-screen px-4 sm:px-6 lg:px-8 py-10">
+
+  <!-- HEADER -->
+  <header class="mb-12 text-center">
+    <h1 class="header-title text-4xl sm:text-5xl font-bold uppercase">VERITAS</h1>
+    <p class="text-slate-300 text-sm mt-3 tracking-widest uppercase">RWA Tokenization Demo</p>
+    <p class="max-w-2xl mx-auto mt-2 text-slate-400 text-[0.8rem]">
+      Tokenize invoices, equipment, contracts and collateral into compliant on-chain assets.
+      Demonstrates the VERITAS legal wrapper + compliance oracle flow.
+    </p>
+  </header>
+
+  <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+    <!-- LEFT PANEL -->
+    <aside class="space-y-6">
+
+      <!-- Upload Card -->
+      <section class="card-veritas rounded-3xl px-5 py-6">
+        <h2 class="text-xl font-semibold text-emerald-300 mb-2">Upload RWA Document</h2>
+        <p class="text-[0.75rem] text-slate-300 mb-4">
+          Upload a PDF. It will be hashed locally and assigned a PDA + risk tier.
+        </p>
+
+        <input id="fileInput"
+               type="file"
+               accept="application/pdf"
+               class="block w-full text-[0.75rem] bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 mb-3" />
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[0.7rem] text-slate-400">Asset type</label>
+            <select id="assetType"
+                    class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs mt-1">
+              <option value="invoice">Invoice</option>
+              <option value="equipment">Equipment</option>
+              <option value="contract">Service Contract</option>
+              <option value="credit-line">Line-of-Credit Collateral</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[0.7rem] text-slate-400">Initial risk tier</label>
+            <select id="riskTier"
+                    class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs mt-1">
+              <option value="Low">Low risk</option>
+              <option value="Medium">Medium risk</option>
+              <option value="High">High risk</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-5 text-right">
+          <button id="tokenizeBtn" class="btn-primary text-xs">Tokenize & Mint RWA NFT</button>
+        </div>
+      </section>
+
+      <!-- Metadata card -->
+      <section class="card-veritas rounded-3xl px-5 py-6">
+        <h2 class="text-xl font-semibold text-emerald-300 mb-3">Metadata</h2>
+        <pre id="metadataOutput"
+             class="log-box text-[0.7rem] text-slate-300 whitespace-pre-wrap bg-slate-950/60 rounded-xl p-4 border border-slate-700/80">
+No file tokenized yet.
+        </pre>
+      </section>
+    </aside>
+
+
+    <!-- RIGHT PANEL: NFT + DETAILS -->
+    <main class="lg:col-span-2 space-y-8">
+
+      <!-- NFT Card -->
+      <section id="nftCard" class="nft-card opacity-40 pointer-events-none">
+        <h2 class="text-2xl font-bold text-emerald-200 uppercase tracking-[0.22em] mb-3">RWA NFT</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+          <div class="space-y-3">
+            <div class="text-[0.75rem] text-slate-400">Document Hash</div>
+            <div id="nftHash" class="log-box text-emerald-300 text-sm break-all">—</div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="text-[0.75rem] text-slate-400">PDA</div>
+            <div id="nftPDA" class="log-box text-cyan-300 text-sm break-all">—</div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="text-[0.75rem] text-slate-400">Asset Type</div>
+            <div id="nftType" class="text-slate-200 text-sm">—</div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="text-[0.75rem] text-slate-400">Risk Tier</div>
+            <div id="nftRisk" class="pill risk-low">—</div>
+          </div>
+
+          <div class="space-y-3 sm:col-span-2">
+            <div class="text-[0.75rem] text-slate-400">Timestamp</div>
+            <div id="nftTimestamp" class="text-slate-200 text-sm">—</div>
+          </div>
+
+        </div>
+
+        <hr class="my-6 border-slate-700" />
+
+        <div class="flex items-center justify-between">
+          <div class="text-[0.75rem] text-slate-400">Collateral Status</div>
+          <button id="collateralBtn"
+                  class="btn-primary text-xs px-4 py-1.5">
+            Mark as Collateral
+          </button>
+        </div>
+
+        <div class="mt-2 text-[0.75rem] text-slate-300" id="collateralStatus">Not collateralized</div>
+
+      </section>
+
+      <!-- Compliance oracle -->
+      <section id="oracleCard" class="card-veritas rounded-3xl px-5 py-6 opacity-40 pointer-events-none">
+        <h2 class="text-xl font-semibold text-emerald-300 mb-2">Compliance Oracle Log</h2>
+
+        <pre id="oracleOutput"
+             class="log-box text-[0.75rem] text-slate-300 bg-slate-950/60 border border-slate-700 rounded-xl p-4 whitespace-pre-wrap">
+Awaiting tokenization...
+        </pre>
+      </section>
+    </main>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    function randomHex(len) {
+      const chars = "abcdef0123456789";
+      let out = "0x";
+      for (let i = 0; i < len; i++) {
+        out += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return out;
+    }
+
+    function randomPDA() {
+      return "PDA_" + randomHex(16);
+    }
+
+    function timestamp() {
+      return new Date().toLocaleString();
+    }
+
+    function riskClass(r) {
+      if (r === "High") return "pill risk-high";
+      if (r === "Medium") return "pill risk-medium";
+      return "pill risk-low";
+    }
+
+    document.getElementById("tokenizeBtn").onclick = async () => {
+      const fileInput = document.getElementById("fileInput");
+      if (!fileInput.files.length) {
+        alert("Upload a PDF first.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const assetType = document.getElementById("assetType").value;
+      const riskTier = document.getElementById("riskTier").value;
+
+      // --- Hash file ---
+      const arrayBuff = await file.arrayBuffer();
+      const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuff);
+      const hashHex = Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
+
+      const docHash = "0x" + hashHex.slice(0, 40);
+      const pda = randomPDA();
+      const time = timestamp();
+
+      // Update NFT card UI
+      document.getElementById("nftCard").style.opacity = 1;
+      document.getElementById("nftCard").style.pointerEvents = "auto";
+
+      document.getElementById("nftHash").textContent = docHash;
+      document.getElementById("nftPDA").textContent = pda;
+      document.getElementById("nftTimestamp").textContent = time;
+      document.getElementById("nftType").textContent = assetType;
+
+      const riskEl = document.getElementById("nftRisk");
+      riskEl.className = riskClass(riskTier);
+      riskEl.textContent = riskTier;
+
+      // Collateral reset
+      document.getElementById("collateralStatus").textContent = "Not collateralized";
+
+      // Metadata
+      const meta = {
+        document_hash: docHash,
+        pda: pda,
+        asset_type: assetType,
+        risk_tier: riskTier,
+        timestamp: time,
+        file_name: file.name,
+        file_size_bytes: file.size,
+        simulated_nft_uri: "https://veritas-demo.example/rwa/" + pda
+      };
+
+      document.getElementById("metadataOutput").textContent = JSON.stringify(meta, null, 2);
+
+      // Oracle log
+      document.getElementById("oracleCard").style.opacity = 1;
+      document.getElementById("oracleCard").style.pointerEvents = "auto";
+      document.getElementById("oracleOutput").textContent =
+        `VERITAS Compliance Oracle Log
+-----------------------------------
+PDA: ${pda}
+Asset type: ${assetType}
+Risk tier: ${riskTier}
+Hash: ${docHash}
+Timestamp: ${time}
+
+Compliance notes:
+- Document hashed and bound to PDA
+- RWA NFT minted (simulation)
+- Jurisdiction mapping pending
+- KYC/KYB required for real-world settlement
+- Ready for collateral operations`;
+
+    };
+
+    document.getElementById("collateralBtn").onclick = () => {
+      const status = document.getElementById("collateralStatus");
+      if (status.textContent.includes("Not")) {
+        status.textContent = "Collateralized · Available for credit line expansion";
+      } else {
+        status.textContent = "Not collateralized";
+      }
+    };
+  </script>
+
+</body>
+</html>

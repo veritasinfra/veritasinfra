@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS · NFT Credit Card Viewer</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .bg-veritas {
+      background: radial-gradient(circle at top left, #0f172a 0%, #020617 40%, #00121a 80%, #00060a 100%);
+    }
+
+    .card-veritas {
+      background: linear-gradient(145deg, rgba(6,15,30,0.96), rgba(2,6,23,0.98));
+      border: 1px solid rgba(45,212,191,0.25);
+      box-shadow:
+        0 0 24px rgba(15,118,110,0.35),
+        0 0 60px rgba(15,23,42,0.85);
+      border-radius: 1.25rem;
+    }
+
+    .title-gradient {
+      background: linear-gradient(120deg, #22c55e, #67e8f9, #22c55e);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .pill {
+      background: radial-gradient(circle at 0 0, rgba(16,185,129,0.25), rgba(2,6,23,0.95));
+      border: 1px solid rgba(45,212,191,0.55);
+      border-radius: 999px;
+    }
+
+    .glass-line {
+      background: radial-gradient(circle, rgba(34,197,94,0.35), transparent 70%);
+      opacity: 0.7;
+    }
+
+    .card-surface {
+      background: radial-gradient(circle at 10% 0%, rgba(56,189,248,0.25), rgba(2,6,23,0.98));
+      border-radius: 1.25rem;
+      border: 1px solid rgba(148,163,184,0.35);
+    }
+
+    .badge-status-active {
+      background: rgba(34,197,94,0.18);
+      border-color: rgba(34,197,94,0.55);
+      color: #bbf7d0;
+    }
+
+    .badge-status-suspended {
+      background: rgba(248,113,113,0.16);
+      border-color: rgba(248,113,113,0.65);
+      color: #fecaca;
+    }
+
+    .badge-status-review {
+      background: rgba(250,204,21,0.14);
+      border-color: rgba(250,204,21,0.65);
+      color: #fef9c3;
+    }
+
+    .util-bar-track {
+      background: rgba(15,23,42,0.95);
+    }
+    .util-bar-fill {
+      background: linear-gradient(90deg, #22c55e, #0ea5e9);
+      box-shadow:
+        0 0 16px rgba(34,197,94,0.8),
+        0 0 32px rgba(14,165,233,0.65);
+    }
+
+    .table-row {
+      transition: background 0.12s ease-out, transform 0.12s ease-out;
+    }
+
+    .table-row:hover {
+      background-color: rgba(15,23,42,0.9);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+
+
+<body class="bg-veritas text-slate-100 min-h-screen antialiased">
+
+  <!-- Decorative background accents -->
+  <div class="fixed inset-0 pointer-events-none opacity-40">
+    <div class="glass-line w-1 h-40 absolute left-10 top-24 blur-xl"></div>
+    <div class="glass-line w-1 h-48 absolute right-16 top-72 blur-xl"></div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20 relative">
+
+    <!-- Header -->
+    <header class="mb-10">
+      <h1 class="text-3xl sm:text-4xl font-semibold tracking-wide title-gradient">
+        NFT Credit Card Viewer
+      </h1>
+      <p class="mt-3 max-w-3xl text-slate-300 text-sm sm:text-base leading-relaxed">
+        Each VERITAS credit card is represented as an NFT that points to a LegalPDA and an OraclePDA. This viewer
+        demonstrates how reviewers, partners, and regulators can inspect card metadata, owner identity, limits,
+        utilization, jurisdiction mapping, and compliance status in a single screen.
+      </p>
+      <div class="flex flex-wrap gap-2 mt-4 text-[0.7rem] sm:text-xs">
+        <span class="pill px-3 py-1">On chain identity</span>
+        <span class="pill px-3 py-1">Limit and risk visibility</span>
+        <span class="pill px-3 py-1">Jurisdiction aware</span>
+        <span class="pill px-3 py-1">Compliance first</span>
+      </div>
+    </header>
+
+    <!-- Filter bar -->
+    <section class="card-veritas mb-8 px-5 py-5">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div class="space-y-2">
+          <p class="text-xs font-semibold text-emerald-200 uppercase tracking-wider">
+            Filter and search
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[0.7rem] text-slate-300 mb-1">
+                Search by owner address
+              </label>
+              <input
+                id="searchWalletInput"
+                type="text"
+                placeholder="Enter partial wallet, for example 7jPk..."
+                class="w-full rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2 text-xs sm:text-sm
+                       focus:outline-none focus:ring-1 focus:ring-emerald-400/80 focus:border-emerald-400/80"
+              />
+            </div>
+            <div>
+              <label class="block text-[0.7rem] text-slate-300 mb-1">
+                Status
+              </label>
+              <select
+                id="filterStatus"
+                class="w-full rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2 text-xs sm:text-sm
+                       focus:outline-none focus:ring-1 focus:ring-emerald-400/80 focus:border-emerald-400/80"
+              >
+                <option value="all">All statuses</option>
+                <option value="Active">Active</option>
+                <option value="Under review">Under review</option>
+                <option value="Suspended">Suspended</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[0.7rem] text-slate-300 mb-1">
+                Jurisdiction
+              </label>
+              <select
+                id="filterJurisdiction"
+                class="w-full rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2 text-xs sm:text-sm
+                       focus:outline-none focus:ring-1 focus:ring-emerald-400/80 focus:border-emerald-400/80"
+              >
+                <option value="all">All regions</option>
+                <option value="United States">United States</option>
+                <option value="European Union">European Union</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Singapore">Singapore</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button
+          id="resetFiltersBtn"
+          class="self-start md:self-auto text-xs sm:text-sm px-4 py-2 rounded-full border border-slate-600
+                 bg-slate-950/70 hover:bg-slate-900/90 transition"
+        >
+          Reset filters
+        </button>
+      </div>
+    </section>
+
+    <!-- Main grid -->
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- Left column summary -->
+      <section class="space-y-4 lg:col-span-1">
+        <div class="card-veritas px-5 py-5 space-y-3">
+          <p class="text-xs font-semibold text-emerald-200 uppercase tracking-wider">
+            Portfolio summary (simulated)
+          </p>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <p class="text-[0.7rem] text-slate-400">Total NFT cards</p>
+              <p id="summaryTotalCards" class="text-lg font-semibold text-emerald-300">0</p>
+            </div>
+            <div>
+              <p class="text-[0.7rem] text-slate-400">Active cards</p>
+              <p id="summaryActiveCards" class="text-lg font-semibold text-emerald-200">0</p>
+            </div>
+            <div>
+              <p class="text-[0.7rem] text-slate-400">Average utilization</p>
+              <p id="summaryAvgUtil" class="text-lg font-semibold text-cyan-200">0%</p>
+            </div>
+            <div>
+              <p class="text-[0.7rem] text-slate-400">Average risk band</p>
+              <p id="summaryRiskBand" class="text-lg font-semibold text-slate-100">Low</p>
+            </div>
+          </div>
+          <p class="text-[0.7rem] text-slate-400 leading-relaxed">
+            In production this panel would be sourced from the Veritas indexer and oracle feeds, and would reflect
+            live data for a given institution, regulator, or DAO observer.
+          </p>
+        </div>
+
+        <div class="card-veritas px-5 py-5 space-y-2">
+          <p class="text-xs font-semibold text-emerald-200 uppercase tracking-wider">
+            How the viewer works
+          </p>
+          <p class="text-[0.75rem] text-slate-300 leading-relaxed">
+            Each NFT credit card maps to a program account. The NFT certifies the link between:
+          </p>
+          <ul class="text-[0.75rem] text-slate-300 space-y-1">
+            <li>• The owner wallet, and its KYC and KYB status.</li>
+            <li>• A LegalPDA that points to the correct entity shell.</li>
+            <li>• A credit limit and usage model backed by real world assets or revenue.</li>
+            <li>• Oracle driven compliance data and risk scoring.</li>
+          </ul>
+          <p class="text-[0.7rem] text-slate-400 mt-2">
+            This demo uses local sample data to mirror what a live, on chain inspection tool would show.
+          </p>
+        </div>
+      </section>
+
+      <!-- Center column: list of cards -->
+      <section class="card-veritas px-5 py-5 lg:col-span-1">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-xs font-semibold text-emerald-200 uppercase tracking-wider">
+            NFT credit cards (simulated)
+          </p>
+          <p class="text-[0.7rem] text-slate-400">
+            Click a row to inspect card details.
+          </p>
+        </div>
+
+        <div class="rounded-2xl bg-slate-950/60 border border-slate-700/80 overflow-hidden">
+          <div class="grid grid-cols-5 gap-2 px-4 py-2 border-b border-slate-700/80 text-[0.65rem] sm:text-[0.7rem] text-slate-400">
+            <span class="col-span-2">Card NFT</span>
+            <span>Owner</span>
+            <span>Utilization</span>
+            <span class="text-right">Status</span>
+          </div>
+          <div id="cardListContainer" class="divide-y divide-slate-800/80 text-xs sm:text-[0.8rem]">
+            <!-- rows injected by JS -->
+          </div>
+        </div>
+
+        <p class="mt-3 text-[0.7rem] text-slate-400 leading-relaxed">
+          In a live deployment, this list would be populated from indexer queries, for example by NFT mint,
+          by owner address, by institution, or by jurisdiction filters for a regulatory body.
+        </p>
+      </section>
+
+      <!-- Right column: detail viewer -->
+      <section class="card-veritas px-5 py-5 lg:col-span-1">
+        <p class="text-xs font-semibold text-emerald-200 uppercase tracking-wider mb-3">
+          Card detail
+        </p>
+
+        <div id="cardDetailEmpty" class="text-[0.75rem] text-slate-400 leading-relaxed">
+          Select a credit card from the list to view its NFT identity, limit, utilization, jurisdiction,
+          and compliance status. Reviewers can use this pane to understand how a single card behaves inside the
+          Veritas system.
+        </div>
+
+        <div id="cardDetailContainer" class="hidden space-y-4 text-sm">
+
+          <!-- Visual representation -->
+          <div class="card-surface p-4 space-y-3">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[0.7rem] text-slate-200 uppercase tracking-widest">Veritas Card</p>
+                <p id="detailCardLevel" class="text-base font-semibold text-emerald-200">
+                  Elite
+                </p>
+              </div>
+              <div class="text-right">
+                <p class="text-[0.7rem] text-slate-300">Card ID</p>
+                <p id="detailCardId" class="text-xs font-mono text-cyan-200 truncate max-w-[140px]">
+                  ...
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[0.65rem] text-slate-300">Owner</p>
+                <p id="detailOwner" class="text-xs font-mono text-slate-100 truncate max-w-[160px]">
+                  ...
+                </p>
+              </div>
+              <div class="flex flex-col items-end gap-1">
+                <span
+                  id="detailStatusBadge"
+                  class="inline-flex items-center px-2 py-0.5 border rounded-full text-[0.65rem]"
+                >
+                  Active
+                </span>
+                <p id="detailJurisdiction" class="text-[0.65rem] text-slate-300">
+                  United States
+                </p>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex items-center justify-between text-[0.7rem] text-slate-200">
+                <span>Utilization</span>
+                <span id="detailUtilPct">0%</span>
+              </div>
+              <div class="h-2 rounded-full util-bar-track overflow-hidden">
+                <div id="detailUtilBar" class="h-2 util-bar-fill rounded-full" style="width: 0%;"></div>
+              </div>
+              <div class="flex items-center justify-between text-[0.7rem] text-slate-300">
+                <span id="detailLimitLabel">Limit: $0</span>
+                <span id="detailUsedLabel">Used: $0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Structured metadata -->
+          <div class="grid grid-cols-2 gap-4 text-[0.75rem]">
+            <div class="space-y-1">
+              <p class="text-[0.7rem] text-slate-400">Legal wrapper</p>
+              <p id="detailLegalPda" class="text-[0.7rem] font-mono text-cyan-200 truncate">
+                ...
+              </p>
+              <p class="text-[0.7rem] text-slate-400 mt-2">Oracle reference</p>
+              <p id="detailOraclePda" class="text-[0.7rem] font-mono text-sky-200 truncate">
+                ...
+              </p>
+            </div>
+            <div class="space-y-1">
+              <p class="text-[0.7rem] text-slate-400">Risk band</p>
+              <p id="detailRiskBand" class="text-[0.8rem] text-emerald-200 font-semibold">
+                Low
+              </p>
+              <p class="text-[0.7rem] text-slate-400 mt-2">Metadata URI</p>
+              <p id="detailMetadataUri" class="text-[0.7rem] font-mono text-slate-200 truncate">
+                ...
+              </p>
+            </div>
+          </div>
+
+          <!-- Compliance and lifecycle panel -->
+          <div class="rounded-2xl bg-slate-950/70 border border-slate-700/80 p-4 space-y-3 text-[0.75rem]">
+            <p class="text-[0.75rem] font-semibold text-emerald-200">
+              Compliance and lifecycle
+            </p>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <p class="text-[0.7rem] text-slate-400">KYC status</p>
+                <p id="detailKycStatus" class="text-[0.8rem] text-slate-100">Verified</p>
+              </div>
+              <div>
+                <p class="text-[0.7rem] text-slate-400">KYB status</p>
+                <p id="detailKybStatus" class="text-[0.8rem] text-slate-100">Verified</p>
+              </div>
+              <div>
+                <p class="text-[0.7rem] text-slate-400">Last manual review</p>
+                <p id="detailLastReview" class="text-[0.8rem] text-slate-100">2025-01-10</p>
+              </div>
+              <div>
+                <p class="text-[0.7rem] text-slate-400">Next scheduled check</p>
+                <p id="detailNextReview" class="text-[0.8rem] text-slate-100">2025-04-10</p>
+              </div>
+            </div>
+
+            <p class="text-[0.7rem] text-slate-400">
+              In production, this block would be populated by oracle writes from the compliance engine,
+              plus manual annotations from regulated partners where needed.
+            </p>
+          </div>
+
+          <!-- Recent activity timeline -->
+          <div class="rounded-2xl bg-slate-950/70 border border-slate-700/80 p-4 space-y-3 text-[0.75rem]">
+            <p class="text-[0.75rem] font-semibold text-emerald-200">
+              Recent on chain activity (simulated)
+            </p>
+            <ul id="detailActivityList" class="space-y-2">
+              <!-- populated by JS -->
+            </ul>
+            <p class="text-[0.7rem] text-slate-400">
+              In the live integration this timeline would come from the Veritas indexer reading
+              TransactionLogged events for this card and owner.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t border-slate-800/80 pt-6 text-[0.7rem] leading-relaxed text-slate-400">
+      This NFT Credit Card Viewer is a demonstration layer that shows how Veritas wraps credit,
+      identity, and compliance into a single on chain object. The data shown here is simulated and
+      is provided for design, integration, and regulatory review purposes only.
+    </footer>
+
+  </div>
+
+  <!-- Core script, simulated data and behavior -->
+  <script>
+    // Simulated NFT credit card data
+    const cards = [
+      {
+        id: "VERxCard1111aaabbbccc1111",
+        shortId: "VERxCard1111...",
+        owner: "7jPkX3fZ5sY7sC9wjbE5utGZd912AqXKxGf7PDyMtJ1Q",
+        status: "Active",
+        jurisdiction: "United States",
+        limitUsd: 25000,
+        usedUsd: 11250,
+        level: "Elite",
+        riskBand: "Low",
+        legalPda: "LeGalPdaUS111111111111111111111",
+        oraclePda: "OrclPdaUS111111111111111111111",
+        metadataUri: "https://veritas.example/meta/card-elite-001.json",
+        kycStatus: "Verified",
+        kybStatus: "Verified",
+        lastReview: "2025-01-06",
+        nextReview: "2025-04-06",
+        activity: [
+          {
+            ts: "2025-01-15 13:04 UTC",
+            type: "Authorization",
+            desc: "Payroll funded Veritas card from on chain escrow"
+          },
+          {
+            ts: "2025-01-14 18:21 UTC",
+            type: "Merchant spend",
+            desc: "Card holder spent at enterprise SaaS provider"
+          },
+          {
+            ts: "2025-01-13 09:12 UTC",
+            type: "Compliance check",
+            desc: "Automated jurisdiction framework run, no exceptions"
+          }
+        ]
+      },
+      {
+        id: "VERxCard2222dddEEEfff2222",
+        shortId: "VERxCard2222...",
+        owner: "F3a81n9Lxfq32rmmx9s7oC3iFPRswvK9C5xF7t1Abc9V",
+        status: "Under review",
+        jurisdiction: "European Union",
+        limitUsd: 15000,
+        usedUsd: 9300,
+        level: "Standard",
+        riskBand: "Medium",
+        legalPda: "LeGalPdaEU222222222222222222222",
+        oraclePda: "OrclPdaEU222222222222222222222",
+        metadataUri: "https://veritas.example/meta/card-standard-002.json",
+        kycStatus: "Verified",
+        kybStatus: "Pending update",
+        lastReview: "2025-01-10",
+        nextReview: "2025-02-10",
+        activity: [
+          {
+            ts: "2025-01-15 08:33 UTC",
+            type: "Risk flag",
+            desc: "Unusual region spend, elevated for manual review"
+          },
+          {
+            ts: "2025-01-14 17:02 UTC",
+            type: "Merchant spend",
+            desc: "Card holder spent at marketing services vendor"
+          }
+        ]
+      },
+      {
+        id: "VERxCard3333gggHHHiii3333",
+        shortId: "VERxCard3333...",
+        owner: "2Jv3nMcgYRuUMT6X1zPoJL5zGvu2oF6nCw5f3DzxkBzJ",
+        status: "Suspended",
+        jurisdiction: "Singapore",
+        limitUsd: 30000,
+        usedUsd: 29800,
+        level: "Premium",
+        riskBand: "High",
+        legalPda: "LeGalPdaSG333333333333333333333",
+        oraclePda: "OrclPdaSG333333333333333333333",
+        metadataUri: "https://veritas.example/meta/card-premium-003.json",
+        kycStatus: "Verified",
+        kybStatus: "Verified",
+        lastReview: "2025-01-12",
+        nextReview: "Manual escalation",
+        activity: [
+          {
+            ts: "2025-01-15 10:22 UTC",
+            type: "Suspension",
+            desc: "Card suspended due to limit breach and oracle rule trigger"
+          },
+          {
+            ts: "2025-01-14 22:48 UTC",
+            type: "Merchant spend",
+            desc: "High value equipment transaction detected"
+          }
+        ]
+      }
+    ];
+
+    let filteredCards = [...cards];
+    let selectedCardId = null;
+
+    function computeSummary() {
+      const total = filteredCards.length;
+      const active = filteredCards.filter(c => c.status === "Active").length;
+
+      let totalUtil = 0;
+      let countUtil = 0;
+      filteredCards.forEach(c => {
+        if (c.limitUsd > 0) {
+          totalUtil += (c.usedUsd / c.limitUsd);
+          countUtil += 1;
+        }
+      });
+      const avgUtil = countUtil > 0 ? (totalUtil / countUtil) * 100 : 0;
+
+      let riskScore = 0;
+      filteredCards.forEach(c => {
+        if (c.riskBand === "Low") riskScore += 1;
+        else if (c.riskBand === "Medium") riskScore += 2;
+        else if (c.riskBand === "High") riskScore += 3;
+      });
+
+      let avgRiskBand = "Low";
+      if (filteredCards.length > 0) {
+        const avgRisk = riskScore / filteredCards.length;
+        if (avgRisk >= 2.5) avgRiskBand = "High";
+        else if (avgRisk >= 1.7) avgRiskBand = "Medium";
+        else avgRiskBand = "Low";
+      }
+
+      document.getElementById("summaryTotalCards").textContent = total.toString();
+      document.getElementById("summaryActiveCards").textContent = active.toString();
+      document.getElementById("summaryAvgUtil").textContent = avgUtil.toFixed(0) + "%";
+      document.getElementById("summaryRiskBand").textContent = avgRiskBand;
+    }
+
+    function statusBadgeClass(status) {
+      if (status === "Active") return "badge-status-active";
+      if (status === "Suspended") return "badge-status-suspended";
+      if (status === "Under review") return "badge-status-review";
+      return "";
+    }
+
+    function renderCardList() {
+      const container = document.getElementById("cardListContainer");
+      container.innerHTML = "";
+
+      if (filteredCards.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "px-4 py-4 text-[0.75rem] text-slate-400";
+        empty.textContent = "No cards match the selected filters.";
+        container.appendChild(empty);
+        return;
+      }
+
+      filteredCards.forEach(card => {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className =
+          "table-row w-full grid grid-cols-5 gap-2 px-4 py-3 text-left text-[0.7rem] sm:text-xs " +
+          (card.id === selectedCardId ? "bg-slate-900/90" : "bg-slate-950/50");
+
+        row.addEventListener("click", () => selectCard(card.id));
+
+        const cardCell = document.createElement("div");
+        cardCell.className = "col-span-2 flex flex-col truncate";
+        const cardIdLine = document.createElement("span");
+        cardIdLine.className = "font-mono text-slate-100 truncate";
+        cardIdLine.textContent = card.shortId;
+        const levelLine = document.createElement("span");
+        levelLine.className = "text-[0.65rem] text-slate-400";
+        levelLine.textContent = card.level;
+        cardCell.appendChild(cardIdLine);
+        cardCell.appendChild(levelLine);
+
+        const ownerCell = document.createElement("div");
+        ownerCell.className = "truncate";
+        ownerCell.textContent = card.owner.slice(0, 6) + "..." + card.owner.slice(-4);
+
+        const utilCell = document.createElement("div");
+        const util = card.limitUsd > 0 ? (card.usedUsd / card.limitUsd) * 100 : 0;
+        utilCell.textContent = util.toFixed(0) + "%";
+
+        const statusCell = document.createElement("div");
+        statusCell.className = "flex justify-end";
+        const statusSpan = document.createElement("span");
+        statusSpan.className =
+          "px-2 py-0.5 border rounded-full text-[0.65rem] " + statusBadgeClass(card.status);
+        statusSpan.textContent = card.status;
+        statusCell.appendChild(statusSpan);
+
+        row.appendChild(cardCell);
+        row.appendChild(ownerCell);
+        row.appendChild(utilCell);
+        row.appendChild(statusCell);
+
+        container.appendChild(row);
+      });
+    }
+
+    function selectCard(cardId) {
+      selectedCardId = cardId;
+      const card = cards.find(c => c.id === cardId);
+      if (!card) return;
+
+      document.getElementById("cardDetailEmpty").classList.add("hidden");
+      document.getElementById("cardDetailContainer").classList.remove("hidden");
+
+      document.getElementById("detailCardLevel").textContent = card.level;
+      document.getElementById("detailCardId").textContent = card.id;
+      document.getElementById("detailCardId").title = card.id;
+      document.getElementById("detailOwner").textContent = card.owner;
+      document.getElementById("detailOwner").title = card.owner;
+      document.getElementById("detailJurisdiction").textContent = card.jurisdiction;
+
+      const badge = document.getElementById("detailStatusBadge");
+      badge.textContent = card.status;
+      badge.className = "inline-flex items-center px-2 py-0.5 border rounded-full text-[0.65rem] " +
+        statusBadgeClass(card.status);
+
+      const utilPct = card.limitUsd > 0 ? (card.usedUsd / card.limitUsd) * 100 : 0;
+      document.getElementById("detailUtilPct").textContent = utilPct.toFixed(0) + "%";
+      document.getElementById("detailUtilBar").style.width = Math.min(utilPct, 100) + "%";
+
+      document.getElementById("detailLimitLabel").textContent =
+        "Limit: $" + card.limitUsd.toLocaleString();
+      document.getElementById("detailUsedLabel").textContent =
+        "Used: $" + card.usedUsd.toLocaleString();
+
+      document.getElementById("detailLegalPda").textContent = card.legalPda;
+      document.getElementById("detailLegalPda").title = card.legalPda;
+
+      document.getElementById("detailOraclePda").textContent = card.oraclePda;
+      document.getElementById("detailOraclePda").title = card.oraclePda;
+
+      document.getElementById("detailRiskBand").textContent = card.riskBand;
+      document.getElementById("detailMetadataUri").textContent = card.metadataUri;
+      document.getElementById("detailMetadataUri").title = card.metadataUri;
+
+      document.getElementById("detailKycStatus").textContent = card.kycStatus;
+      document.getElementById("detailKybStatus").textContent = card.kybStatus;
+      document.getElementById("detailLastReview").textContent = card.lastReview;
+      document.getElementById("detailNextReview").textContent = card.nextReview;
+
+      const list = document.getElementById("detailActivityList");
+      list.innerHTML = "";
+      (card.activity || []).forEach(item => {
+        const li = document.createElement("li");
+        li.className = "flex flex-col gap-0.5";
+        const row1 = document.createElement("div");
+        row1.className = "flex items-center justify-between text-[0.7rem] text-slate-200";
+        const tsSpan = document.createElement("span");
+        tsSpan.textContent = item.ts;
+        const typeSpan = document.createElement("span");
+        typeSpan.className = "text-[0.65rem] text-emerald-200";
+        typeSpan.textContent = item.type;
+        row1.appendChild(tsSpan);
+        row1.appendChild(typeSpan);
+        const row2 = document.createElement("p");
+        row2.className = "text-[0.7rem] text-slate-400";
+        row2.textContent = item.desc;
+        li.appendChild(row1);
+        li.appendChild(row2);
+        list.appendChild(li);
+      });
+
+      renderCardList();
+    }
+
+    function applyFilters() {
+      const status = document.getElementById("filterStatus").value;
+      const jurisdiction = document.getElementById("filterJurisdiction").value;
+      const walletSearch = document
+        .getElementById("searchWalletInput")
+        .value
+        .trim()
+        .toLowerCase();
+
+      filteredCards = cards.filter(card => {
+        let ok = true;
+        if (status !== "all" && card.status !== status) ok = false;
+        if (jurisdiction !== "all" && card.jurisdiction !== jurisdiction) ok = false;
+        if (walletSearch && !card.owner.toLowerCase().includes(walletSearch)) ok = false;
+        return ok;
+      });
+
+      computeSummary();
+      renderCardList();
+
+      if (!filteredCards.find(c => c.id === selectedCardId)) {
+        selectedCardId = null;
+        document.getElementById("cardDetailEmpty").classList.remove("hidden");
+        document.getElementById("cardDetailContainer").classList.add("hidden");
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById("filterStatus").value = "all";
+      document.getElementById("filterJurisdiction").value = "all";
+      document.getElementById("searchWalletInput").value = "";
+      filteredCards = [...cards];
+      computeSummary();
+      renderCardList();
+      selectedCardId = null;
+      document.getElementById("cardDetailEmpty").classList.remove("hidden");
+      document.getElementById("cardDetailContainer").classList.add("hidden");
+    }
+
+    function init() {
+      document.getElementById("filterStatus").addEventListener("change", applyFilters);
+      document.getElementById("filterJurisdiction").addEventListener("change", applyFilters);
+      document.getElementById("searchWalletInput").addEventListener("input", applyFilters);
+      document.getElementById("resetFiltersBtn").addEventListener("click", resetFilters);
+
+      filteredCards = [...cards];
+      computeSummary();
+      renderCardList();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>

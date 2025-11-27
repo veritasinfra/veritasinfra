@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS — Entity Registration Flow Demo</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #00121f 0%, #00060d 60%, #000207 100%);
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .card {
+      background: rgba(2, 10, 20, 0.96);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      padding: 1.7rem;
+      box-shadow: 0 0 45px rgba(0, 40, 70, 0.8);
+    }
+
+    .title-gradient {
+      background: linear-gradient(120deg, #22c55e, #06b6d4);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 25px rgba(34, 197, 94, 0.6),
+        0 0 40px rgba(8, 145, 178, 0.55);
+      letter-spacing: 0.22em;
+    }
+
+    .input-field {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 0.7rem;
+      padding: 0.7rem;
+      width: 100%;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+    }
+
+    .btn {
+      background: radial-gradient(circle at top left, #22c55e, #06b6d4, #0369a1 90%);
+      padding: 0.7rem 1.1rem;
+      border-radius: 0.9rem;
+      color: white;
+      font-weight: 600;
+      border: 1px solid rgba(34, 197, 94, 0.45);
+      transition: all 0.15s ease;
+      font-size: 0.85rem;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.12);
+    }
+
+    .pill {
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(148,163,184,0.7);
+      display: inline-block;
+    }
+
+    .pill-verified {
+      border-color: rgba(34,197,94,0.9);
+      color: #bbf7d0;
+    }
+
+    .pill-pending {
+      border-color: rgba(250,204,21,0.9);
+      color: #fef9c3;
+    }
+
+    .pill-error {
+      border-color: rgba(248,113,113,0.9);
+      color: #fee2e2;
+    }
+
+    .nft-card {
+      background: rgba(2, 18, 32, 0.85);
+      border-radius: 1rem;
+      padding: 1rem;
+      border: 1px solid rgba(6,182,212,0.5);
+      box-shadow: 0 0 35px rgba(6,182,212,0.5);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen px-4 sm:px-6 lg:px-10 py-8">
+
+  <!-- HEADER -->
+  <header class="max-w-5xl mx-auto mb-10">
+    <h1 class="text-4xl md:text-5xl font-semibold title-gradient uppercase">
+      VERITAS
+    </h1>
+    <p class="text-xs md:text-sm text-cyan-200 tracking-[0.25em] uppercase mt-3">
+      Entity Registration Flow — Compliance Simulation
+    </p>
+    <p class="text-xs text-slate-400 mt-3 max-w-xl">
+      This page simulates how a business registers, attaches its corporate entity,
+      configures jurisdiction, loads KYB materials, and receives a
+      “Verified Business NFT” used across the VERITAS compliance network.
+      Exactly what regulators want to see before approving a sandbox pilot.
+    </p>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <div class="max-w-5xl mx-auto space-y-10">
+
+    <!-- STEP 1 — CREATE VERITAS DAO LLC RECORD -->
+    <section class="card">
+      <h2 class="text-lg font-semibold text-emerald-300 mb-3">
+        Step 1 — Register Under VERITAS DAO LLC
+      </h2>
+      <p class="text-sm text-slate-300 mb-3">
+        This creates a simulated VERITAS-compliant business identity with a unique
+        corporate enrollment ID.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">Business Legal Name</label>
+          <input id="bizName" class="input-field" placeholder="Example: APEX Holdings LLC">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">Business Email</label>
+          <input id="bizEmail" class="input-field" placeholder="contact@company.com">
+        </div>
+      </div>
+
+      <button id="registerBtn" class="btn">Register Entity</button>
+
+      <div id="regStatus" class="text-xs text-slate-300 mt-4"></div>
+    </section>
+
+    <!-- STEP 2 — ATTACH CORPORATE STRUCTURE -->
+    <section class="card">
+      <h2 class="text-lg font-semibold text-emerald-300 mb-3">
+        Step 2 — Attach LLC / C-Corp Structure
+      </h2>
+      <p class="text-sm text-slate-300 mb-3">
+        Regulators require clear mapping of parent company, registrations, and EIN structure.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="text-xs text-slate-400 mb-1">Entity Type</label>
+          <select id="entityType" class="input-field">
+            <option>LLC</option>
+            <option>C-Corp</option>
+            <option>S-Corp</option>
+            <option>Partnership</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 mb-1">EIN Number</label>
+          <input id="einInput" class="input-field" placeholder="12-3456789">
+        </div>
+      </div>
+
+      <button id="attachCorpBtn" class="btn">Attach Corporate Details</button>
+      <div id="corpStatus" class="text-xs text-slate-300 mt-4"></div>
+    </section>
+
+    <!-- STEP 3 — SELECT POLICY REGION -->
+    <section class="card">
+      <h2 class="text-lg font-semibold text-emerald-300 mb-3">
+        Step 3 — Select Regulatory Jurisdiction
+      </h2>
+      <p class="text-sm text-slate-300 mb-3">
+        Each region maps to its own tax rules, compliance reporting cadence, and risk tables.
+      </p>
+
+      <select id="regionSelect" class="input-field mb-4">
+        <option value="US">United States (FinCEN, IRS, 1099/KYC rules)</option>
+        <option value="EU">European Union (ESMA, PSD2, AMLD5)</option>
+        <option value="UK">United Kingdom (FCA, HMRC, Travel Rule)</option>
+        <option value="SG">Singapore (MAS, AML/KYB Tiering)</option>
+      </select>
+
+      <button id="regionBtn" class="btn">Apply Region Policy</button>
+      <div id="regionStatus" class="text-xs text-slate-300 mt-4"></div>
+    </section>
+
+    <!-- STEP 4 — KYB UPLOAD -->
+    <section class="card">
+      <h2 class="text-lg font-semibold text-emerald-300 mb-3">
+        Step 4 — Upload KYB Documents
+      </h2>
+      <p class="text-sm text-slate-300 mb-3">
+        These materials are hashed and uploaded to a simulated PDA to show how
+        VERITAS anchors compliance proof on chain.
+      </p>
+
+      <input id="kybFile"
+             type="file"
+             accept="application/pdf,image/*"
+             class="text-xs text-slate-300 mb-3">
+
+      <button id="kybBtn" class="btn">Process KYB</button>
+
+      <div id="kybStatus" class="text-xs text-slate-300 mt-4"></div>
+    </section>
+
+    <!-- STEP 5 — VERIFIED BUSINESS NFT -->
+    <section class="card">
+      <h2 class="text-lg font-semibold text-emerald-300 mb-3">
+        Step 5 — Issue “Verified Business NFT”
+      </h2>
+      <p class="text-sm text-slate-300 mb-4">
+        Once KYB is approved, VERITAS mints a non-transferable NFT that acts as
+        compliance proof for payroll, RWA, and credit products.
+      </p>
+
+      <button id="mintNftBtn" class="btn mb-4">Mint Verified Business NFT</button>
+
+      <div id="nftPreview" class="text-xs"></div>
+    </section>
+
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    function randHash() {
+      return [...Array(64)].map(() =>
+        Math.floor(Math.random()*16).toString(16)
+      ).join("");
+    }
+
+    const regStatus = document.getElementById("regStatus");
+    const corpStatus = document.getElementById("corpStatus");
+    const regionStatus = document.getElementById("regionStatus");
+    const kybStatus = document.getElementById("kybStatus");
+    const nftPreview = document.getElementById("nftPreview");
+
+    let businessRecord = {
+      registered: false,
+      corpAttached: false,
+      region: null,
+      kybHash: null,
+      nftMinted: false
+    };
+
+    document.getElementById("registerBtn").onclick = () => {
+      const name = document.getElementById("bizName").value.trim();
+      const email = document.getElementById("bizEmail").value.trim();
+
+      if (!name || !email) {
+        regStatus.innerHTML = `<span class="pill pill-error">Missing fields</span>`;
+        return;
+      }
+
+      businessRecord.registered = true;
+      const id = "VER-BIZ-" + Math.floor(Math.random()*999999).toString().padStart(6,"0");
+
+      regStatus.innerHTML = `
+        <span class="pill pill-verified">Registered</span>  
+        Business ID: <span class="text-cyan-300 font-semibold">${id}</span>
+      `;
+    };
+
+    document.getElementById("attachCorpBtn").onclick = () => {
+      if (!businessRecord.registered) {
+        corpStatus.innerHTML = `<span class="pill pill-error">Register first</span>`;
+        return;
+      }
+
+      businessRecord.corpAttached = true;
+      corpStatus.innerHTML = `<span class="pill pill-verified">Corporate structure attached</span>`;
+    };
+
+    document.getElementById("regionBtn").onclick = () => {
+      if (!businessRecord.registered) {
+        regionStatus.innerHTML = `<span class="pill pill-error">Register first</span>`;
+        return;
+      }
+
+      const region = document.getElementById("regionSelect").value;
+      businessRecord.region = region;
+
+      regionStatus.innerHTML = `
+        <span class="pill pill-verified">Region set</span>  
+        Selected: <span class="text-cyan-300">${region}</span>
+      `;
+    };
+
+    document.getElementById("kybBtn").onclick = () => {
+      if (!businessRecord.corpAttached) {
+        kybStatus.innerHTML = `<span class="pill pill-error">Attach corporate details first</span>`;
+        return;
+      }
+
+      const file = document.getElementById("kybFile").files[0];
+      if (!file) {
+        kybStatus.innerHTML = `<span class="pill pill-error">Upload file</span>`;
+        return;
+      }
+
+      businessRecord.kybHash = randHash();
+      kybStatus.innerHTML = `
+        <span class="pill pill-verified">KYB processed</span>  
+        Hash: <span class="text-emerald-300">${businessRecord.kybHash.slice(0,12)}...</span>
+      `;
+    };
+
+    document.getElementById("mintNftBtn").onclick = () => {
+      if (!businessRecord.kybHash) {
+        nftPreview.innerHTML = `<span class="pill pill-error">Complete KYB first</span>`;
+        return;
+      }
+
+      businessRecord.nftMinted = true;
+
+      const nftHtml = `
+        <div class="nft-card mt-3">
+          <p class="text-sm font-semibold text-emerald-300 mb-2">
+            Verified Business NFT (Simulated)
+          </p>
+          <p class="text-xs text-slate-300 mb-2">
+            Entity is now eligible for:
+            <br>• On-chain payroll
+            <br>• RWA tokenization
+            <br>• Credit line borrowing
+            <br>• Compliance audits
+          </p>
+          <p class="text-xs text-cyan-300">
+            Compliance Hash: ${businessRecord.kybHash.slice(0, 20)}...
+          </p>
+        </div>
+      `;
+
+      nftPreview.innerHTML = nftHtml;
+    };
+  </script>
+</body>
+</html>

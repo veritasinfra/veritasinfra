@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VERITAS — FinCEN Regulatory Briefing</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  body {
+    background: radial-gradient(circle at top left, #00121f 0%, #00060d 60%, #000207 100%);
+    color: #e2e8f0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .header-title {
+    background: linear-gradient(120deg, #22c55e, #06b6d4);
+    -webkit-background-clip: text;
+    color: transparent;
+    letter-spacing: 0.22em;
+    text-shadow:
+      0 0 20px rgba(34, 197, 94, 0.5),
+      0 0 35px rgba(6, 182, 212, 0.45);
+  }
+  .card {
+    background: rgba(2, 10, 20, 0.96);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    border-radius: 1.4rem;
+    padding: 1.6rem;
+    box-shadow: 0 0 42px rgba(0, 40, 70, 0.8);
+  }
+  .section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #22c55e;
+    letter-spacing: .05em;
+  }
+  .brief-block {
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 0.9rem;
+    padding: 0.9rem 1.2rem;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.7rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.75);
+    white-space: nowrap;
+  }
+  .pill-ok { border-color: rgba(34,197,94,.75); color: #bbf7d0; }
+  .pill-warn { border-color: rgba(250,204,21,.85); color: #fde68a; }
+  .link-btn {
+    background: linear-gradient(120deg,#22c55e,#06b6d4,#0369a1);
+    padding: .8rem 1.2rem;
+    border-radius: .9rem;
+    border: 1px solid rgba(34, 197, 94, .45);
+    font-size: .85rem;
+    font-weight: 600;
+    transition: all .15s ease;
+    color: #fff;
+  }
+  .link-btn:hover { transform: translateY(-2px); filter: brightness(1.17); }
+</style>
+</head>
+
+<body class="min-h-screen py-8 px-5 sm:px-8 lg:px-10">
+
+<header class="max-w-6xl mx-auto mb-10">
+  <h1 class="text-4xl md:text-5xl font-semibold header-title uppercase">VERITAS</h1>
+  <p class="text-xs md:text-sm text-cyan-200 tracking-[0.26em] uppercase mt-2">FinCEN Regulatory Briefing</p>
+  <p class="text-xs text-slate-400 mt-3 max-w-3xl">
+    Public Benefit Compliance Infrastructure for U.S. business payments using digital assets.  
+    VERITAS establishes a lawful, auditable, identity-verified framework for payroll,
+    contractor payments, invoicing, and business financial reporting on-chain.
+  </p>
+</header>
+
+<main class="max-w-6xl mx-auto space-y-10">
+
+<!-- EXECUTIVE SUMMARY -->
+<section class="card space-y-3">
+  <h2 class="section-title">Executive Summary</h2>
+  <p class="text-sm text-slate-300 leading-relaxed">
+    VERITAS is a public-benefit compliance layer that businesses adopt to ensure digital asset
+    payments are fully recorded, identity-verified, properly jurisdiction-mapped, and audit-ready.
+    It does not custody funds, does not transmit assets, and does not broker trades.  
+    The system ensures compliance through credentialing, logging, and reporting — not through financial control.
+  </p>
+  <div class="flex flex-wrap gap-2 text-[0.7rem]">
+    <span class="pill pill-ok">Non-custodial</span>
+    <span class="pill pill-warn">Identity-verified</span>
+    <span class="pill">Audit-grade logs</span>
+  </div>
+</section>
+
+<!-- NO MONEY TRANSMITTER ROLE -->
+<section class="card space-y-4">
+  <h2 class="section-title">Regulatory Classification: Not a Money Transmitter</h2>
+  <p class="text-sm text-slate-300">
+    VERITAS never controls user funds. All payments occur peer-to-peer from user wallets.  
+    Veritas provides rules, attestations, and recordkeeping — not transmission or custody.
+  </p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+    <div class="brief-block">No asset custody or control</div>
+    <div class="brief-block">No brokerage of crypto or fiat</div>
+    <div class="brief-block">No routing or payment execution</div>
+    <div class="brief-block">No fee based on money transmission</div>
+  </div>
+</section>
+
+<!-- IDENTITY + RISK ARCHITECTURE -->
+<section class="card space-y-4">
+  <h2 class="section-title">Identity, AML, and Recordkeeping Architecture</h2>
+  <p class="text-sm text-slate-300">
+    VERITAS uses Persona for identity verification and Chainalysis for forensic risk analysis.  
+    Payments are stamped with compliance states and stored in PDAs as immutable audit logs.
+  </p>
+  <table class="text-[0.75rem] w-full border border-slate-700/80 rounded-lg overflow-hidden">
+    <tr class="bg-slate-900/70 text-emerald-200 uppercase tracking-wide">
+      <th class="py-2 px-3 text-left">Layer</th><th class="py-2 px-3 text-left">Function</th><th class="py-2 px-3 text-left">Enforcement</th>
+    </tr>
+    <tr><td class="px-3 py-2">Identity Gate</td><td class="px-3 py-2">Business/employee verification</td><td class="px-3 py-2">Persona Attestation</td></tr>
+    <tr><td class="px-3 py-2">Credential Minting</td><td class="px-3 py-2">Compliance NFTs</td><td class="px-3 py-2">Non-transferable PDAs</td></tr>
+    <tr><td class="px-3 py-2">Audit Logging</td><td class="px-3 py-2">On-chain reporting</td><td class="px-3 py-2">PDA log entries</td></tr>
+    <tr><td class="px-3 py-2">Risk Escalation</td><td class="px-3 py-2">Flagged transactions</td><td class="px-3 py-2">Chainalysis triggers</td></tr>
+  </table>
+</section>
+
+<!-- ASK -->
+<section class="card space-y-4">
+  <h2 class="section-title">Requested Outcome</h2>
+  <p class="text-sm text-slate-300">
+    VERITAS seeks a <strong>No-Action Interpretation</strong> confirming that a non-custodial identity & reporting infrastructure
+    for digital asset business payments does not constitute money transmission.
+  </p>
+  <ul class="list-disc list-inside text-xs text-slate-300">
+    <li>Wallet custody remains with the user</li>
+    <li>Protocol does not initiate, route, or hold funds</li>
+    <li>Revenue derived only from compliance credentials + reporting</li>
+  </ul>
+</section>
+
+<!-- LINK BACK -->
+<section class="flex justify-end max-w-6xl mx-auto">
+  <a href="veritas-demo-hub.html" class="link-btn">
+    ← Back to VERITAS Demo Hub
+  </a>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VERITAS – NFT Credit Line Borrowing Simulator</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  body {
+    background: radial-gradient(circle at top left, #00111a, #00070d 60%);
+    color: #e2e8f0;
+    font-family: system-ui, sans-serif;
+  }
+
+  .card {
+    background: rgba(0,17,26,0.85);
+    border: 1px solid rgba(0,255,200,0.12);
+    border-radius: 1.6rem;
+    padding: 1.5rem 1.7rem;
+    box-shadow: 0 0 40px rgba(0,255,180,0.08);
+  }
+
+  .header-title {
+    letter-spacing: .2em;
+    background: linear-gradient(120deg, #00ffaa, #00ccff);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .btn {
+    background: linear-gradient(120deg, #00b894, #00a8ff);
+    padding: .55rem 1.1rem;
+    border-radius: .8rem;
+    border: 1px solid rgba(0,255,200,0.25);
+    color: white;
+    font-weight: 600;
+    font-size: .85rem;
+  }
+  .btn:hover {
+    filter: brightness(1.09);
+  }
+
+  .nft-card {
+    border-radius: 1rem;
+    background: rgba(0,20,30,0.7);
+    border: 1px solid rgba(0,255,200,0.15);
+    padding: .9rem;
+    cursor: pointer;
+    transition: .15s;
+  }
+
+  .nft-card:hover {
+    border-color: rgba(0,255,200,0.4);
+    transform: translateY(-2px);
+  }
+
+  .active-nft {
+    border-color: rgba(0,255,200,0.8) !important;
+    box-shadow: 0 0 15px rgba(0,255,200,0.3);
+  }
+
+  .pill {
+    padding: .15rem .58rem;
+    border-radius: 999px;
+    font-size: .65rem;
+    border: 1px solid;
+  }
+
+  .pill-low { border-color:#00ffaa; color:#bdfccf; }
+  .pill-med { border-color:#facc15; color:#fde047; }
+  .pill-high { border-color:#fb7185; color:#fecdd3; }
+
+  .log-box {
+    background: rgba(0,10,15,.9);
+    border: 1px solid rgba(200,255,255,.15);
+    padding: 1rem;
+    border-radius: .9rem;
+    white-space: pre-wrap;
+    font-size: .8rem;
+  }
+</style>
+</head>
+
+<body class="px-4 md:px-8 py-10">
+
+<!-- HEADER -->
+<header class="text-center mb-12">
+  <h1 class="header-title text-5xl font-bold">VERITAS</h1>
+  <p class="text-sm tracking-widest mt-2 text-cyan-200">
+    NFT Credit Line Borrowing Simulator
+  </p>
+  <p class="mt-3 text-slate-400 text-xs max-w-xl mx-auto">
+    This demonstration shows how a verified, compliant Real-World-Asset NFT
+    can support borrowing under fully auditable, risk-aware on-chain rules.
+  </p>
+</header>
+
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+
+  <!-- LEFT COLUMN (NFT SELECTION) -->
+  <aside class="lg:col-span-1">
+    <div class="card">
+      <h2 class="text-emerald-300 text-sm font-semibold mb-2">Select Verified RWA NFT</h2>
+      <p class="text-xs text-slate-400 mb-4">
+        These sample NFTs represent tokenized real-world assets with oracle-verified
+        appraisals and risk tiers.
+      </p>
+
+      <div id="nftList" class="space-y-3"></div>
+    </div>
+  </aside>
+
+  <!-- MIDDLE COLUMN (TERMS, CALCULATION) -->
+  <main class="lg:col-span-2 space-y-7">
+
+    <!-- TERMS ENGINE -->
+    <section class="card">
+      <h2 class="text-emerald-300 text-lg font-semibold mb-2">Loan Terms Engine</h2>
+      <p class="text-xs text-slate-400 mb-3">
+        Configure a credit line secured by the selected NFT. Oracle risk feeds dynamically
+        adjust APR, LTV, and liquidation thresholds.
+      </p>
+
+      <div id="assetSummary" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs mb-6">
+        <div>
+          <p class="text-slate-400">Asset</p>
+          <p id="assetType" class="font-medium">—</p>
+        </div>
+        <div>
+          <p class="text-slate-400">Appraised Value</p>
+          <p id="assetValue" class="text-emerald-200 font-semibold">—</p>
+        </div>
+        <div>
+          <p class="text-slate-400">Risk Tier</p>
+          <span id="riskTier" class="pill pill-low">—</span>
+        </div>
+        <div>
+          <p class="text-slate-400">Oracle Score</p>
+          <p id="oracleScore" class="text-cyan-200 font-semibold">—</p>
+        </div>
+      </div>
+
+      <!-- Borrow Controls -->
+      <div class="rounded-xl bg-slate-900/60 border border-slate-700/50 p-4 mb-6">
+        <p class="text-xs text-slate-400 mb-1">Borrow Amount</p>
+        <input id="borrowRange" type="range" class="w-full mb-2" min="0" max="0" value="0" />
+        <p class="text-xs flex justify-between text-slate-300">
+          <span>Selected: <span id="borrowAmount" class="text-emerald-200 font-semibold">$0</span></span>
+          <span id="maxBorrow" class="text-slate-500"></span>
+        </p>
+      </div>
+
+      <!-- Tenor -->
+      <div class="mb-6">
+        <p class="text-xs mb-2 text-slate-400">Tenor</p>
+        <div class="grid grid-cols-3 gap-3">
+          <button class="btn-tenor btn" data-days="90">90 Days</button>
+          <button class="btn-tenor btn opacity-70" data-days="180">180 Days</button>
+          <button class="btn-tenor btn opacity-70" data-days="360">360 Days</button>
+        </div>
+      </div>
+
+      <!-- Calculated Fields -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs mb-4">
+        <div class="bg-slate-900/50 border border-slate-700 rounded-xl p-3">
+          <p class="text-slate-400">Monthly Payment</p>
+          <p id="monthlyPayment" class="text-emerald-200 text-lg font-semibold">$0</p>
+        </div>
+        <div class="bg-slate-900/50 border border-slate-700 rounded-xl p-3">
+          <p class="text-slate-400">Total Interest</p>
+          <p id="totalInterest" class="text-cyan-200 text-lg font-semibold">$0</p>
+        </div>
+        <div class="bg-slate-900/50 border border-slate-700 rounded-xl p-3">
+          <p class="text-slate-400">Loan Health</p>
+          <span id="loanHealth" class="pill pill-low">No Loan</span>
+        </div>
+      </div>
+
+      <button id="borrowBtn" class="btn">Borrow Against NFT</button>
+    </section>
+
+    <!-- Repayment Schedule -->
+    <section class="card">
+      <h2 class="text-sm font-semibold text-emerald-300 mb-2">Repayment Schedule</h2>
+      <pre id="schedule" class="log-box">No active loan.</pre>
+    </section>
+
+  </main>
+
+  <!-- RIGHT COLUMN (PDA VIEW) -->
+  <aside class="lg:col-span-1">
+    <section class="card">
+      <h2 class="text-emerald-300 text-sm font-semibold mb-2">Loan PDA View</h2>
+
+      <div class="text-xs space-y-3">
+        <div>
+          <p class="text-slate-400">Loan PDA</p>
+          <p id="loanPda" class="text-cyan-300 break-all">—</p>
+        </div>
+        <div>
+          <p class="text-slate-400">Asset Ref</p>
+          <p id="loanAsset" class="text-slate-300">—</p>
+        </div>
+        <div>
+          <p class="text-slate-400">Principal</p>
+          <p id="loanPrincipal" class="text-emerald-200">$0</p>
+        </div>
+        <div>
+          <p class="text-slate-400">Interest</p>
+          <p id="loanInterest" class="text-cyan-200">$0</p>
+        </div>
+        <div>
+          <p class="text-slate-400">Due Date</p>
+          <p id="loanDue" class="text-slate-200">—</p>
+        </div>
+      </div>
+    </section>
+  </aside>
+
+</div>
+
+<!-- JS LOGIC -->
+<script>
+const NFTS = [
+  { id:"INV001", type:"Invoice", value:50000, risk:"Low", score:0.92, ltv:0.70 },
+  { id:"EQP017", type:"Equipment", value:120000, risk:"Medium", score:0.78, ltv:0.55 },
+  { id:"CNT042", type:"Service Contract", value:80000, risk:"Medium", score:0.82, ltv:0.60 },
+  { id:"LOC003", type:"Credit Line Collateral", value:250000, risk:"High", score:0.65, ltv:0.45 },
+];
+
+let selected = null;
+let tenorDays = 90;
+let apr = 0;
+let activeLoan = null;
+
+function format(n){ return "$" + n.toLocaleString(); }
+function datePlus(d){ const dt=new Date(); dt.setDate(dt.getDate()+d); return dt.toLocaleDateString(); }
+
+// APR model
+function aprModel(risk, days){
+  let base = risk === "Low" ? 0.08 : risk==="Medium" ? 0.12 : 0.18;
+  if(days===90) base-=0.015;
+  if(days===360) base+=0.02;
+  return base;
+}
+
+// Render NFT list
+function loadNFTs(){
+  const list = document.getElementById("nftList");
+  list.innerHTML="";
+  NFTS.forEach((n,i)=>{
+    const div=document.createElement("div");
+    div.className="nft-card";
+    div.dataset.index=i;
+    div.innerHTML=`
+      <p class="font-semibold text-sm">${n.type}</p>
+      <p class="text-xs text-slate-400">${n.id}</p>
+      <p class="text-emerald-200 text-sm font-bold mt-1">${format(n.value)}</p>
+      <span class="pill ${n.risk==="Low"?"pill-low":n.risk==="Medium"?"pill-med":"pill-high"}">
+        ${n.risk} Risk
+      </span>
+    `;
+    div.onclick=()=>selectNFT(i);
+    list.appendChild(div);
+  });
+}
+
+// Handle NFT selection
+function selectNFT(i){
+  selected = NFTS[i];
+  document.querySelectorAll(".nft-card").forEach(el=>el.classList.remove("active-nft"));
+  document.querySelector(`.nft-card[data-index="${i}"]`).classList.add("active-nft");
+
+  // Update asset UI
+  document.getElementById("assetType").textContent=selected.type;
+  document.getElementById("assetValue").textContent=format(selected.value);
+  document.getElementById("riskTier").textContent=selected.risk + " Risk";
+  document.getElementById("oracleScore").textContent=(selected.score*100).toFixed(0)+"%";
+
+  // Range
+  const max = Math.round(selected.value*selected.ltv);
+  const r = document.getElementById("borrowRange");
+  r.max=max;
+  r.value=Math.round(max*0.5);
+
+  document.getElementById("maxBorrow").textContent="Max "+format(max);
+  document.getElementById("borrowAmount").textContent=format(r.value);
+
+  apr = aprModel(selected.risk, tenorDays);
+
+  recalc();
+}
+
+// Tenor Buttons
+document.querySelectorAll(".btn-tenor").forEach(btn=>{
+  btn.onclick=()=>{
+    tenorDays=parseInt(btn.dataset.days);
+    document.querySelectorAll(".btn-tenor").forEach(b=>b.style.opacity=".7");
+    btn.style.opacity="1";
+    if(selected) apr=aprModel(selected.risk, tenorDays);
+    recalc();
+  };
+});
+
+// Borrow range change
+document.getElementById("borrowRange").oninput=()=>{
+  document.getElementById("borrowAmount").textContent=format(document.getElementById("borrowRange").value);
+  recalc();
+};
+
+// Recalculate payments and health
+function recalc(){
+  if(!selected){ return; }
+
+  const amount = parseFloat(document.getElementById("borrowRange").value);
+  const yearly = apr;
+  const interest = amount * yearly * (tenorDays/365);
+
+  document.getElementById("totalInterest").textContent = format(interest);
+  document.getElementById("monthlyPayment").textContent =
+    format((amount+interest) / Math.max(1, Math.round(tenorDays/30)));
+
+  // Loan health
+  const collateral = selected.value * selected.ltv;
+  const ratio = collateral / amount;
+
+  const health = document.getElementById("loanHealth");
+  if(ratio>=1.5){
+    health.textContent="Healthy Coverage";
+    health.className="pill pill-low";
+  } else if(ratio>=1.1){
+    health.textContent="Monitor";
+    health.className="pill pill-med";
+  } else {
+    health.textContent="At Risk";
+    health.className="pill pill-high";
+  }
+}
+
+// Simulate Borrow
+document.getElementById("borrowBtn").onclick = ()=>{
+  if(!selected){ alert("Select an NFT first."); return; }
+  const amount = parseFloat(document.getElementById("borrowRange").value);
+  const interest = amount * apr * (tenorDays/365);
+
+  activeLoan = {
+    pda: "PDA_"+Math.random().toString(36).slice(2,10),
+    asset: selected.id,
+    principal: amount,
+    interest: interest,
+    due: datePlus(tenorDays),
+  };
+
+  // Update PDA view
+  document.getElementById("loanPda").textContent=activeLoan.pda;
+  document.getElementById("loanAsset").textContent=activeLoan.asset;
+  document.getElementById("loanPrincipal").textContent=format(activeLoan.principal);
+  document.getElementById("loanInterest").textContent=format(activeLoan.interest);
+  document.getElementById("loanDue").textContent=activeLoan.due;
+
+  // Schedule
+  const months=Math.max(1,Math.round(tenorDays/30));
+  let text=`Repayment schedule for ${months} months\n\n`;
+  const mp=(amount+interest)/months;
+  for(let m=1;m<=Math.min(months,12);m++){
+    text+=`Month ${m}: ${format(mp)}\n`;
+  }
+  if(months>12) text+=`... ${months-12} more months\n`;
+  document.getElementById("schedule").textContent=text;
+
+  recalc();
+};
+
+loadNFTs();
+</script>
+
+</body>
+</html>

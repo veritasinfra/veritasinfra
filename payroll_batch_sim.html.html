@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS · Payroll Batch Simulation</title>
+
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .bg-veritas {
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 40%, #001b1f 75%, #000814 100%);
+    }
+    .card-veritas {
+      background: linear-gradient(145deg, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+      border: 1px solid rgba(56,189,248,0.20);
+      box-shadow:
+        0 0 30px rgba(15,118,110,0.25),
+        0 0 80px rgba(15,23,42,0.85);
+    }
+    .text-gradient-veritas {
+      background: linear-gradient(120deg, #22c55e, #a5f3fc, #22c55e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: titleGlow 7s ease-in-out infinite;
+    }
+    .logo-emboss {
+      text-shadow:
+        0 0 18px rgba(34,197,94,0.6),
+        0 0 40px rgba(8,145,178,0.7),
+        0 2px 0 rgba(0,0,0,0.9);
+      letter-spacing: 0.22em;
+    }
+    .glass-line {
+      background: radial-gradient(circle, rgba(34,197,94,0.35), transparent 70%);
+      opacity: 0.7;
+    }
+    .btn-primary {
+      background: radial-gradient(circle at 20% 0%, #22c55e 0%, #0284c7 40%, #0369a1 100%);
+      box-shadow:
+        0 0 18px rgba(34,197,94,0.65),
+        0 0 32px rgba(8,145,178,0.75);
+    }
+    .btn-primary:hover {
+      filter: brightness(1.06);
+    }
+    .pill-badge {
+      background: radial-gradient(circle at 0 0, rgba(16,185,129,0.30), rgba(8,47,73,0.96));
+      border: 1px solid rgba(45,212,191,0.70);
+    }
+    .pill-muted {
+      background: radial-gradient(circle at 0 0, rgba(15,23,42,0.90), rgba(15,23,42,0.98));
+      border: 1px solid rgba(148,163,184,0.55);
+    }
+    .risk-pill {
+      font-size: 0.65rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.9);
+    }
+    .risk-low {
+      border-color: rgba(34,197,94,0.7);
+      color: #bbf7d0;
+    }
+    .risk-medium {
+      border-color: rgba(234,179,8,0.8);
+      color: #facc15;
+    }
+    .risk-high {
+      border-color: rgba(248,113,113,0.85);
+      color: #fecaca;
+    }
+    .table-row {
+      cursor: pointer;
+      transition: background 0.12s ease-out, transform 0.08s ease-out;
+    }
+    .table-row:hover {
+      background: rgba(15,23,42,0.9);
+      transform: translateY(-1px);
+    }
+    .table-row-selected {
+      background: rgba(8,47,73,0.94);
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.80);
+    }
+    .log-box {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    @keyframes titleGlow {
+      0% {
+        text-shadow:
+          0 0 12px rgba(34,197,94,0.4),
+          0 0 28px rgba(8,145,178,0.45),
+          0 0 60px rgba(8,47,73,0.9);
+        filter: drop-shadow(0 0 8px rgba(8,47,73,0.8));
+      }
+      50% {
+        text-shadow:
+          0 0 24px rgba(45,212,191,0.9),
+          0 0 60px rgba(8,145,178,0.9),
+          0 0 80px rgba(8,47,73,1);
+        filter: drop-shadow(0 0 16px rgba(8,145,178,0.9));
+      }
+      100% {
+        text-shadow:
+          0 0 12px rgba(34,197,94,0.4),
+          0 0 28px rgba(8,145,178,0.45),
+          0 0 60px rgba(8,47,73,0.9);
+        filter: drop-shadow(0 0 8px rgba(8,47,73,0.8));
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-veritas text-slate-100 antialiased min-h-screen">
+  <!-- Decorative background -->
+  <div class="fixed inset-0 pointer-events-none opacity-40">
+    <div class="glass-line w-1 h-40 absolute left-10 top-32 blur-xl"></div>
+    <div class="glass-line w-1 h-48 absolute right-16 top-80 blur-xl"></div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 relative">
+    <!-- HEADER -->
+    <header class="flex flex-col gap-6 mb-10 md:mb-12">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <div class="inline-flex flex-col">
+            <span class="text-gradient-veritas logo-emboss text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[0.24em] uppercase">
+              VERITAS
+            </span>
+            <span class="mt-2 text-sm sm:text-base text-cyan-200/85">
+              Payroll batch simulation, devnet style demo for investors and auditors
+            </span>
+          </div>
+          <div class="mt-3 text-xs sm:text-sm uppercase tracking-[0.28em] text-emerald-300/70">
+            On chain payroll model · Batch preview
+          </div>
+        </div>
+
+        <div class="flex flex-col items-end gap-2">
+          <div class="flex flex-wrap gap-2 justify-end">
+            <span class="pill-badge px-3 py-1 rounded-full text-[0.7rem] sm:text-xs text-emerald-100">
+              Simulated, no live transfers
+            </span>
+            <span class="pill-badge px-3 py-1 rounded-full text-[0.7rem] sm:text-xs text-cyan-100">
+              Shows how a real VERITAS run looks
+            </span>
+          </div>
+          <p class="text-[0.7rem] text-slate-400 max-w-xs text-right">
+            Use this page live in calls to walk investors, partners and regulators through a full batch payroll cycle.
+          </p>
+        </div>
+      </div>
+
+      <!-- High level KPIs -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div class="card-veritas rounded-2xl px-4 py-3 flex flex-col gap-1">
+          <span class="text-xs uppercase tracking-widest text-slate-300/70">Employees in batch</span>
+          <span id="statEmployees" class="text-lg sm:text-xl font-semibold text-emerald-300">0</span>
+          <span class="text-[0.7rem] text-slate-400">Simulated from your batch configuration.</span>
+        </div>
+        <div class="card-veritas rounded-2xl px-4 py-3 flex flex-col gap-1">
+          <span class="text-xs uppercase tracking-widest text-slate-300/70">Total gross</span>
+          <span id="statTotalGross" class="text-lg sm:text-xl font-semibold text-cyan-200">$0.00</span>
+          <span class="text-[0.7rem] text-slate-400">Before tax and contributions.</span>
+        </div>
+        <div class="card-veritas rounded-2xl px-4 py-3 flex flex-col gap-1">
+          <span class="text-xs uppercase tracking-widest text-slate-300/70">Total tax and contributions</span>
+          <span id="statTotalTax" class="text-lg sm:text-xl font-semibold text-amber-200">$0.00</span>
+          <span class="text-[0.7rem] text-slate-400">Based on simple jurisdiction rules.</span>
+        </div>
+        <div class="card-veritas rounded-2xl px-4 py-3 flex flex-col gap-1">
+          <span class="text-xs uppercase tracking-widest text-slate-300/70">Total net to employees</span>
+          <span id="statTotalNet" class="text-lg sm:text-xl font-semibold text-emerald-200">$0.00</span>
+          <span class="text-[0.7rem] text-slate-400">What actually reaches wallets.</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN GRID -->
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <!-- LEFT: CONFIG -->
+      <aside class="space-y-5">
+        <section class="card-veritas rounded-3xl px-5 py-5">
+          <h2 class="text-lg sm:text-xl font-semibold text-emerald-300 mb-2">Batch configuration</h2>
+          <p class="text-[0.75rem] text-slate-300/90 mb-3">
+            Define a realistic payroll run, then simulate how VERITAS would calculate gross, tax and net, with per employee compliance context.
+          </p>
+
+          <div class="space-y-3 text-sm">
+            <div>
+              <label class="block text-[0.7rem] text-slate-300 mb-1">Batch name</label>
+              <input
+                id="inputBatchName"
+                type="text"
+                placeholder="March payroll, engineering and ops"
+                class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[0.7rem] text-slate-300 mb-1">Pay period start</label>
+                <input
+                  id="inputPeriodStart"
+                  type="date"
+                  class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                />
+              </div>
+              <div>
+                <label class="block text-[0.7rem] text-slate-300 mb-1">Pay period end</label>
+                <input
+                  id="inputPeriodEnd"
+                  type="date"
+                  class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[0.7rem] text-slate-300 mb-1">Jurisdiction mode</label>
+              <select
+                id="inputJurisdictionMode"
+                class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+              >
+                <option value="single">One primary jurisdiction for entire batch</option>
+                <option value="multi">Mixed, allocate across all supported regions</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[0.7rem] text-slate-300 mb-1">Primary jurisdiction</label>
+                <select
+                  id="inputPrimaryJurisdiction"
+                  class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                >
+                  <option value="US">United States</option>
+                  <option value="EU">European Union</option>
+                  <option value="UK">United Kingdom</option>
+                  <option value="SG">Singapore</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[0.7rem] text-slate-300 mb-1">Currency</label>
+                <select
+                  id="inputCurrency"
+                  class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                >
+                  <option value="USDC">USDC</option>
+                  <option value="EURC">EURC</option>
+                  <option value="SGD">SGD token</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[0.7rem] text-slate-300 mb-1">Number of employees</label>
+                <input
+                  id="inputEmployeeCount"
+                  type="number"
+                  min="1"
+                  max="200"
+                  value="25"
+                  class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                />
+              </div>
+              <div>
+                <label class="block text-[0.7rem] text-slate-300 mb-1">Risk appetite</label>
+                <select
+                  id="inputRiskMode"
+                  class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                >
+                  <option value="conservative">Conservative default</option>
+                  <option value="balanced">Balanced review</option>
+                  <option value="aggressive">Aggressive growth context</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[0.7rem] text-slate-300 mb-1">Base monthly min</label>
+                <div class="relative">
+                  <input
+                    id="inputSalaryMin"
+                    type="number"
+                    min="500"
+                    value="4000"
+                    class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-3 py-2 pr-10 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                  />
+                  <span class="absolute right-3 top-1.5 text-[0.7rem] text-slate-400">per employee</span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[0.7rem] text-slate-300 mb-1">Base monthly max</label>
+                <div class="relative">
+                  <input
+                    id="inputSalaryMax"
+                    type="number"
+                    min="500"
+                    value="11000"
+                    class="w-full rounded-xl bg-slate-950/70 border border-slate-600/80 px-3 py-2 pr-10 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400/70 focus:border-emerald-400/70"
+                  />
+                  <span class="absolute right-3 top-1.5 text-[0.7rem] text-slate-400">per employee</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <button
+                id="btnReset"
+                class="text-[0.75rem] text-slate-300 underline-offset-2 hover:underline"
+              >
+                Reset configuration
+              </button>
+              <button
+                id="btnSimulate"
+                class="btn-primary px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-emerald-100/60"
+              >
+                Run payroll simulation
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card-veritas rounded-3xl px-5 py-5 text-[0.75rem] text-slate-300/90">
+          <h2 class="text-sm font-semibold text-emerald-300 mb-2">How to present this demo</h2>
+          <p class="mb-2">
+            Configure a realistic pay period and team size, then run the simulation. Point out how VERITAS:
+          </p>
+          <ul class="list-disc list-inside space-y-1 mb-2">
+            <li>Splits gross, tax and net clearly for finance and regulators.</li>
+            <li>Tags each employee with KYC status, jurisdiction and risk posture.</li>
+            <li>Can generate an audit ready batch report the same day.</li>
+          </ul>
+          <p class="text-[0.7rem] text-slate-400">
+            In production this view would be backed by the payroll program, legal wrapper and indexer that you already scoped in the main VERITAS architecture.
+          </p>
+        </section>
+      </aside>
+
+      <!-- RIGHT: RESULTS -->
+      <section class="lg:col-span-2 space-y-6">
+        <!-- Summary and distribution -->
+        <div class="card-veritas rounded-3xl px-4 sm:px-5 py-4 sm:py-5">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+            <div>
+              <h2 class="text-lg sm:text-xl font-semibold text-emerald-300">Batch summary</h2>
+              <p class="text-[0.75rem] text-slate-300/90" id="batchSummaryText">
+                No batch has been simulated yet. Configure parameters and run a simulation to populate this view.
+              </p>
+            </div>
+            <div class="flex flex-col items-end gap-1 text-[0.7rem] text-slate-400">
+              <div>Batch name</div>
+              <div id="summaryBatchName" class="text-slate-100 text-[0.75rem] truncate max-w-[220px]">
+                Not set
+              </div>
+              <div id="summaryPeriod" class="text-slate-400 text-[0.7rem]">Period not selected</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[0.8rem]">
+            <div class="rounded-2xl border border-slate-700/80 px-3 py-3">
+              <div class="text-[0.7rem] text-slate-400 mb-1">Average gross per employee</div>
+              <div id="summaryAvgGross" class="text-emerald-200 font-semibold">$0.00</div>
+              <div class="text-[0.7rem] text-slate-400 mt-1">Helpful for comp reviews and budgeting.</div>
+            </div>
+            <div class="rounded-2xl border border-slate-700/80 px-3 py-3">
+              <div class="text-[0.7rem] text-slate-400 mb-1">Average effective tax rate</div>
+              <div id="summaryAvgTaxRate" class="text-amber-200 font-semibold">0.0%</div>
+              <div class="text-[0.7rem] text-slate-400 mt-1">Simple jurisdiction based model for demo.</div>
+            </div>
+            <div class="rounded-2xl border border-slate-700/80 px-3 py-3">
+              <div class="text-[0.7rem] text-slate-400 mb-1">Employees with flags</div>
+              <div id="summaryFlaggedCount" class="text-rose-200 font-semibold">0</div>
+              <div class="text-[0.7rem] text-slate-400 mt-1">Need extra review before release of funds.</div>
+            </div>
+          </div>
+
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-[0.75rem]">
+            <div class="rounded-2xl border border-slate-700/80 px-3 py-3">
+              <div class="text-[0.7rem] text-slate-400 mb-1">Jurisdiction distribution</div>
+              <ul id="summaryJurisdictions" class="space-y-1 text-slate-200">
+                <li class="text-slate-500">Pending simulation.</li>
+              </ul>
+            </div>
+            <div class="rounded-2xl border border-slate-700/80 px-3 py-3">
+              <div class="text-[0.7rem] text-slate-400 mb-1">KYC coverage snapshot</div>
+              <ul id="summaryKycStats" class="space-y-1 text-slate-200">
+                <li class="text-slate-500">Pending simulation.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Employee table -->
+        <div class="card-veritas rounded-3xl px-4 sm:px-5 py-4 sm:py-5">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h2 class="text-lg sm:text-xl font-semibold text-emerald-300">Employee breakdown</h2>
+              <p class="text-[0.75rem] text-slate-300/90">
+                Each row represents one employee wallet and one VERITAS payroll distribution in this batch.
+              </p>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-[0.7rem] text-slate-400">
+              <span class="risk-pill risk-low">Low risk</span>
+              <span class="risk-pill risk-medium">Medium</span>
+              <span class="risk-pill risk-high">High</span>
+            </div>
+          </div>
+
+          <div class="mt-3 border border-slate-700/80 rounded-2xl overflow-hidden">
+            <div class="hidden md:grid grid-cols-12 gap-2 px-3 py-2 text-[0.7rem] uppercase tracking-widest bg-slate-950/70 text-slate-400">
+              <div class="col-span-2">Employee id</div>
+              <div class="col-span-3">Wallet</div>
+              <div class="col-span-2">Jurisdiction</div>
+              <div class="col-span-2 text-right">Gross</div>
+              <div class="col-span-2 text-right">Tax and contributions</div>
+              <div class="col-span-1 text-right">Risk</div>
+            </div>
+            <div
+              id="employeeTableBody"
+              class="max-h-[380px] overflow-y-auto divide-y divide-slate-800/80 text-xs sm:text-[0.8rem]"
+            >
+              <div class="px-3 py-4 text-[0.75rem] text-slate-400">
+                No simulation has been run yet. Configure a batch on the left and click the run button.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detail panel -->
+        <div class="card-veritas rounded-3xl px-4 sm:px-5 py-4 sm:py-5">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h2 class="text-lg sm:text-xl font-semibold text-emerald-300">Employee detail</h2>
+              <p class="text-[0.75rem] text-slate-300/90">
+                Click any row to see the full story for that employee in this batch.
+              </p>
+            </div>
+            <div class="text-right text-[0.7rem] text-slate-400">
+              <div>Selected employee</div>
+              <div id="detailEmployeeShort" class="text-[0.75rem] text-cyan-200 truncate max-w-[160px]">
+                None
+              </div>
+            </div>
+          </div>
+
+          <div id="detailEmpty" class="text-[0.8rem] text-slate-400 py-3">
+            No employee selected. Choose a row in the breakdown table above.
+          </div>
+
+          <div id="detailContent" class="hidden space-y-4 text-[0.8rem]">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Employee id</div>
+                <div id="detailEmployeeId" class="text-slate-100 font-semibold"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Wallet</div>
+                <div id="detailWallet" class="log-box text-[0.7rem] text-slate-100 break-all"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Jurisdiction</div>
+                <div id="detailJurisdiction" class="text-slate-100"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">KYC and KYB</div>
+                <div id="detailKyc" class="text-slate-100"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Gross and net</div>
+                <div id="detailAmounts" class="text-slate-100"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Tax breakdown</div>
+                <div id="detailTax" class="text-slate-100"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Risk view</div>
+                <div id="detailRisk" class="flex items-center gap-2"></div>
+              </div>
+              <div class="space-y-1">
+                <div class="text-[0.7rem] text-slate-400">Policy alignment</div>
+                <div id="detailPolicy" class="text-slate-100"></div>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-700/80 px-3 py-3">
+              <div class="text-[0.7rem] text-slate-400 mb-1">Simulated internal note</div>
+              <div id="detailNote" class="text-slate-200">
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-700/80 px-3 py-3">
+              <div class="text-[0.7rem] text-slate-400 mb-1">Hash and traceability demo</div>
+              <div id="detailHash" class="log-box text-[0.7rem] text-emerald-200 break-all">
+              </div>
+              <div class="mt-1 text-[0.7rem] text-slate-400">
+                In production this would link directly to a VERITAS payroll log PDA, plus the underlying Solana transaction.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-10 border-t border-slate-800/80 pt-5">
+      <p class="text-[0.7rem] leading-relaxed text-slate-400/90">
+        This payroll batch view is a demonstration only. No real salaries are paid and no real wallets are touched.
+        In a live deployment this screen would be driven by the VERITAS payroll program, legal wrapper and indexer,
+        with jurisdiction aware tax models and verified KYC and KYB data.
+      </p>
+    </footer>
+  </div>
+
+  <!-- SCRIPT: simulation logic -->
+  <script>
+    const state = {
+      batch: null,
+      employees: [],
+      selectedEmployeeId: null
+    };
+
+    const jurisdictionMeta = {
+      US: {
+        label: "United States, Delaware C Corp",
+        baseTaxRate: 0.24,
+        kycTemplate: "Employee KYC verified, employer KYB cleared for US payroll.",
+        policyHint: "Subject to US federal and state withholding, plus standard payroll reporting."
+      },
+      EU: {
+        label: "European Union, Ireland Ltd",
+        baseTaxRate: 0.21,
+        kycTemplate: "Employee KYC and EU residency confirmed, employer KYB cleared.",
+        policyHint: "Aligned with EU payroll directives, subject to local social contributions."
+      },
+      UK: {
+        label: "United Kingdom, London branch",
+        baseTaxRate: 0.22,
+        kycTemplate: "Employee identity verified, UK payroll profile registered.",
+        policyHint: "Treated as UK employment income with PAYE rules applied."
+      },
+      SG: {
+        label: "Singapore, APAC hub",
+        baseTaxRate: 0.18,
+        kycTemplate: "Employee KYC and work status verified, APAC entity KYB approved.",
+        policyHint: "Handled under Singapore payroll and cross border remittance rules where relevant."
+      }
+    };
+
+    function formatMoney(value, currency) {
+      const v = Number.isFinite(value) ? value : 0;
+      const formatted = v.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      return formatted + " " + currency;
+    }
+
+    function clamp(num, min, max) {
+      return Math.min(max, Math.max(min, num));
+    }
+
+    function sampleJurisdiction(mode, primary, index) {
+      if (mode === "single") return primary;
+      const keys = ["US", "EU", "UK", "SG"];
+      return keys[index % keys.length];
+    }
+
+    function sampleRiskLevel(baseTaxRate, riskMode) {
+      let base = baseTaxRate;
+      if (riskMode === "conservative") base += 0.04;
+      if (riskMode === "aggressive") base -= 0.04;
+
+      const r = Math.random();
+
+      if (r < clamp(base - 0.10, 0.05, 0.80)) return "Low";
+      if (r < clamp(base + 0.10, 0.10, 0.95)) return "Medium";
+      return "High";
+    }
+
+    function riskPillClass(level) {
+      if (level === "High") return "risk-pill risk-high";
+      if (level === "Medium") return "risk-pill risk-medium";
+      return "risk-pill risk-low";
+    }
+
+    function riskLabel(level) {
+      if (level === "High") return "High";
+      if (level === "Medium") return "Medium";
+      return "Low";
+    }
+
+    function randomWalletSuffix() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let s = "";
+      for (let i = 0; i < 12; i++) {
+        s += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return s;
+    }
+
+    function randomHash() {
+      const chars = "abcdef0123456789";
+      let s = "0x";
+      for (let i = 0; i < 40; i++) {
+        s += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return s;
+    }
+
+    function formatShortWallet(pub) {
+      if (!pub) return "N A";
+      if (pub.length <= 12) return pub;
+      return pub.slice(0, 4) + "…" + pub.slice(-4);
+    }
+
+    function simulateBatch() {
+      const nameInput = document.getElementById("inputBatchName");
+      const startInput = document.getElementById("inputPeriodStart");
+      const endInput = document.getElementById("inputPeriodEnd");
+      const jurisdictionModeInput = document.getElementById("inputJurisdictionMode");
+      const primaryJurInput = document.getElementById("inputPrimaryJurisdiction");
+      const currencyInput = document.getElementById("inputCurrency");
+      const countInput = document.getElementById("inputEmployeeCount");
+      const riskModeInput = document.getElementById("inputRiskMode");
+      const salaryMinInput = document.getElementById("inputSalaryMin");
+      const salaryMaxInput = document.getElementById("inputSalaryMax");
+
+      const batchName = nameInput.value.trim() || "Monthly payroll batch";
+      const periodStart = startInput.value || "";
+      const periodEnd = endInput.value || "";
+      const jurisdictionMode = jurisdictionModeInput.value;
+      const primaryJur = primaryJurInput.value;
+      const currency = currencyInput.value;
+      const riskMode = riskModeInput.value;
+
+      let count = parseInt(countInput.value || "0", 10);
+      if (!Number.isFinite(count) || count <= 0) count = 10;
+      if (count > 200) count = 200;
+
+      let salaryMin = parseFloat(salaryMinInput.value || "0");
+      let salaryMax = parseFloat(salaryMaxInput.value || "0");
+      if (!Number.isFinite(salaryMin) || salaryMin <= 0) salaryMin = 3000;
+      if (!Number.isFinite(salaryMax) || salaryMax <= salaryMin) salaryMax = salaryMin * 2;
+
+      const batch = {
+        name: batchName,
+        periodStart,
+        periodEnd,
+        jurisdictionMode,
+        primaryJur,
+        currency,
+        riskMode
+      };
+
+      const employees = [];
+      let totalGross = 0;
+      let totalTax = 0;
+      let totalNet = 0;
+
+      for (let i = 0; i < count; i++) {
+        const empIndex = i + 1;
+        const employeeId = "EMP" + String(empIndex).padStart(3, "0");
+        const jurisdiction = sampleJurisdiction(jurisdictionMode, primaryJur, i);
+        const meta = jurisdictionMeta[jurisdiction] || jurisdictionMeta.US;
+
+        const gross = salaryMin + Math.random() * (salaryMax - salaryMin);
+        const baseRate = meta.baseTaxRate;
+        const jitter = (Math.random() - 0.5) * 0.06;
+        const effectiveTaxRate = clamp(baseRate + jitter, 0.10, 0.40);
+        const taxAmount = gross * effectiveTaxRate;
+        const netAmount = gross - taxAmount;
+
+        const riskLevel = sampleRiskLevel(baseRate, riskMode);
+
+        const kycVariants = [
+          meta.kycTemplate,
+          meta.kycTemplate + " No anomalies detected in last quarter.",
+          meta.kycTemplate + " Enhanced checks applied for large payouts."
+        ];
+        const kycStatus = kycVariants[Math.floor(Math.random() * kycVariants.length)];
+
+        const policyNote = meta.policyHint;
+
+        let internalNote = "Standard payroll employee, within expected compensation band.";
+        if (riskLevel === "Medium") {
+          internalNote = "Non standard element present, check bonus or cross border factors before release.";
+        } else if (riskLevel === "High") {
+          internalNote = "Hold for manual review, high risk profile or unusual pattern flagged by oracle.";
+        }
+
+        const wallet = "Wallet" + randomWalletSuffix();
+        const hash = randomHash();
+
+        employees.push({
+          id: employeeId,
+          wallet,
+          jurisdiction,
+          jurisdictionLabel: meta.label,
+          gross,
+          taxAmount,
+          netAmount,
+          taxRate: effectiveTaxRate,
+          currency,
+          riskLevel,
+          kycStatus,
+          policyNote,
+          internalNote,
+          hash
+        });
+
+        totalGross += gross;
+        totalTax += taxAmount;
+        totalNet += netAmount;
+      }
+
+      batch.totalGross = totalGross;
+      batch.totalTax = totalTax;
+      batch.totalNet = totalNet;
+
+      state.batch = batch;
+      state.employees = employees;
+      state.selectedEmployeeId = null;
+
+      renderSummary();
+      renderEmployeeTable();
+      renderDetail(null);
+    }
+
+    function renderSummary() {
+      const batch = state.batch;
+      const employees = state.employees || [];
+
+      const statEmployees = document.getElementById("statEmployees");
+      const statTotalGross = document.getElementById("statTotalGross");
+      const statTotalTax = document.getElementById("statTotalTax");
+      const statTotalNet = document.getElementById("statTotalNet");
+      const summaryText = document.getElementById("batchSummaryText");
+      const summaryBatchName = document.getElementById("summaryBatchName");
+      const summaryPeriod = document.getElementById("summaryPeriod");
+      const summaryAvgGross = document.getElementById("summaryAvgGross");
+      const summaryAvgTaxRate = document.getElementById("summaryAvgTaxRate");
+      const summaryFlaggedCount = document.getElementById("summaryFlaggedCount");
+      const summaryJurisdictions = document.getElementById("summaryJurisdictions");
+      const summaryKycStats = document.getElementById("summaryKycStats");
+
+      if (!batch || employees.length === 0) {
+        statEmployees.textContent = "0";
+        statTotalGross.textContent = "$0.00";
+        statTotalTax.textContent = "$0.00";
+        statTotalNet.textContent = "$0.00";
+        summaryText.textContent = "No batch has been simulated yet. Configure parameters and run a simulation to populate this view.";
+        summaryBatchName.textContent = "Not set";
+        summaryPeriod.textContent = "Period not selected";
+        summaryAvgGross.textContent = "$0.00";
+        summaryAvgTaxRate.textContent = "0.0%";
+        summaryFlaggedCount.textContent = "0";
+        summaryJurisdictions.innerHTML = '<li class="text-slate-500">Pending simulation.</li>';
+        summaryKycStats.innerHTML = '<li class="text-slate-500">Pending simulation.</li>';
+        return;
+      }
+
+      const currency = batch.currency;
+
+      statEmployees.textContent = String(employees.length);
+      statTotalGross.textContent = formatMoney(batch.totalGross, currency);
+      statTotalTax.textContent = formatMoney(batch.totalTax, currency);
+      statTotalNet.textContent = formatMoney(batch.totalNet, currency);
+
+      summaryText.textContent =
+        "This batch represents " +
+        employees.length +
+        " simulated employees paid in " +
+        currency +
+        ". Values are generated locally for demo purposes.";
+
+      summaryBatchName.textContent = batch.name;
+      if (batch.periodStart && batch.periodEnd) {
+        summaryPeriod.textContent = "Period " + batch.periodStart + " to " + batch.periodEnd;
+      } else {
+        summaryPeriod.textContent = "Period not selected";
+      }
+
+      const avgGross = batch.totalGross / employees.length;
+      const avgTaxRate =
+        employees.reduce((acc, e) => acc + e.taxRate, 0) / employees.length || 0;
+      const flaggedCount = employees.filter((e) => e.riskLevel === "Medium" || e.riskLevel === "High").length;
+
+      summaryAvgGross.textContent = formatMoney(avgGross, currency);
+      summaryAvgTaxRate.textContent = (avgTaxRate * 100).toFixed(1) + "%";
+      summaryFlaggedCount.textContent = String(flaggedCount);
+
+      const jurisdCounts = {};
+      employees.forEach((e) => {
+        jurisdCounts[e.jurisdiction] = (jurisdCounts[e.jurisdiction] || 0) + 1;
+      });
+
+      summaryJurisdictions.innerHTML = "";
+      Object.keys(jurisdCounts).forEach((code) => {
+        const meta = jurisdictionMeta[code];
+        const li = document.createElement("li");
+        li.textContent = code + " · " + jurisdCounts[code] + " employees, " + (meta ? meta.label : "");
+        summaryJurisdictions.appendChild(li);
+      });
+
+      if (Object.keys(jurisdCounts).length === 0) {
+        summaryJurisdictions.innerHTML = '<li class="text-slate-500">No employees in this batch.</li>';
+      }
+
+      let verifiedCount = 0;
+      let enhancedCount = 0;
+      let holdCount = 0;
+
+      employees.forEach((e) => {
+        const text = e.kycStatus.toLowerCase();
+        if (text.includes("enhanced") || text.includes("cross border")) {
+          enhancedCount += 1;
+        } else if (e.riskLevel === "High") {
+          holdCount += 1;
+        } else {
+          verifiedCount += 1;
+        }
+      });
+
+      summaryKycStats.innerHTML = "";
+      const li1 = document.createElement("li");
+      li1.textContent = "Standard verified, " + verifiedCount;
+      const li2 = document.createElement("li");
+      li2.textContent = "Enhanced checks, " + enhancedCount;
+      const li3 = document.createElement("li");
+      li3.textContent = "Hold for manual review, " + holdCount;
+      summaryKycStats.appendChild(li1);
+      summaryKycStats.appendChild(li2);
+      summaryKycStats.appendChild(li3);
+    }
+
+    function renderEmployeeTable() {
+      const employees = state.employees || [];
+      const tableBody = document.getElementById("employeeTableBody");
+
+      tableBody.innerHTML = "";
+
+      if (employees.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "px-3 py-4 text-[0.75rem] text-slate-400";
+        empty.textContent = "No simulation data yet, run a payroll batch on the left.";
+        tableBody.appendChild(empty);
+        return;
+      }
+
+      employees.forEach((e) => {
+        const row = document.createElement("div");
+        row.className =
+          "table-row grid grid-cols-12 gap-2 px-3 py-2 items-center text-[0.7rem] sm:text-xs";
+
+        if (state.selectedEmployeeId === e.id) {
+          row.classList.add("table-row-selected");
+        }
+
+        row.innerHTML = `
+          <div class="col-span-3 md:col-span-2">
+            <div class="text-slate-100 font-semibold">${e.id}</div>
+            <div class="text-[0.65rem] text-slate-500">Simulated record</div>
+          </div>
+          <div class="hidden md:block md:col-span-3">
+            <div class="log-box text-[0.7rem] text-cyan-200 truncate">${formatShortWallet(e.wallet)}</div>
+            <div class="text-[0.65rem] text-slate-500">Wallet, not stored in this demo</div>
+          </div>
+          <div class="col-span-4 md:col-span-2">
+            <div class="text-[0.7rem] text-slate-100 truncate">${e.jurisdictionLabel}</div>
+            <div class="text-[0.65rem] text-slate-500">${e.jurisdiction}</div>
+          </div>
+          <div class="col-span-5 md:col-span-2 text-right">
+            <div class="text-[0.7rem] text-slate-100">${formatMoney(e.gross, e.currency)}</div>
+            <div class="text-[0.65rem] text-slate-500">Gross salary</div>
+          </div>
+          <div class="col-span-5 md:col-span-2 text-right">
+            <div class="text-[0.7rem] text-amber-100">${formatMoney(e.taxAmount, e.currency)}</div>
+            <div class="text-[0.65rem] text-slate-500">${(e.taxRate * 100).toFixed(1)} percent effective rate</div>
+          </div>
+          <div class="col-span-2 md:col-span-1 flex justify-end">
+            <span class="${riskPillClass(e.riskLevel)}">${riskLabel(e.riskLevel)}</span>
+          </div>
+        `;
+
+        row.addEventListener("click", () => {
+          state.selectedEmployeeId = e.id;
+          renderEmployeeTable();
+          renderDetail(e);
+        });
+
+        tableBody.appendChild(row);
+      });
+    }
+
+    function renderDetail(employee) {
+      const detailEmpty = document.getElementById("detailEmpty");
+      const detailContent = document.getElementById("detailContent");
+      const detailEmployeeShort = document.getElementById("detailEmployeeShort");
+      const detailEmployeeId = document.getElementById("detailEmployeeId");
+      const detailWallet = document.getElementById("detailWallet");
+      const detailJurisdiction = document.getElementById("detailJurisdiction");
+      const detailKyc = document.getElementById("detailKyc");
+      const detailAmounts = document.getElementById("detailAmounts");
+      const detailTax = document.getElementById("detailTax");
+      const detailRisk = document.getElementById("detailRisk");
+      const detailPolicy = document.getElementById("detailPolicy");
+      const detailNote = document.getElementById("detailNote");
+      const detailHash = document.getElementById("detailHash");
+
+      if (!employee) {
+        detailEmpty.classList.remove("hidden");
+        detailContent.classList.add("hidden");
+        detailEmployeeShort.textContent = "None";
+        return;
+      }
+
+      detailEmpty.classList.add("hidden");
+      detailContent.classList.remove("hidden");
+
+      detailEmployeeShort.textContent = employee.id;
+      detailEmployeeId.textContent = employee.id;
+      detailWallet.textContent = employee.wallet;
+      detailJurisdiction.textContent = employee.jurisdictionLabel;
+      detailKyc.textContent = employee.kycStatus;
+
+      detailAmounts.textContent =
+        "Gross, " +
+        formatMoney(employee.gross, employee.currency) +
+        ", Net, " +
+        formatMoney(employee.netAmount, employee.currency) +
+        ". Net equals gross minus simulated tax and contributions.";
+
+      detailTax.textContent =
+        formatMoney(employee.taxAmount, employee.currency) +
+        " collected at an effective rate of " +
+        (employee.taxRate * 100).toFixed(1) +
+        " percent for this jurisdiction in this demo.";
+
+      detailRisk.innerHTML = "";
+      const pill = document.createElement("span");
+      pill.className = riskPillClass(employee.riskLevel);
+      pill.textContent = riskLabel(employee.riskLevel) + " risk";
+      detailRisk.appendChild(pill);
+
+      const extra = document.createElement("span");
+      extra.className = "text-[0.7rem] text-slate-300";
+      if (employee.riskLevel === "Low") {
+        extra.textContent = " · Consistent with configured policy thresholds.";
+      } else if (employee.riskLevel === "Medium") {
+        extra.textContent = " · Suggest flagging for secondary review before release.";
+      } else {
+        extra.textContent = " · Hold and review, potential anomaly or policy edge case.";
+      }
+      detailRisk.appendChild(extra);
+
+      detailPolicy.textContent = employee.policyNote;
+      detailNote.textContent = employee.internalNote;
+      detailHash.textContent = employee.hash;
+    }
+
+    function resetConfiguration() {
+      document.getElementById("inputBatchName").value = "";
+      document.getElementById("inputPeriodStart").value = "";
+      document.getElementById("inputPeriodEnd").value = "";
+      document.getElementById("inputJurisdictionMode").value = "single";
+      document.getElementById("inputPrimaryJurisdiction").value = "US";
+      document.getElementById("inputCurrency").value = "USDC";
+      document.getElementById("inputEmployeeCount").value = "25";
+      document.getElementById("inputRiskMode").value = "conservative";
+      document.getElementById("inputSalaryMin").value = "4000";
+      document.getElementById("inputSalaryMax").value = "11000";
+
+      state.batch = null;
+      state.employees = [];
+      state.selectedEmployeeId = null;
+
+      renderSummary();
+      renderEmployeeTable();
+      renderDetail(null);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("btnSimulate").addEventListener("click", simulateBatch);
+      document.getElementById("btnReset").addEventListener("click", resetConfiguration);
+    });
+  </script>
+</body>
+</html>

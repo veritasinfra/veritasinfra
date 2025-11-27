@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS – Security and Audit Log Explorer</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+    }
+
+    .bg-veritas {
+      background: radial-gradient(circle at top left, #0f172a 0%, #020617 45%, #001b1f 80%, #000814 100%);
+    }
+
+    .card-veritas {
+      background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(2,6,23,0.97));
+      border: 1px solid rgba(56,189,248,0.18);
+      box-shadow:
+        0 0 30px rgba(15,118,110,0.25),
+        0 0 70px rgba(8,47,73,0.7);
+    }
+
+    .text-gradient-veritas {
+  background: linear-gradient(120deg, #22c55e 0%, #06b6d4 50%, #22c55e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.88;
+  letter-spacing: 0.22em;
+}
+
+.logo-emboss {
+  text-shadow: none !important;
+  filter: none !important;
+  letter-spacing: 0.22em;
+}
+
+
+    @keyframes glow {
+      0% { filter: drop-shadow(0 0 6px rgba(14,165,233,0.5)); }
+      50% { filter: drop-shadow(0 0 14px rgba(14,165,233,0.9)); }
+      100% { filter: drop-shadow(0 0 6px rgba(14,165,233,0.5)); }
+    }
+
+    .glass-line {
+      background: radial-gradient(circle, rgba(34,197,94,0.35), transparent 70%);
+      opacity: 0.6;
+    }
+
+    .pill {
+      padding: 0.22rem 0.8rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .pill-low {
+      border: 1px solid rgba(22,163,74,0.8);
+      background: rgba(22,101,52,0.45);
+      color: #bbf7d0;
+    }
+    .pill-medium {
+      border: 1px solid rgba(234,179,8,0.9);
+      background: rgba(161,98,7,0.45);
+      color: #fef9c3;
+    }
+    .pill-high {
+      border: 1px solid rgba(248,113,113,0.95);
+      background: rgba(127,29,29,0.7);
+      color: #fee2e2;
+    }
+
+    .row-hover {
+      transition: background-color 0.14s ease, transform 0.12s ease;
+      cursor: pointer;
+    }
+    .row-hover:hover {
+      background-color: rgba(30,64,175,0.25);
+      transform: translateY(-1px);
+    }
+
+    .btn-soft {
+      border-radius: 9999px;
+      padding: 0.45rem 1rem;
+      font-size: 0.78rem;
+      border: 1px solid rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+
+    .btn-soft:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .btn-soft-primary {
+      border-color: rgba(52,211,153,0.9);
+      background: radial-gradient(circle at 20% 0%, #22c55e 0%, #0ea5e9 40%, #0369a1 100%);
+      color: #ecfeff;
+      box-shadow:
+        0 0 16px rgba(34,197,94,0.8),
+        0 0 28px rgba(8,145,178,0.7);
+    }
+
+    .search-input {
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(51,65,85,0.9);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: rgba(45,212,191,0.9);
+      box-shadow: 0 0 0 1px rgba(45,212,191,0.7);
+    }
+
+    code.json-block {
+      font-size: 0.75rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .badge-type {
+      font-size: 0.68rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.95);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* subtle pulse highlight when "connected" */
+    .kpi-pulse {
+      box-shadow:
+        0 0 18px rgba(34,197,94,0.7),
+        0 0 32px rgba(8,145,178,0.6);
+      transition: box-shadow 0.3s ease;
+    }
+  </style>
+</head>
+
+<body class="bg-veritas text-slate-100 antialiased min-h-screen relative">
+
+  <!-- Decorative background -->
+  <div class="fixed inset-0 pointer-events-none opacity-40">
+    <div class="glass-line w-1 h-48 absolute left-10 top-32 blur-xl"></div>
+    <div class="glass-line w-1 h-56 absolute right-16 top-80 blur-xl"></div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-20 relative">
+
+    <!-- Header -->
+    <header class="flex flex-col gap-5 mb-10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <div class="inline-flex flex-col">
+            <span class="text-gradient-veritas logo-emboss text-3xl sm:text-4xl font-semibold uppercase">
+              VERITAS
+            </span>
+            <span class="mt-2 text-sm sm:text-base text-cyan-200/85">
+              Security and audit log explorer for VERITAS protocol events
+            </span>
+          </div>
+          <div class="mt-3 text-xs uppercase tracking-[0.24em] text-emerald-300/80">
+            Real time visibility for security teams, auditors, and regulators
+          </div>
+        </div>
+
+        <div class="flex flex-col items-end gap-2">
+          <button id="btnConnectIndexer" class="btn-soft btn-soft-primary">
+            <span class="text-xs">Connect indexer (simulated)</span>
+          </button>
+          <span id="connectStatus" class="text-[0.7rem] text-slate-400 max-w-xs text-right">
+            In a production setup this connects to the VERITAS indexer and Solana devnet or mainnet endpoints.
+          </span>
+        </div>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div id="kpiCardTotal" class="card-veritas rounded-2xl px-4 py-3">
+          <p class="text-[0.7rem] text-slate-400 uppercase tracking-wide">Total events (sample)</p>
+          <p class="text-xl font-semibold text-emerald-300 mt-1" id="kpiTotalEvents">1,284</p>
+          <p class="text-[0.7rem] text-slate-500 mt-1">From transaction logs, payroll, oracle, and access streams.</p>
+        </div>
+        <div id="kpiCardFlagged" class="card-veritas rounded-2xl px-4 py-3">
+          <p class="text-[0.7rem] text-slate-400 uppercase tracking-wide">Flagged events</p>
+          <p class="text-xl font-semibold text-rose-300 mt-1" id="kpiFlaggedEvents">7</p>
+          <p class="text-[0.7rem] text-slate-500 mt-1">Potential anomalies for review.</p>
+        </div>
+        <div id="kpiCard24h" class="card-veritas rounded-2xl px-4 py-3">
+          <p class="text-[0.7rem] text-slate-400 uppercase tracking-wide">Last 24 hours (sample)</p>
+          <p class="text-xl font-semibold text-cyan-300 mt-1" id="kpiLast24h">326</p>
+          <p class="text-[0.7rem] text-slate-500 mt-1">Live flow once wired to the indexer.</p>
+        </div>
+        <div id="kpiCardEntities" class="card-veritas rounded-2xl px-4 py-3">
+          <p class="text-[0.7rem] text-slate-400 uppercase tracking-wide">Active entities</p>
+          <p class="text-xl font-semibold text-emerald-200 mt-1" id="kpiActiveEntities">18</p>
+          <p class="text-[0.7rem] text-slate-500 mt-1">Mapped to legal wrapper and payroll PDAs.</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filters and table layout -->
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-7 items-start">
+
+      <!-- Left: filters + table -->
+      <section class="lg:col-span-2 space-y-5">
+
+        <!-- Filters -->
+        <div class="card-veritas rounded-3xl px-5 py-5">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div>
+              <h2 class="text-lg sm:text-xl font-semibold text-emerald-300">
+                Log stream filters
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-300/90 mt-1">
+                Narrow events by type, risk, entity, and search. In production these filters query the live indexer.
+              </p>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn-soft text-[0.7rem]" id="btnResetFilters">
+                Reset filters
+              </button>
+              <button class="btn-soft text-[0.7rem]" id="btnSimulateRefresh">
+                Refresh sample
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs sm:text-sm">
+            <div class="flex flex-col gap-1">
+              <label class="text-slate-400">Event type</label>
+              <select
+                id="filterType"
+                class="search-input rounded-xl px-3 py-2 bg-slate-950/80 text-sm"
+              >
+                <option value="all">All types</option>
+                <option value="transaction">Transaction</option>
+                <option value="payroll">Payroll</option>
+                <option value="oracle">Oracle</option>
+                <option value="access">Access</option>
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-slate-400">Risk level</label>
+              <select
+                id="filterRisk"
+                class="search-input rounded-xl px-3 py-2 bg-slate-950/80 text-sm"
+              >
+                <option value="all">All levels</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-slate-400">Entity</label>
+              <select
+                id="filterEntity"
+                class="search-input rounded-xl px-3 py-2 bg-slate-950/80 text-sm"
+              >
+                <option value="all">All entities</option>
+                <option value="OnlyLabs LLC">OnlyLabs LLC</option>
+                <option value="Atlas Finance DAO">Atlas Finance DAO</option>
+                <option value="Nexus Studios Inc">Nexus Studios Inc</option>
+                <option value="Solara Holdings">Solara Holdings</option>
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-slate-400">Search</label>
+              <input
+                id="filterSearch"
+                type="text"
+                class="search-input rounded-xl px-3 py-2 bg-slate-950/80 text-sm"
+                placeholder="Search tx, wallet, memo"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card-veritas rounded-3xl px-4 sm:px-5 py-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-semibold text-emerald-300">
+              Recent events (sample)
+            </h2>
+            <span class="text-[0.7rem] text-slate-400">
+              Click any row to inspect full details.
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-left text-xs sm:text-sm">
+              <thead class="border-b border-slate-700/70 text-slate-300 uppercase tracking-wide text-[0.65rem] sm:text-[0.7rem]">
+                <tr>
+                  <th class="py-2 pr-3">Time</th>
+                  <th class="py-2 pr-3">Type</th>
+                  <th class="py-2 pr-3">Entity</th>
+                  <th class="py-2 pr-3">Wallet</th>
+                  <th class="py-2 pr-3">Amount</th>
+                  <th class="py-2 pr-3">Risk</th>
+                </tr>
+              </thead>
+              <tbody id="logTableBody" class="divide-y divide-slate-800/80">
+                <!-- Filled by script -->
+              </tbody>
+            </table>
+          </div>
+
+          <p class="mt-3 text-[0.7rem] text-slate-400 leading-relaxed">
+            In a live environment this table is driven by the VERITAS indexer and Solana program logs for 
+            the legal wrapper, payroll engine, NFT credit rails, and Oracle updates. Each row corresponds 
+            to a structured event that can be exported for internal and external audits.
+          </p>
+        </div>
+      </section>
+
+      <!-- Right: details panel + exports + dev notes -->
+      <aside class="space-y-5">
+
+        <!-- Detail panel -->
+        <div class="card-veritas rounded-3xl px-5 py-5">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-lg font-semibold text-emerald-300">Event details</h2>
+            <span class="text-[0.7rem] text-slate-400" id="detailStatus">
+              No event selected
+            </span>
+          </div>
+
+          <div id="detailContent" class="space-y-3 text-xs sm:text-[0.8rem] text-slate-200">
+            <p class="text-slate-400 text-[0.75rem]">
+              Select any event in the table to see structured information, attached PDAs, and a raw JSON view 
+              similar to what an auditor or regulator would receive.
+            </p>
+
+            <dl class="grid grid-cols-2 gap-2">
+              <div>
+                <dt class="text-slate-500">Type</dt>
+                <dd id="detailType" class="text-slate-200 font-medium mt-1">–</dd>
+              </div>
+              <div>
+                <dt class="text-slate-500">Risk level</dt>
+                <dd id="detailRisk" class="text-slate-200 font-medium mt-1">–</dd>
+              </div>
+              <div>
+                <dt class="text-slate-500">Entity</dt>
+                <dd id="detailEntity" class="text-slate-200 font-medium mt-1">–</dd>
+              </div>
+              <div>
+                <dt class="text-slate-500">Wallet</dt>
+                <dd id="detailWallet" class="text-slate-200 font-medium mt-1 truncate">–</dd>
+              </div>
+              <div>
+                <dt class="text-slate-500">Amount</dt>
+                <dd id="detailAmount" class="text-slate-200 font-medium mt-1">–</dd>
+              </div>
+              <div>
+                <dt class="text-slate-500">Timestamp</dt>
+                <dd id="detailTime" class="text-slate-200 font-medium mt-1">–</dd>
+              </div>
+            </dl>
+
+            <div>
+              <p class="text-[0.7rem] text-slate-400 mb-1">Category</p>
+              <span id="detailCategory" class="badge-type">–</span>
+            </div>
+
+            <div>
+              <p class="text-[0.7rem] text-slate-400 mb-1">Raw JSON (sample)</p>
+              <div class="rounded-xl bg-slate-950/80 border border-slate-700/80 px-3 py-3 max-h-56 overflow-auto">
+                <code id="detailJson" class="json-block text-slate-300">
+{/* Select an event to inspect the structured payload here. */}
+                </code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Export block -->
+        <div class="card-veritas rounded-3xl px-5 py-5">
+          <h2 class="text-lg font-semibold text-emerald-300 mb-2">Export and review</h2>
+          <p class="text-[0.75rem] text-slate-300 mb-3">
+            Security teams and auditors can export filtered events for offline review, regulator reports, 
+            or enterprise compliance checks.
+          </p>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button class="btn-soft text-[0.75rem]" id="btnExportJson">
+              Export JSON sample
+            </button>
+            <button class="btn-soft text-[0.75rem]" id="btnExportCsv">
+              Export CSV sample
+            </button>
+          </div>
+          <p class="text-[0.7rem] text-slate-400">
+            In production these buttons stream structured events directly from the indexer and respect all active filters.
+          </p>
+        </div>
+
+        <!-- Developer notes -->
+        <div class="rounded-2xl bg-slate-950/80 border border-slate-700/80 px-4 py-4 text-[0.75rem] text-slate-300">
+          <p class="font-semibold text-emerald-200 mb-1">Developer notes</p>
+          <ul class="space-y-1.5 text-[0.72rem] text-slate-400">
+            <li>• Wire this UI to the VERITAS indexer and Solana program logs for real data.</li>
+            <li>• Map rows to transaction signatures, PDAs, Oracle entries, and payroll records.</li>
+            <li>• Add authentication and role based access controls for enterprise consoles.</li>
+            <li>• Connect exports to your back end or directly to object storage for regulator sharing.</li>
+          </ul>
+        </div>
+
+      </aside>
+    </main>
+
+  </div>
+
+  <!-- Script block for demo behaviour -->
+  <script>
+    const sampleEvents = [
+      {
+        id: "ev_001",
+        time: "2025-02-01 09:12:33 UTC",
+        type: "transaction",
+        category: "Payroll distribution",
+        entity: "OnlyLabs LLC",
+        wallet: "8XvA...Q1nZ",
+        amount: "4,250 USDC",
+        risk: "low",
+        memo: "Monthly payroll batch – engineering",
+        txSignature: "3x7qfF...D9kF",
+        jurisdiction: "USA",
+        flags: ["kyc_verified", "tax_context_attached"]
+      },
+      {
+        id: "ev_002",
+        time: "2025-02-01 09:20:10 UTC",
+        type: "payroll",
+        category: "Employee update",
+        entity: "Atlas Finance DAO",
+        wallet: "5HnL...p3Wm",
+        amount: "0",
+        risk: "medium",
+        memo: "Role changed from contractor to employee",
+        txSignature: "Br18sZ...L2pP",
+        jurisdiction: "EU",
+        flags: ["classification_change", "review_required"]
+      },
+      {
+        id: "ev_003",
+        time: "2025-02-01 09:31:44 UTC",
+        type: "oracle",
+        category: "Oracle value update",
+        entity: "VERITAS Oracle",
+        wallet: "OracleProgram",
+        amount: "N/A",
+        risk: "low",
+        memo: "Updated FX rate for USDC EUR",
+        txSignature: "7pK2dF...J1qT",
+        jurisdiction: "Global",
+        flags: ["oracle_update"]
+      },
+      {
+        id: "ev_004",
+        time: "2025-02-01 10:02:19 UTC",
+        type: "access",
+        category: "Admin console access",
+        entity: "Nexus Studios Inc",
+        wallet: "3DPq...Z9as",
+        amount: "N/A",
+        risk: "medium",
+        memo: "Admin login from new device",
+        txSignature: "LoginEvent",
+        jurisdiction: "UK",
+        flags: ["new_device", "mfa_challenge"]
+      },
+      {
+        id: "ev_005",
+        time: "2025-02-01 10:15:02 UTC",
+        type: "transaction",
+        category: "High value payout",
+        entity: "Solara Holdings",
+        wallet: "9EsT...Lm4k",
+        amount: "128,900 USDC",
+        risk: "high",
+        memo: "Bonus distribution – extraordinary",
+        txSignature: "F9w3mC...H7sK",
+        jurisdiction: "Singapore",
+        flags: ["high_value", "manual_review"]
+      },
+      {
+        id: "ev_006",
+        time: "2025-02-01 10:28:51 UTC",
+        type: "payroll",
+        category: "Payroll run",
+        entity: "Atlas Finance DAO",
+        wallet: "5HnL...p3Wm",
+        amount: "1,980 USDC",
+        risk: "low",
+        memo: "Cycle payout – contributor tier",
+        txSignature: "H1p3Kz...Q2Tf",
+        jurisdiction: "EU",
+        flags: ["kyc_verified"]
+      }
+    ];
+
+    let currentEvents = [...sampleEvents];
+
+    function riskLabel(risk) {
+      if (risk === "low") return '<span class="pill pill-low">Low</span>';
+      if (risk === "medium") return '<span class="pill pill-medium">Medium</span>';
+      if (risk === "high") return '<span class="pill pill-high">High</span>';
+      return '<span class="pill pill-low">Unknown</span>';
+    }
+
+    function typeBadge(type) {
+      let label = "Other";
+      if (type === "transaction") label = "Transaction";
+      if (type === "payroll") label = "Payroll";
+      if (type === "oracle") label = "Oracle";
+      if (type === "access") label = "Access";
+      return '<span class="badge-type">' + label + '</span>';
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("logTableBody");
+      tbody.innerHTML = "";
+
+      const filterType = document.getElementById("filterType").value;
+      const filterRisk = document.getElementById("filterRisk").value;
+      const filterEntity = document.getElementById("filterEntity").value;
+      const search = document.getElementById("filterSearch").value.trim().toLowerCase();
+
+      const filtered = currentEvents.filter(ev => {
+        if (filterType !== "all" && ev.type !== filterType) return false;
+        if (filterRisk !== "all" && ev.risk !== filterRisk) return false;
+        if (filterEntity !== "all" && ev.entity !== filterEntity) return false;
+        if (search) {
+          const hay = (ev.memo + " " + ev.wallet + " " + ev.txSignature + " " + ev.entity).toLowerCase();
+          if (!hay.includes(search)) return false;
+        }
+        return true;
+      });
+
+      filtered.forEach(ev => {
+        const tr = document.createElement("tr");
+        tr.className = "row-hover";
+        tr.dataset.id = ev.id;
+        tr.innerHTML = `
+          <td class="py-2 pr-3 text-[0.7rem] sm:text-xs text-slate-300">${ev.time}</td>
+          <td class="py-2 pr-3 text-[0.7rem] sm:text-xs">${typeBadge(ev.type)}</td>
+          <td class="py-2 pr-3 text-[0.7rem] sm:text-xs text-slate-200">${ev.entity}</td>
+          <td class="py-2 pr-3 text-[0.7rem] sm:text-xs text-slate-400">${ev.wallet}</td>
+          <td class="py-2 pr-3 text-[0.7rem] sm:text-xs text-emerald-200">${ev.amount}</td>
+          <td class="py-2 pr-3 text-[0.7rem] sm:text-xs">${riskLabel(ev.risk)}</td>
+        `;
+        tr.addEventListener("click", () => showDetails(ev.id));
+        tbody.appendChild(tr);
+      });
+
+      if (!filtered.length) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td colspan="6" class="py-4 text-center text-[0.75rem] text-slate-500">
+            No events match the current filters.
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function showDetails(id) {
+      const ev = currentEvents.find(e => e.id === id);
+      if (!ev) return;
+
+      document.getElementById("detailStatus").textContent = "Event " + ev.id + " selected";
+      document.getElementById("detailType").textContent = ev.type.charAt(0).toUpperCase() + ev.type.slice(1);
+      document.getElementById("detailRisk").textContent = ev.risk.charAt(0).toUpperCase() + ev.risk.slice(1);
+      document.getElementById("detailEntity").textContent = ev.entity;
+      document.getElementById("detailWallet").textContent = ev.wallet;
+      document.getElementById("detailAmount").textContent = ev.amount;
+      document.getElementById("detailTime").textContent = ev.time;
+      document.getElementById("detailCategory").textContent = ev.category || "Uncategorized";
+
+      const payload = {
+        id: ev.id,
+        type: ev.type,
+        category: ev.category,
+        entity: ev.entity,
+        wallet: ev.wallet,
+        amount: ev.amount,
+        risk: ev.risk,
+        memo: ev.memo,
+        txSignature: ev.txSignature,
+        jurisdiction: ev.jurisdiction,
+        flags: ev.flags
+      };
+
+      document.getElementById("detailJson").textContent = JSON.stringify(payload, null, 2);
+    }
+
+    function attachFilters() {
+      document.getElementById("filterType").addEventListener("change", renderTable);
+      document.getElementById("filterRisk").addEventListener("change", renderTable);
+      document.getElementById("filterEntity").addEventListener("change", renderTable);
+      document.getElementById("filterSearch").addEventListener("input", renderTable);
+
+      document.getElementById("btnResetFilters").addEventListener("click", () => {
+        document.getElementById("filterType").value = "all";
+        document.getElementById("filterRisk").value = "all";
+        document.getElementById("filterEntity").value = "all";
+        document.getElementById("filterSearch").value = "";
+        renderTable();
+      });
+
+      document.getElementById("btnSimulateRefresh").addEventListener("click", () => {
+        // For now we just re-render. In a live version this would poll the indexer.
+        renderTable();
+      });
+
+      document.getElementById("btnExportJson").addEventListener("click", () => {
+        alert("In production this would download filtered events as a JSON file.");
+      });
+
+      document.getElementById("btnExportCsv").addEventListener("click", () => {
+        alert("In production this would download filtered events as a CSV file.");
+      });
+    }
+
+    function attachConnectButton() {
+      const btn = document.getElementById("btnConnectIndexer");
+      const status = document.getElementById("connectStatus");
+      const kpiCards = [
+        document.getElementById("kpiCardTotal"),
+        document.getElementById("kpiCardFlagged"),
+        document.getElementById("kpiCard24h"),
+        document.getElementById("kpiCardEntities")
+      ];
+
+      btn.addEventListener("click", () => {
+        // A: popup notice
+        alert("Indexer linked (simulated). In production this would connect to the VERITAS indexer and live Solana logs.");
+
+        // Update status text
+        status.textContent = "Indexer connected (simulated). Sample data represents how live VERITAS events would stream in.";
+
+        // B: visual pulse on KPIs
+        kpiCards.forEach(card => card.classList.add("kpi-pulse"));
+        setTimeout(() => {
+          kpiCards.forEach(card => card.classList.remove("kpi-pulse"));
+        }, 1500);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      attachFilters();
+      attachConnectButton();
+      renderTable();
+    });
+  </script>
+</body>
+</html>

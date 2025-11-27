@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VERITAS — Compliance Infrastructure for Digital Payments</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  :root {
+    color-scheme: dark;
+  }
+
+  /* ===============================
+     GLOBAL LAYOUT + BACKGROUND
+  =============================== */
+  body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #e2e8f0;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(34, 197, 94, 0.16), transparent 60%),
+      radial-gradient(circle at 80% 0%, rgba(56, 189, 248, 0.14), transparent 60%),
+      radial-gradient(circle at 50% 120%, rgba(16, 185, 129, 0.15), transparent 65%),
+      #020617;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    animation: veritasPulse 8s ease-in-out infinite;
+  }
+
+  /* Slight background glow breathing effect */
+  @keyframes veritasPulse {
+    0%, 100% { filter: brightness(0.97); }
+    50% { filter: brightness(1.02); }
+  }
+
+  /* Security grid overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(15, 23, 42, 0.55) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 23, 42, 0.55) 1px, transparent 1px);
+    background-size: 140px 140px;
+    opacity: 0.23;
+    mix-blend-mode: soft-light;
+    animation: veritasGridDrift 22s linear infinite;
+    z-index: -1;
+  }
+
+  @keyframes veritasGridDrift {
+    0%, 100% { transform: translate(0,0); opacity:0.21; }
+    50% { transform: translate(-10px,-12px); opacity:0.28; }
+  }
+
+  /* ===============================
+     COMPONENT STYLES
+  =============================== */
+  .section-card {
+    background: rgba(2, 10, 20, 0.87);
+    border: 1px solid rgba(34,197,94,0.28);
+    border-radius: 1.3rem;
+    padding: 2rem;
+    box-shadow: 0 0 55px rgba(0,40,70,0.55);
+  }
+
+  .title-gradient {
+    background: linear-gradient(120deg,#22c55e,#06b6d4);
+    -webkit-background-clip:text;
+    color:transparent;
+    text-shadow:0 0 22px rgba(4,120,87,0.75);
+    letter-spacing: 0.08em;
+  }
+
+  .icon-box {
+    background: rgba(15,23,42,0.78);
+    border-radius: 0.9rem;
+    padding: 0.9rem;
+    border: 1px solid rgba(56,189,248,0.24);
+    box-shadow:0 0 18px rgba(0,90,120,0.32);
+  }
+
+  .btn-main {
+    background: radial-gradient(circle at top left,#22c55e,#06b6d4,#0369a1 88%);
+    border:1px solid rgba(34,197,94,0.45);
+    padding:0.75rem 1.2rem;
+    border-radius:0.85rem;
+    font-weight:600;
+    font-size:0.85rem;
+    color:white;
+    transition:transform 0.15s ease, filter 0.15s ease;
+  }
+  .btn-main:hover { transform:translateY(-2px); filter:brightness(1.08); }
+
+  .btn-secondary {
+    background:rgba(15,23,42,0.86);
+    border:1px solid rgba(148,163,184,0.58);
+    padding:0.75rem 1.1rem;
+    border-radius:0.85rem;
+    font-weight:600;
+    color:#e5e7eb;
+    font-size:0.85rem;
+    transition:background 0.15s ease;
+  }
+  .btn-secondary:hover { background:rgba(30,41,59,0.92); }
+
+  .footer-links a {
+    display:block;
+    color:#94a3b8;
+    font-size:0.75rem;
+    margin-bottom:0.35rem;
+  }
+  .footer-links a:hover { color:#22c55e; }
+
+</style>
+</head>
+<body>
+<!-- HERO -->
+<section class="max-w-6xl mx-auto py-20 px-6 text-center">
+  <h1 class="text-4xl sm:text-6xl font-bold title-gradient mb-4 uppercase tracking-wide">
+    VERITAS
+  </h1>
+  <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto">
+    Compliance Infrastructure for Digital Payments<br/>
+    Identity, audit logs and payment classification secured on-chain.
+  </p>
+
+  <div class="mt-7 flex flex-col sm:flex-row gap-4 justify-center">
+    <a href="veritas-demo-hub.html" class="btn-main">Explore Live Demo Hub</a>
+    <a href="mailto:veritas.partnerships@outlook.com" class="btn-secondary">Request Partnership / Pilot Access</a>
+  </div>
+</section>
+<!-- WHY VERITAS -->
+<section class="max-w-6xl mx-auto px-6 py-10 section-card">
+  <h2 class="text-xl font-semibold text-emerald-300 mb-3">Why VERITAS Exists</h2>
+  <p class="text-sm text-slate-300 leading-relaxed">
+    Global digital payments are fragmented by compliance barriers. Businesses are forced to use multiple 
+    systems for KYC, payroll tax classifications, vendor payments, AML reporting, and audit verification. 
+    VERITAS solves this by being an <strong>infrastructure layer.</strong> Not a payroll provider, not a 
+    custodian, but a <strong>compliance and identity engine</strong> that sits beneath any payment system.
+    Like Stripe standardized online payments, VERITAS standardizes regulatory trust.
+  </p>
+</section>
+</section>
+<section class="max-w-6xl mx-auto px-6 py-16">
+  <h2 class="text-xl font-semibold text-emerald-300 mb-6 text-center">Core Utilities</h2>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+    <div class="icon-box"><p class="text-sm font-semibold">Verified Business NFTs (KYB)</p></div>
+    <div class="icon-box"><p class="text-sm font-semibold">Employee & Wallet Identity Mapping</p></div>
+    <div class="icon-box"><p class="text-sm font-semibold">Payment Classification Engine</p></div>
+    <div class="icon-box"><p class="text-sm font-semibold">Certified IRS/AML Audit Trail</p></div>
+  </div>
+</section>
+<!-- MISSION + CORPORATE CONTACT BLOCK -->
+<section class="max-w-6xl mx-auto px-6 py-12 section-card">
+  <h2 class="text-xl font-semibold text-emerald-300 mb-3">Mission & Vision</h2>
+  <p class="text-sm text-slate-300 leading-relaxed mb-5">
+    VERITAS is an independent compliance infrastructure for digital payments. Our mission is to
+    enable global businesses to transact on-chain with the same regulatory clarity, auditability,
+    and legal certainty expected of traditional finance. We do not custody funds or operate as a
+    payroll provider, processor, or exchange. Instead, we deliver the verification, classification,
+    and audit framework that financial systems build on top of. VERITAS is standardizing trust for
+    decentralized commerce.
+  </p>
+
+  <div class="border-t border-slate-700/70 pt-4 mt-4">
+    <p class="text-sm text-emerald-300 font-semibold mb-1">Corporate Contact</p>
+    <p class="text-xs text-slate-300 leading-relaxed">
+      Veritas Compliance Systems<br/>
+      Compliance & Infrastructure Division<br/>
+      Telegram (Business Inquiry): 
+      <a href="https://t.me/Stinbo" target="_blank" class="underline text-cyan-300 hover:text-emerald-300">
+        https://t.me/Stinbo
+      </a><br/>
+      Email (Partnerships): 
+      <a href="mailto:partnerships@veritas.com" class="underline text-cyan-300 hover:text-emerald-300">
+        veritas.partnerships@outlook.com
+      </a>
+    </p>
+  </div>
+<div class="w-full my-8">
+  <div class="h-px w-full bg-gradient-to-r from-emerald-400/30 via-cyan-300/60 to-emerald-400/30 blur-[0.3px]"></div>
+</div>
+<!-- WORKFLOW PREVIEW -->
+<section class="max-w-6xl mx-auto px-6 py-16">
+  <h2 class="text-xl font-semibold text-emerald-300 mb-6 text-center">
+    Workflow Preview
+  </h2>
+  <ol class="text-sm text-slate-300 max-w-2xl mx-auto list-decimal list-inside space-y-1">
+    <li>Verify Entity</li>
+    <li>Issue Employee NFTs</li>
+    <li>Execute Payments</li>
+    <li>Generate Compliance Logs</li>
+    <li>Export IRS/AML Audit</li>
+  </ol>
+  <div class="mt-6 text-center">
+    <a href="veritasworkflow_demo.html" class="btn-secondary">View Workflow Demo</a>
+  </div>
+</section>
+<div class="w-full my-8">
+  <div class="h-px w-full bg-gradient-to-r from-emerald-400/30 via-cyan-300/60 to-emerald-400/30 blur-[0.3px]"></div>
+</div>
+<section class="max-w-6xl mx-auto px-6 py-16">
+  <div class="text-center mb-8">
+    <h2 class="text-xl sm:text-2xl font-semibold text-emerald-300 mb-2">
+      Real-World Use Cases
+    </h2>
+    <p class="text-sm text-slate-300 max-w-2xl mx-auto">
+      Click a scenario to see how things go wrong without VERITAS — then flip the story to see how the same situation plays out when every payment, identity, and audit log is secured on-chain.
+    </p>
+  </div>
+
+  <div class="space-y-5">
+
+    <!-- USE CASE 1: GLOBAL PAYROLL COMPLIANCE -->
+    <div class="rounded-2xl border border-emerald-500/30 bg-slate-950/60 shadow-xl overflow-hidden">
+      <!-- Header -->
+      <button
+        type="button"
+        class="w-full flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 text-left hover:bg-slate-900/70 transition"
+        onclick="toggleUseCaseBody('uc1')"
+      >
+        <div>
+          <p class="text-[0.75rem] uppercase tracking-[0.22em] text-emerald-300">
+            Use Case 01
+          </p>
+          <h3 class="text-sm sm:text-base font-semibold text-slate-100 mt-1">
+            Global Payroll Compliance for Remote Teams
+          </h3>
+        </div>
+        <span id="uc1Chevron" class="ml-3 text-slate-400 text-xs sm:text-sm">
+          ▼
+        </span>
+      </button>
+
+      <!-- Body -->
+      <div id="uc1Body" class="border-t border-slate-800/80 hidden">
+        <!-- Toggle bar -->
+        <div class="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-slate-800/80 bg-slate-950/60">
+          <div class="flex gap-1 text-[0.7rem] sm:text-xs">
+            <button
+              id="uc1TabBefore"
+              class="px-3 py-1 rounded-full bg-rose-900/40 border border-rose-500/60 text-rose-100 font-medium"
+              onclick="setUseCaseView('uc1','before')"
+            >
+              Without VERITAS
+            </button>
+            <button
+              id="uc1TabAfter"
+              class="px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300"
+              onclick="setUseCaseView('uc1','after')"
+            >
+              With VERITAS
+            </button>
+          </div>
+          <span class="text-[0.7rem] text-slate-400">
+            Flip the story outcome
+          </span>
+        </div>
+
+        <!-- Stories -->
+        <div class="px-4 sm:px-5 py-4 text-xs sm:text-sm space-y-4">
+
+          <!-- BEFORE -->
+          <div id="uc1Before" class="space-y-2">
+            <p class="text-rose-300 font-semibold text-[0.75rem]">
+              Scenario – “The Remote Dream Turns Into a Tax Nightmare”
+            </p>
+            <p class="text-slate-200">
+              A U.S. startup hires engineers and designers in the UK, Germany, and Brazil. To move fast,
+              the founder pays everyone in USDC directly from a multi-sig wallet. There’s no consistent
+              tracking of who is an employee vs contractor, no standardized contracts, and each accountant
+              in each country gets a different spreadsheet.
+            </p>
+            <p class="text-slate-300">
+              For two years, the company grows. Then a routine review triggers an inquiry:
+              the UK engineer appears as a “contractor” but is functionally an employee; in Germany,
+              social contributions weren’t correctly categorized; in Brazil, cross-border tax treatment
+              is inconsistent. Regulators ask for:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 space-y-1">
+              <li>Proof of identity and status for every wallet.</li>
+              <li>Classification of each payment (wage, bonus, grant, vendor, etc.).</li>
+              <li>Audit-ready logs linking on-chain transfers to legal entities and contracts.</li>
+            </ul>
+            <p class="text-slate-300">
+              The startup can’t provide a unified ledger. They scramble through CSV exports,
+              exchange histories, and Google Sheets. Within months, they receive:
+            </p>
+            <ul class="list-disc list-inside text-rose-200 space-y-1">
+              <li>Back-tax assessments and penalties in multiple jurisdictions.</li>
+              <li>Blocked bank relationships due to “unstructured crypto payroll.”</li>
+              <li>A delayed funding round as investors request clarity on contingent liabilities.</li>
+            </ul>
+            <p class="text-slate-400 italic">
+              Result: growth stalls, lawyers and accountants get paid instead of talent, and every
+              new international hire feels risky.
+            </p>
+            <button
+              class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/70 bg-emerald-500/10 text-[0.7rem] text-emerald-200"
+              onclick="setUseCaseView('uc1','after')"
+            >
+              Show how this plays out with VERITAS
+            </button>
+          </div>
+
+          <!-- AFTER -->
+          <div id="uc1After" class="space-y-2 hidden">
+            <p class="text-emerald-300 font-semibold text-[0.75rem]">
+              Scenario With VERITAS – “Remote First, Regulator-Ready From Day One”
+            </p>
+            <p class="text-slate-200">
+              The same startup onboards through VERITAS. The company is issued a
+              <span class="text-emerald-300 font-medium">Verified Business NFT</span> that encodes its entity,
+              jurisdiction, and tax profile. Each team member receives an
+              <span class="text-emerald-300 font-medium">identity-linked employment NFT</span> that clearly marks
+              them as employee or contractor and associates their wallet with their legal status.
+            </p>
+            <p class="text-slate-300">
+              Every USDC payroll run is processed through VERITAS’ payment classification engine:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 space-y-1">
+              <li>Transactions are tagged as salary, bonus, equity vesting, or contractor payout.</li>
+              <li>Each payment is tied to a specific entity-jurisdiction context (UK, EU, Brazil).</li>
+              <li>All events are pushed into an immutable, queryable audit log.</li>
+            </ul>
+            <p class="text-slate-300">
+              When tax authorities or auditors knock, the company generates a 90-day VERITAS report
+              with one click:
+            </p>
+            <ul class="list-disc list-inside text-emerald-200 space-y-1">
+              <li>Per-jurisdiction breakdown of payroll events and identities.</li>
+              <li>Proof that each wallet belonged to a verified individual or entity.</li>
+              <li>Regulator-grade export aligned with IRS/FinCEN/AMLD expectations.</li>
+            </ul>
+            <p class="text-slate-400 italic">
+              Result: the startup scales remote hiring confidently, investors see risk derisked at the
+              infrastructure layer, and regulators are presented with a clean, consistent ledger instead
+              of a patchwork of screenshots.
+            </p>
+            <button
+              class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-rose-400/70 bg-rose-500/10 text-[0.7rem] text-rose-200"
+              onclick="setUseCaseView('uc1','before')"
+            >
+              Go back to the pre-VERITAS outcome
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- USE CASE 2: ON-CHAIN VENDOR PAYMENTS -->
+    <div class="rounded-2xl border border-cyan-500/30 bg-slate-950/60 shadow-xl overflow-hidden">
+      <button
+        type="button"
+        class="w-full flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 text-left hover:bg-slate-900/70 transition"
+        onclick="toggleUseCaseBody('uc2')"
+      >
+        <div>
+          <p class="text-[0.75rem] uppercase tracking-[0.22em] text-cyan-300">
+            Use Case 02
+          </p>
+          <h3 class="text-sm sm:text-base font-semibold text-slate-100 mt-1">
+            On-Chain Vendor Payments With Tax Classification
+          </h3>
+        </div>
+        <span id="uc2Chevron" class="ml-3 text-slate-400 text-xs sm:text-sm">
+          ▼
+        </span>
+      </button>
+
+      <div id="uc2Body" class="border-t border-slate-800/80 hidden">
+        <div class="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-slate-800/80 bg-slate-950/60">
+          <div class="flex gap-1 text-[0.7rem] sm:text-xs">
+            <button
+              id="uc2TabBefore"
+              class="px-3 py-1 rounded-full bg-rose-900/40 border border-rose-500/60 text-rose-100 font-medium"
+              onclick="setUseCaseView('uc2','before')"
+            >
+              Without VERITAS
+            </button>
+            <button
+              id="uc2TabAfter"
+              class="px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300"
+              onclick="setUseCaseView('uc2','after')"
+            >
+              With VERITAS
+            </button>
+          </div>
+          <span class="text-[0.7rem] text-slate-400">
+            Flip the story outcome
+          </span>
+        </div>
+
+        <div class="px-4 sm:px-5 py-4 text-xs sm:text-sm space-y-4">
+          <!-- BEFORE -->
+          <div id="uc2Before" class="space-y-2">
+            <p class="text-rose-300 font-semibold text-[0.75rem]">
+              Scenario – “Crypto Vendor Chaos”
+            </p>
+            <p class="text-slate-200">
+              A gaming studio pays dozens of artists, composers, and developers in USDC and SOL.
+              Vendors are spread across the U.S., Eastern Europe, and Southeast Asia. Payments fly
+              out of a treasury wallet with brief memos like “art drop” and “music pack.”
+            </p>
+            <p class="text-slate-300">
+              At year-end, the finance lead tries to reconcile:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 space-y-1">
+              <li>Which wallets are U.S. vendors needing 1099s.</li>
+              <li>Who is an incorporated business vs an individual freelancer.</li>
+              <li>Which payouts qualify as royalties, which as services, which as bonuses.</li>
+            </ul>
+            <p class="text-slate-300">
+              Exchanges begin flagging large aggregate outflows to “unknown beneficiaries.” One major
+              partner bank asks for enhanced due diligence. When the company can’t clearly prove who
+              got paid for what and under which tax treatment, the bank quietly sunsets the relationship.
+            </p>
+            <p class="text-slate-400 italic">
+              Result: the studio spends months reconstructing payment histories; tax filings are late;
+              future banking partners are skeptical of “on-chain vendor payment experiments.”
+            </p>
+            <button
+              class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/70 bg-emerald-500/10 text-[0.7rem] text-emerald-200"
+              onclick="setUseCaseView('uc2','after')"
+            >
+              Show the same story with VERITAS
+            </button>
+          </div>
+
+          <!-- AFTER -->
+          <div id="uc2After" class="space-y-2 hidden">
+            <p class="text-emerald-300 font-semibold text-[0.75rem]">
+              Scenario With VERITAS – “Vendor Rails That Banks Can Trust”
+            </p>
+            <p class="text-slate-200">
+              The studio plugs treasury tools into VERITAS. Each vendor completes a KYB/KYC flow and
+              receives a <span class="text-emerald-300 font-medium">Vendor or Business NFT</span> that encodes
+              whether they are:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 space-y-1">
+              <li>U.S. individual (1099-NEC scope).</li>
+              <li>Non-U.S. contractor.</li>
+              <li>Registered business entity.</li>
+              <li>Royalty / IP-only participant.</li>
+            </ul>
+            <p class="text-slate-300">
+              When a payment is sent, VERITAS attaches:
+            </p>
+            <ul class="list-disc list-inside text-emerald-200 space-y-1">
+              <li>A classification tag (services, royalty, milestone bonus, expense reimbursement).</li>
+              <li>Jurisdiction context (e.g. U.S. source income vs foreign source).</li>
+              <li>An immutable log entry linking transaction hash, vendor identity, and category.</li>
+            </ul>
+            <p class="text-slate-300">
+              At year-end, the studio exports a ready-to-file package:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 space-y-1">
+              <li>U.S. vendor list with 1099-eligible totals.</li>
+              <li>Non-U.S. vendors with treaty-relevant classifications.</li>
+              <li>Audit-ready CSV/JSON for internal and external accountants.</li>
+            </ul>
+            <p class="text-slate-400 italic">
+              Result: banks see a structured, explainable flow of value; regulators see clear identity
+              and tax treatment; the studio keeps paying in crypto without losing real-world banking.
+            </p>
+            <button
+              class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-rose-400/70 bg-rose-500/10 text-[0.7rem] text-rose-200"
+              onclick="setUseCaseView('uc2','before')"
+            >
+              Go back to the pre-VERITAS outcome
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USE CASE 3: CREDIT LINE BACKED BY VERIFIED REVENUE -->
+    <div class="rounded-2xl border border-emerald-500/30 bg-slate-950/60 shadow-xl overflow-hidden">
+      <button
+        type="button"
+        class="w-full flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 text-left hover:bg-slate-900/70 transition"
+        onclick="toggleUseCaseBody('uc3')"
+      >
+        <div>
+          <p class="text-[0.75rem] uppercase tracking-[0.22em] text-emerald-300">
+            Use Case 03
+          </p>
+          <h3 class="text-sm sm:text-base font-semibold text-slate-100 mt-1">
+            Decentralized Credit Line Backed by Verified Revenue
+          </h3>
+        </div>
+        <span id="uc3Chevron" class="ml-3 text-slate-400 text-xs sm:text-sm">
+          ▼
+        </span>
+      </button>
+
+      <div id="uc3Body" class="border-t border-slate-800/80 hidden">
+        <div class="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-slate-800/80 bg-slate-950/60">
+          <div class="flex gap-1 text-[0.7rem] sm:text-xs">
+            <button
+              id="uc3TabBefore"
+              class="px-3 py-1 rounded-full bg-rose-900/40 border border-rose-500/60 text-rose-100 font-medium"
+              onclick="setUseCaseView('uc3','before')"
+            >
+              Without VERITAS
+            </button>
+            <button
+              id="uc3TabAfter"
+              class="px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300"
+              onclick="setUseCaseView('uc3','after')"
+            >
+              With VERITAS
+            </button>
+          </div>
+          <span class="text-[0.7rem] text-slate-400">
+            Flip the story outcome
+          </span>
+        </div>
+
+        <div class="px-4 sm:px-5 py-4 text-xs sm:text-sm space-y-4">
+          <!-- BEFORE -->
+          <div id="uc3Before" class="space-y-2">
+            <p class="text-rose-300 font-semibold text-[0.75rem]">
+              Scenario – “Great On-Chain Revenue, Zero Underwriting Trust”
+            </p>
+            <p class="text-slate-200">
+              A DeFi-enabled fintech app processes millions of dollars in on-chain volume each month.
+              All revenue is visible in public wallets, but none of it is normalized for a traditional
+              lender: there are no standard merchant IDs, no clear separation of customer funds vs
+              protocol fees, and no mapped entity structure.
+            </p>
+            <p class="text-slate-300">
+              The company approaches a credit fund for a growth facility. The fund’s team looks at:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 space-y-1">
+              <li>Unlabeled wallet flows on chain.</li>
+              <li>Self-reported dashboards built in spreadsheets.</li>
+              <li>No independent attestation that those flows belong to a licensed entity.</li>
+            </ul>
+            <p class="text-slate-400 italic">
+              Result: the lender passes. The business is “interesting,” but the data is too noisy,
+              too self-reported, and too fragile to support a sizable credit line.
+            </p>
+            <button
+              class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/70 bg-emerald-500/10 text-[0.7rem] text-emerald-200"
+              onclick="setUseCaseView('uc3','after')"
+            >
+              Show how VERITAS changes this
+            </button>
+          </div>
+
+          <!-- AFTER -->
+          <div id="uc3After" class="space-y-2 hidden">
+            <p class="text-emerald-300 font-semibold text-[0.75rem]">
+              Scenario With VERITAS – “On-Chain Revenue as Bankable Collateral”
+            </p>
+            <p class="text-slate-200">
+              The same fintech app integrates VERITAS. Protocol-level revenue is routed through
+              <span class="text-emerald-300 font-medium">VERITAS-tracked payment paths</span>, where each inflow is:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 space-y-1">
+              <li>Attributed to a Verified Business NFT representing the operating entity.</li>
+              <li>Classified as fee revenue, interest spread, or other clearly labeled line item.</li>
+              <li>Logged in an immutable, queryable audit record with timestamps and jurisdictions.</li>
+            </ul>
+            <p class="text-slate-300">
+              When approaching lenders, the company shares a <span class="text-emerald-300 font-medium">
+              VERITAS credit packet</span>:
+            </p>
+            <ul class="list-disc list-inside text-emerald-200 space-y-1">
+              <li>Rolling 12-month revenue with on-chain signatures and PDAs as proof.</li>
+              <li>Segregation of customer funds vs protocol income.</li>
+              <li>Risk-tiered breakdown of counterparties via VERITAS oracles.</li>
+            </ul>
+            <p class="text-slate-400 italic">
+              Result: the lender can treat on-chain cashflows like any other verifiable revenue stream.
+              Underwriting is faster, limits are higher, and the DeFi stack plugs into real-world credit
+              instead of operating in isolation.
+            </p>
+            <button
+              class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-rose-400/70 bg-rose-500/10 text-[0.7rem] text-rose-200"
+              onclick="setUseCaseView('uc3','before')"
+            >
+              Go back to the pre-VERITAS outcome
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USE CASE 4: RWA & INVOICE TOKENIZATION -->
+    <div class="rounded-2xl border border-cyan-500/30 bg-slate-950/60 shadow-xl overflow-hidden">
+      <button
+        type="button"
+        class="w-full flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 text-left hover:bg-slate-900/70 transition"
+        onclick="toggleUseCaseBody('uc4')"
+      >
+        <div>
+          <p class="text-[0.75rem] uppercase tracking-[0.22em] text-cyan-300">
+            Use Case 04
+          </p>
+          <h3 class="text-sm sm:text-base font-semibold text-slate-100 mt-1">
+            Regulated RWA & Invoice Tokenization for Businesses
+          </h3>
+        </div>
+        <span id="uc4Chevron" class="ml-3 text-slate-400 text-xs sm:text-sm">
+          ▼
+        </span>
+      </button>
+
+      <div id="uc4Body" class="border-t border-slate-800/80 hidden">
+        <div class="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-slate-800/80 bg-slate-950/60">
+          <div class="flex gap-1 text-[0.7rem] sm:text-xs">
+            <button
+              id="uc4TabBefore"
+              class="px-3 py-1 rounded-full bg-rose-900/40 border border-rose-500/60 text-rose-100 font-medium"
+              onclick="setUseCaseView('uc4','before')"
+            >
+              Without VERITAS
+            </button>
+            <button
+              id="uc4TabAfter"
+              class="px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300"
+              onclick="setUseCaseView('uc4','after')"
+            >
+              With VERITAS
+            </button>
+          </div>
+          <span class="text-[0.7rem] text-slate-400">
+            Flip the story outcome
+          </span>
+        </div>
+
+        <div class="px-4 sm:px-5 py-4 text-xs sm:text-sm space-y-4">
+          <!-- BEFORE -->
+          <div id="uc4Before" class="space-y-2">
+            <p class="text-rose-300 font-semibold text-[0.75rem]">
+              Scenario – “DIY RWA Meets Regulatory Wall”
+            </p>
+            <p class="text-slate-200">
+              A logistics company decides to “tokenize invoices” to improve liquidity. They upload PDFs
+              to a cloud drive, mint generic NFTs that point to those files, and offer them on a
+              marketplace as “invoice-backed assets.”
+            </p>
+            <p class="text-slate-300">
+              Nothing encodes:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 space-y-1">
+              <li>The legal entity behind each invoice.</li>
+              <li>The jurisdiction and governing law for the receivable.</li>
+              <li>Who is allowed to hold or trade the tokenized claim.</li>
+            </ul>
+            <p class="text-slate-300">
+              When they speak to their bank and legal counsel, the feedback is immediate:
+            </p>
+            <ul class="list-disc list-inside text-rose-200 space-y-1">
+              <li>Potential unregistered securities exposure.</li>
+              <li>No standardized risk classification or investor eligibility checks.</li>
+              <li>No clear audit trail if an invoice is disputed or repaid early.</li>
+            </ul>
+            <p class="text-slate-400 italic">
+              Result: the pilot is shut down. The idea was right; the infrastructure was not.
+            </p>
+            <button
+              class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-400/70 bg-emerald-500/10 text-[0.7rem] text-emerald-200"
+              onclick="setUseCaseView('uc4','after')"
+            >
+              Show the RWA flow with VERITAS
+            </button>
+          </div>
+
+          <!-- AFTER -->
+          <div id="uc4After" class="space-y-2 hidden">
+            <p class="text-emerald-300 font-semibold text-[0.75rem]">
+              Scenario With VERITAS – “Tokenized Invoices on a Regulated Spine”
+            </p>
+            <p class="text-slate-200">
+              The logistics company routes its tokenization pilot through VERITAS. Each invoice is:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 space-y-1">
+              <li>Uploaded and hashed; the hash and metadata are written into a VERITAS RWA PDA.</li>
+              <li>Linked to a Verified Business NFT representing the issuing company.</li>
+              <li>Assigned a risk tier via a VERITAS compliance oracle (e.g. A-1, B-2).</li>
+            </ul>
+            <p class="text-slate-300">
+              The resulting RWA NFT carries:
+            </p>
+            <ul class="list-disc list-inside text-emerald-200 space-y-1">
+              <li>Jurisdiction, governing law, and basic eligibility rules.</li>
+              <li>Structured fields for face value, maturity, and obligor.</li>
+              <li>A link to a full VERITAS audit trail for every status change.</li>
+            </ul>
+            <p class="text-slate-300">
+              Banks and regulated platforms can:
+            </p>
+            <ul class="list-disc list-inside text-slate-300 space-y-1">
+              <li>Read standardized metadata directly from chain.</li>
+              <li>Verify that only KYC’d wallets hold specific risk tiers.</li>
+              <li>Pull end-to-end servicing history from VERITAS logs.</li>
+            </ul>
+            <p class="text-slate-400 italic">
+              Result: the same innovation — tokenized invoices — but now on top of an infrastructure
+              regulators can recognize, interrogate, and ultimately approve.
+            </p>
+            <button
+              class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-rose-400/70 bg-rose-500/10 text-[0.7rem] text-rose-200"
+              onclick="setUseCaseView('uc4','before')"
+            >
+              Go back to the pre-VERITAS outcome
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // Accordion open/close
+  function toggleUseCaseBody(id) {
+    const body = document.getElementById(id + "Body");
+    const chevron = document.getElementById(id + "Chevron");
+    if (!body || !chevron) return;
+    const isHidden = body.classList.contains("hidden");
+    if (isHidden) {
+      body.classList.remove("hidden");
+      chevron.textContent = "▲";
+    } else {
+      body.classList.add("hidden");
+      chevron.textContent = "▼";
+    }
+  }
+
+  // Toggle Before / After story view
+  function setUseCaseView(id, view) {
+    const beforeEl = document.getElementById(id + "Before");
+    const afterEl = document.getElementById(id + "After");
+    const tabBefore = document.getElementById(id + "TabBefore");
+    const tabAfter = document.getElementById(id + "TabAfter");
+    if (!beforeEl || !afterEl || !tabBefore || !tabAfter) return;
+
+    if (view === "before") {
+      beforeEl.classList.remove("hidden");
+      afterEl.classList.add("hidden");
+      tabBefore.className = "px-3 py-1 rounded-full bg-rose-900/40 border border-rose-500/60 text-rose-100 font-medium";
+      tabAfter.className = "px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300";
+    } else {
+      beforeEl.classList.add("hidden");
+      afterEl.classList.remove("hidden");
+      tabBefore.className = "px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300";
+      tabAfter.className = "px-3 py-1 rounded-full bg-emerald-900/40 border border-emerald-500/70 text-emerald-100 font-medium";
+    }
+  }
+
+  // Optional: set all to "before" by default
+  document.addEventListener("DOMContentLoaded", () => {
+    ["uc1","uc2","uc3","uc4"].forEach(id => setUseCaseView(id,"before"));
+  });
+</script>
+<div class="w-full my-8">
+  <div class="h-px w-full bg-gradient-to-r from-emerald-400/30 via-cyan-300/60 to-emerald-400/30 blur-[0.3px]"></div>
+</div>
+
+<!-- REGULATORY ENGAGEMENT ROADMAP -->
+<section class="max-w-6xl mx-auto px-6 mt-10">
+  <h2 class="text-xl font-semibold text-emerald-300 mb-4">
+    Regulatory Engagement Roadmap
+  </h2>
+  <p class="text-sm text-slate-300 leading-relaxed mb-6 max-w-3xl">
+    Veritas is being positioned as a neutral compliance infrastructure for digital payments. 
+    Our objective is to support regulated actors — not replace them — by standardizing 
+    identity, attestation, and audit logic beneath banks, payroll providers, fintech platforms, 
+    DAOs, and digital asset issuers. Below are the planned filings and briefing commitments for 
+    interoperable compliance development.
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- IRS Brief -->
+    <div class="rounded-xl bg-slate-950/90 border border-slate-700/80 p-4">
+      <p class="text-sm font-semibold text-cyan-300 mb-1">U.S. IRS Digital Asset Division</p>
+      <p class="text-[0.75rem] text-slate-400 mb-3">
+        Technical standard for wage and vendor classification using on-chain attestations.
+      </p>
+      <span class="inline-block rounded-md px-2 py-1 text-[0.7rem] font-medium border border-blue-400 bg-blue-900/40 text-blue-100">
+        Preparing Evidence Set
+      </span>
+    </div>
+
+    <!-- FinCEN No-Action -->
+    <div class="rounded-xl bg-slate-950/90 border border-slate-700/80 p-4">
+      <p class="text-sm font-semibold text-cyan-300 mb-1">FinCEN Innovation Office (No-Action)</p>
+      <p class="text-[0.75rem] text-slate-400 mb-3">
+        Request that Veritas be treated as a compliance layer, not a money service business (MSB).
+      </p>
+      <span class="inline-block rounded-md px-2 py-1 text-[0.7rem] font-medium border border-amber-400 bg-amber-500/10 text-amber-200">
+        Drafting
+      </span>
+    </div>
+
+    <!-- BSA/AML -->
+    <div class="rounded-xl bg-slate-950/90 border border-slate-700/80 p-4">
+      <p class="text-sm font-semibold text-cyan-300 mb-1">BSA/AML Attestation Framework</p>
+      <p class="text-[0.75rem] text-slate-400 mb-3">
+        Framework enabling enterprises to store proofs of AML compliance on-chain for regulators.
+      </p>
+      <span class="inline-block rounded-md px-2 py-1 text-[0.7rem] font-medium border border-slate-300/60 bg-slate-300/10 text-slate-200">
+        In Documentation
+      </span>
+    </div>
+
+    <!-- EU MiCA -->
+    <div class="rounded-xl bg-slate-950/90 border border-slate-700/80 p-4">
+      <p class="text-sm font-semibold text-cyan-300 mb-1">EU MiCA Conformity Scope</p>
+      <p class="text-[0.75rem] text-slate-400 mb-3">
+        Mapping Veritas attestations as a service layer for MiCA-regulated payment providers.
+      </p>
+      <span class="inline-block rounded-md px-2 py-1 text-[0.7rem] font-medium border border-teal-400 bg-teal-900/40 text-teal-100">
+        Scope Review
+      </span>
+    </div>
+
+  </div>
+</section>
+<div class="w-full my-8">
+  <div class="h-px w-full bg-gradient-to-r from-emerald-400/30 via-cyan-300/60 to-emerald-400/30 blur-[0.3px]"></div>
+</div>
+<!-- FAQ CTA (unchanged button swap) -->
+<section class="max-w-6xl mx-auto px-6 text-center">
+  <h2 class="text-xl font-semibold text-emerald-300 mb-2">FAQ</h2>
+  <p class="text-xs text-slate-400 mb-4">Answers to technical, legal and business questions</p>
+  <a href="FAQ.html" class="btn-main">Open FAQ</a>
+</section>
+<!-- FOOTER (Business links removed) -->
+<footer class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 sm:grid-cols-3 gap-10 text-xs footer-links">
+  <div>
+    <p class="text-emerald-300 font-semibold mb-2">Navigation</p>
+    <a href="veritas-demo-hub.html">Demo Hub</a>
+    <a href="FAQ.html">FAQ</a>
+    <a href="veritasworkflow_demo.html">Workflow Demo</a>
+  </div>
+  <div>
+    <p class="text-emerald-300 font-semibold mb-2">Compliance</p>
+    <a href="compliance_center.html">Regulatory Briefings</a>
+  </div>
+  <div>
+    <p class="text-emerald-300 font-semibold mb-2">Documentation</p>
+    <a href="https://veritaswpv1.github.io/VeritasWPv1/" target="_blank">Open Documentation</a>
+  </div>
+</footer>
+
+</body>
+</html>

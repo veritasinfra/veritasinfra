@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERITAS Demo Hub</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 40%, #001b1f 75%, #000814 100%);
+      color: #e2e8f0;
+      font-family: Inter, sans-serif;
+    }
+    .demo-card {
+      background: rgba(2, 6, 23, 0.7);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      transition: 0.15s ease-in-out;
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.25);
+    }
+    .demo-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 28px rgba(16, 185, 129, 0.55);
+      cursor: pointer;
+    }
+    .header-glow {
+      font-size: 2.6rem;
+      font-weight: 700;
+      background: linear-gradient(120deg, #22c55e, #0ea5e9, #22c55e);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 20px rgba(16,185,129,0.8);
+    }
+  </style>
+
+</head>
+<style>
+  :root {
+    color-scheme: dark;
+  }
+
+  /* GLOBAL VERITAS BACKGROUND */
+  body.veritas-bg {
+    min-height: 100vh;
+    margin: 0;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(34, 197, 94, 0.18), transparent 55%),
+      radial-gradient(circle at 80% 0%, rgba(56, 189, 248, 0.16), transparent 55%),
+      radial-gradient(circle at 50% 120%, rgba(16, 185, 129, 0.22), transparent 60%),
+      #020617;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    animation: veritasPulse 9s ease-in-out infinite;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* VERY SUBTLE “BREATHING” GLOW */
+  @keyframes veritasPulse {
+    0% {
+      background-position:
+        20% 0%,
+        80% 0%,
+        50% 120%,
+        0 0;
+      filter: brightness(0.98);
+    }
+    50% {
+      background-position:
+        18% 2%,
+        82% -2%,
+        52% 118%,
+        0 0;
+      filter: brightness(1.03);
+    }
+    100% {
+      background-position:
+        20% 0%,
+        80% 0%,
+        50% 120%,
+        0 0;
+      filter: brightness(0.98);
+    }
+  }
+
+  /* SOFT GRID / SECURITY OVERLAY */
+  body.veritas-bg::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(
+        rgba(15, 23, 42, 0.6) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        rgba(15, 23, 42, 0.6) 1px,
+        transparent 1px
+      );
+    background-size: 140px 140px, 140px 140px;
+    opacity: 0.22;
+    mix-blend-mode: soft-light;
+    z-index: -1;
+    animation: veritasGridDrift 24s linear infinite;
+  }
+
+  @keyframes veritasGridDrift {
+    0% {
+      transform: translate3d(0, 0, 0);
+      opacity: 0.18;
+    }
+    50% {
+      transform: translate3d(-12px, -10px, 0);
+      opacity: 0.26;
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+      opacity: 0.18;
+    }
+  }
+</style>
+<body class="veritas-bg" "min-h-screen">
+
+  <div class="max-w-5xl mx-auto px-6 py-12">
+
+    <!-- HEADER -->
+    <header class="mb-10 text-center">
+      <h1 class="header-glow tracking-[0.18em] uppercase">VERITAS Demo Hub</h1>
+      <p class="text-slate-300 mt-3 text-sm">
+        Explore the full suite of regulatory infrastructure demos optimized for investors, auditors, and enterprise review.
+      </p>
+    </header>
+
+    <!-- DEMO GRID -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+<!-- Workflow Simulation Demo -->
+<a href="./veritasworkflow_demo.html">
+  <div class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">Worlflow Simulation Demo</h3>
+    <p class="text-sm text-slate-300 mt-2">
+Step-through task runner for legal wrappers, attestations & slashing logic.
+     </p>
+  </div>
+</a>
+      <!-- DASHBOARD -->
+      <a href="dashboard.html" class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">Business Dashboard</h3>
+        <p class="text-sm text-slate-300 mt-2">
+          Complete on-chain payroll + audit cockpit.
+        </p>
+      </a>
+
+      <!-- NFT CC VIEWER -->
+      <a href="NFTCCviewer.html" class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">NFT Credit Card Viewer</h3>
+        <p class="text-sm mt-2">
+          View the NFT card, metadata, PDA accounts, and compliance flags.
+        </p>
+      </a>
+
+      <!-- NFT CREDIT LINE BORROWING -->
+      <a href="veritas-nft-credit-line-borrowing-v2.html" class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">NFT Credit Line Borrowing</h3>
+        <p class="text-sm mt-2">
+          Borrow against on-chain assets via compliant credit engine.
+        </p>
+      </a>
+
+      <!-- PAYROLL BATCH SIM -->
+      <a href="payroll_batch_sim.html" class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">Payroll Batch Simulation</h3>
+        <p class="text-sm mt-2">
+          Run batch payroll cycles with automated compliance logging.
+        </p>
+      </a>
+
+      <!-- RWA TOKENIZATION -->
+      <a href="rwa_tokenization_sim.html" class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">RWA Tokenization</h3>
+        <p class="text-sm mt-2">
+          Tokenize invoices, equipment, contracts — create RWA NFTs.
+        </p>
+      </a>
+
+      <!-- SEC AUDIT LOG -->
+      <a href="sec_audit_log_exp.html" class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">SEC Audit Log Explorer</h3>
+        <p class="text-sm mt-2">
+          View compliance logs, on-chain events, and audit trails.
+        </p>
+      </a>
+
+      <!-- COMPLIANCE REPORT -->
+      <a href="veritas-compliance-report.html" class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">Compliance Report Generator</h3>
+        <p class="text-sm mt-2">
+          Generate 90-day audit-ready compliance reports.
+        </p>
+      </a>
+
+      <!-- AUDIT EXPLORER -->
+      <a href="audit_explorer.html" class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">Automated Audit Explorer</h3>
+        <p class="text-sm mt-2">
+          A live simulation of an on-chain auditor’s workflow.
+        </p>
+      </a>
+
+      <!-- ENTITY REGISTRATION -->
+      <a href="veritas-entity-registration-flow.html" class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">Entity Registration Flow</h3>
+        <p class="text-sm mt-2">
+          Register businesses, attach LLCs, load KYB data and mint business NFTs.
+        </p>
+      </a>
+
+      <!-- Legal Wrapper Composer (NEW) -->
+      <a href="./veritas_legal_wrapper_demo.html">
+        <div class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">Legal Wrapper Composer</h2>
+          <p class="text-slate-400 text-sm">Design and lock a compliance wrapper snapshot for oracle review.</p>
+        </div>
+      </a>
+
+      <!-- DAO GOVERNANCE -->
+      <a href="veritas-dao-governance-vote-demo.html" class="demo-card block">
+        <h3 class="text-xl font-semibold text-emerald-300">DAO Governance Voting</h3>
+        <p class="text-sm mt-2">
+          Live governance proposals and devnet voting simulation.
+        </p>
+      </a>
+
+    <!-- FOOTER -->
+    <footer class="mt-12 text-center text-xs text-slate-500">
+      VERITAS • Regulatory-Compliant On-Chain Infrastructure Demo Suite
+    </footer>
+
+  </div>
+</body>
+</html>

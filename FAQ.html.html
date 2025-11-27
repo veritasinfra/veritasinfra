@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS – FAQ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .bg-veritas {
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 40%, #001b1f 75%, #000814 100%);
+    }
+    .card-veritas {
+      background: linear-gradient(145deg, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+      border: 1px solid rgba(56,189,248,0.18);
+      box-shadow:
+        0 0 30px rgba(15,118,110,0.25),
+        0 0 80px rgba(15,23,42,0.85);
+    }
+    .text-gradient-veritas {
+      background: linear-gradient(120deg, #22c55e, #a5f3fc, #22c55e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: titleGlow 7s ease-in-out infinite;
+    }
+    .logo-emboss {
+      text-shadow:
+        0 0 18px rgba(34,197,94,0.6),
+        0 0 40px rgba(8,145,178,0.7),
+        0 2px 0 rgba(0,0,0,0.9);
+      letter-spacing: 0.22em;
+    }
+    .subtitle-soft {
+      text-shadow: 0 0 12px rgba(59,130,246,0.55);
+    }
+    @keyframes titleGlow {
+      0% {
+        text-shadow:
+          0 0 12px rgba(34,197,94,0.4),
+          0 0 28px rgba(8,145,178,0.45),
+          0 0 60px rgba(8,47,73,0.9);
+        filter: drop-shadow(0 0 8px rgba(8,47,73,0.8));
+      }
+      50% {
+        text-shadow:
+          0 0 24px rgba(45,212,191,0.9),
+          0 0 60px rgba(8,145,178,0.9),
+          0 0 80px rgba(8,47,73,1);
+        filter: drop-shadow(0 0 16px rgba(8,145,178,0.9));
+      }
+      100% {
+        text-shadow:
+          0 0 12px rgba(34,197,94,0.4),
+          0 0 28px rgba(8,145,178,0.45),
+          0 0 60px rgba(8,47,73,0.9);
+        filter: drop-shadow(0 0 8px rgba(8,47,73,0.8));
+      }
+    }
+    .section-shell {
+      position: relative;
+      overflow: hidden;
+    }
+    .section-shell::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.08), transparent 60%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .glass-line {
+      background: radial-gradient(circle, rgba(34,197,94,0.35), transparent 70%);
+      opacity: 0.7;
+    }
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+    details summary {
+      list-style: none;
+    }
+    .faq-summary {
+      cursor: pointer;
+      transition: all 0.16s ease-out;
+    }
+    .faq-summary:hover {
+      color: #a5f3fc;
+    }
+  </style>
+</head>
+<body class="bg-veritas text-slate-100 antialiased min-h-screen relative">
+
+  <!-- Soft background accents -->
+  <div class="fixed inset-0 pointer-events-none opacity-40">
+    <div class="glass-line w-1 h-40 absolute left-10 top-28 blur-xl"></div>
+    <div class="glass-line w-1 h-48 absolute right-16 top-80 blur-xl"></div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 relative">
+
+    <!-- HEADER -->
+    <header class="relative mb-10 md:mb-12">
+      <div class="flex flex-col items-center text-center gap-3">
+        <div class="inline-flex flex-col items-center">
+          <span class="text-gradient-veritas logo-emboss text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[0.24em] uppercase">
+            VERITAS
+          </span>
+          <span class="mt-2 text-sm sm:text-base text-cyan-200/85 subtitle-soft">
+            Regulatory aware payments and payroll infrastructure on Solana
+          </span>
+        </div>
+        <div class="mt-3 text-xs sm:text-sm uppercase tracking-[0.28em] text-emerald-300/70">
+          Frequently Asked Questions
+        </div>
+        <p class="mt-4 max-w-2xl text-xs sm:text-sm text-slate-300/90 leading-relaxed">
+          This FAQ explains what VERITAS is, how the legal wrapper and oracle work,
+          who this protocol is for, and how it fits into the wider landscape of digital asset regulation,
+          payroll and card infrastructure.
+        </p>
+      </div>
+    </header>
+
+    <!-- FAQ: GENERAL -->
+    <section class="section-shell card-veritas rounded-3xl px-5 sm:px-7 md:px-8 py-6 sm:py-7 md:py-8 mb-8">
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        General questions
+      </h2>
+
+      <div class="space-y-3 sm:space-y-4 text-sm sm:text-base text-slate-100/95">
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              What is VERITAS in simple terms
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            VERITAS is a compliance aware payments and payroll protocol on Solana.
+            It provides a legal wrapper, KYC linked program derived accounts,
+            a transaction logging pattern and an indexer, so that payroll, card
+            and real world asset flows can be traced, audited and attached to
+            real legal entities, while still running on public crypto rails.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              What problem does VERITAS solve
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            Today, on chain payroll and payments are fast, the audit trail often is not.
+            Different wallets, ad hoc spreadsheets and scattered compliance records
+            make it hard for businesses, auditors and regulators to understand what
+            is really happening. VERITAS standardizes how KYC, legal entities and
+            payment metadata are tied to programs and accounts, so that an audit
+            can be completed in days instead of months.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              Who is VERITAS designed for
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            VERITAS is built for three main groups, developers who want a reusable
+            legal and compliance layer for Solana applications, businesses and DAOs
+            that want to run payroll, card and vendor payments in digital assets, and
+            institutions that require an audit ready view of those flows before they
+            can approve or support them.
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- FAQ: PRODUCT AND TECHNOLOGY -->
+    <section class="section-shell card-veritas rounded-3xl px-5 sm:px-7 md:px-8 py-6 sm:py-7 md:py-8 mb-8">
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Product and technology
+      </h2>
+
+      <div class="space-y-3 sm:space-y-4 text-sm sm:text-base text-slate-100/95">
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              Is VERITAS a token, a protocol, or a company
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            VERITAS at its core is a Solana based protocol, implemented through Anchor programs, PDAs and indexer infrastructure. A VERITAS Attestation Bond Token is a utility and governance asset around this protocol, required to underwrite the Legal Wrapper and other compliance configurations. It is used to signal responsibility and fund essential protocol functions and legal maintenance. Around that, a legal entity structure is expected to operate the open source work, manage partnerships and handle off chain obligations. The protocol itself is meant to be reusable by many different applications.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              Which network does VERITAS use and why
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            VERITAS is built on Solana. The choice is driven by throughput, low fees and a mature
+            developer stack through Anchor, SPL token standards and token extensions. Compliance
+            aware payroll, card and RWA flows benefit from reliable, inexpensive transactions,
+            since many small on chain writes are required for every period of activity.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              How does the legal wrapper actually work on chain
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            The legal wrapper has two sides. Off chain, a business or DAO forms or attaches to
+            a legal entity, such as an LLC, a DAO LLC or a foundation, and completes KYC or KYB
+            through a chosen provider. On chain, VERITAS creates configuration and legal PDAs
+            that encode the relationship between that entity, its payroll flows and its card or
+            RWA accounts. When payroll or card programs run, they record hashes and metadata into
+            these PDAs, so that the chain itself reflects the legal context of each flow in a
+            consistent and queryable way.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              What is the compliance oracle and indexer layer
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            The oracle layer is a pattern for writing verified, signed compliance and risk data
+            into PDAs, for example KYC status, jurisdiction tags, or risk flags. The indexer scans
+            blocks and program logs, listens for events such as transaction logs from VERITAS
+            programs, and writes structured JSON views for reporting, dashboards and audits.
+            Together, they bridge the gap between raw on chain logs and human readable compliance
+            reports.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              Is VERITAS a wallet, an exchange, or a bank
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            No. VERITAS does not operate as a wallet, does not match orders like an exchange,
+            and does not take deposits as a bank. Instead it is an infrastructure layer that
+            other wallets, exchanges, payroll tools and card issuers can connect to, in order
+            to associate their flows with a verifiable legal and compliance context.
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- FAQ: BUSINESS MODEL AND USE -->
+    <section class="section-shell card-veritas rounded-3xl px-5 sm:px-7 md:px-8 py-6 sm:py-7 md:py-8 mb-8">
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Business model and usage
+      </h2>
+
+      <div class="space-y-3 sm:space-y-4 text-sm sm:text-base text-slate-100/95">
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              How does VERITAS expect to generate revenue
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            At maturity, revenue can come from several aligned sources, protocol level fees on
+            high value flows such as payroll or card settlement, enterprise support and
+            integration agreements, white label deployments for partners that want their own
+            branded instance, and optional premium modules around reporting and governance.
+            The goal is to keep core infrastructure open and reusable, while creating sustainable
+            funding for legal maintenance and further development.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              How will pricing work for businesses and DAOs
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            Pricing can follow a simple pattern, small teams can use the open source stack with
+            no protocol fee beyond normal Solana costs, growth stage users can pay a modest fee
+            per payroll run or card account, which can be charged in stablecoins or the VERITAS
+            token, and large enterprises can negotiate institution level agreements that include
+            support, custom reporting and signed service guarantees. The intention is to avoid
+            friction for early builders while aligning protocol revenue with real adoption.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              What does a typical customer journey look like
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            A business or DAO chooses VERITAS, connects an existing entity or forms a new one
+            with legal counsel, completes onboarding and KYC or KYB, deploys the VERITAS legal
+            wrapper program and PDAs, connects payroll and card flows to those PDAs, and then
+            begins running real payments through Solana. Over time, they use the indexer to
+            export clean audit records, share them with advisors and regulators, and refine
+            policies and thresholds with the help of the oracle layer.
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- FAQ: LEGAL, RISK AND COMPLIANCE -->
+    <section class="section-shell card-veritas rounded-3xl px-5 sm:px-7 md:px-8 py-6 sm:py-7 md:py-8 mb-8">
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Legal, risk and compliance
+      </h2>
+
+      <div class="space-y-3 sm:space-y-4 text-sm sm:text-base text-slate-100/95">
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              Is VERITAS a security or investment product
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            No. VERITAS is designed as compliance infrastructure. The VERITAS Attestation Bond Token is a mandatory utility primitive for protocol access and risk management, not an investment contract. It is required as collateral to underwrite regulated configurations (e.g., Legal Wrappers, payroll classifications) and is subject to slashing for non-compliance. It does not hold client funds, does not act as a broker or exchange, and does not promise yields or returns. Based on its functional design as a required bond for protocol access, VERITAS believes its token is not a security under U.S. law.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              How does VERITAS handle KYC and data privacy
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            The protocol does not store raw personal data on chain. Instead, KYC and KYB checks
+            are expected to be performed by approved providers off chain. Results are turned into
+            hashes or structured flags, then written to PDAs and oracle storage. That way, programs
+            can enforce that a user or entity is verified, without exposing sensitive identity data
+            in public state. Legal counsel in each region should guide how much data is written,
+            and under what privacy framework.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              What are the main risks users should keep in mind
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            There are several categories of risk. Technical risk, the smart contracts or indexer
+            code could contain bugs, so audits and staged rollouts are important. Regulatory risk,
+            laws and guidance change, which can affect what is considered sufficient compliance.
+            Integration risk, partners and third party services may fail or change behavior.
+            Market risk, cryptographic assets remain volatile and subject to market stress.
+            VERITAS aims to make these risks visible and manageable, but cannot remove them.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              Does VERITAS replace legal counsel or regulators
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            No. VERITAS is a tool that makes it easier for legal teams and regulators to see and
+            understand on chain activity. It will always remain the responsibility of each
+            business or DAO to obtain legal advice, follow local rules and work with regulators
+            where needed. The protocol is meant to reduce friction and ambiguity, not to remove
+            oversight.
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- FAQ: STAGE AND ROADMAP -->
+    <section class="section-shell card-veritas rounded-3xl px-5 sm:px-7 md:px-8 py-6 sm:py-7 md:py-8 mb-10">
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Stage, roadmap and participation
+      </h2>
+
+      <div class="space-y-3 sm:space-y-4 text-sm sm:text-base text-slate-100/95">
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              What stage is VERITAS at right now
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            The project is positioned in an early builder and grant ready phase. The whitepaper, architecture, and an Anchor based demo of the legal wrapper, KYC PDAs, transaction logging and indexer pattern are the focus. The intent is to secure grants and partnerships, and rapidly move through audited milestones toward production grade infrastructure, with the goal of transferring core protocol control to the decentralized DAO multi-sig within the first 15 months. The intent is to secure grants and partnerships, then move through structured milestones toward production grade infrastructure and real world integrations.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              What is next on the roadmap for VERITAS
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            The near focus includes: refining and shipping the full devnet demo, legal wrapper
+            plus oracle plus indexer, securing grant and research support, onboarding early
+            design partners that want to test payroll and card flows, and preparing audits,
+            compliance reviews and a safer production roadmap. Longer term, the intent is to
+            become the default compliance layer for serious Solana based business payment flows.
+          </div>
+        </details>
+
+        <details class="group rounded-2xl bg-slate-950/60 border border-slate-800/80 px-4 sm:px-5 py-3">
+          <summary class="faq-summary flex items-start justify-between gap-3">
+            <span class="font-semibold text-emerald-200">
+              How can builders or partners get involved
+            </span>
+            <span class="mt-1 text-xs text-slate-400 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div class="mt-2 text-xs sm:text-sm text-slate-200/90 leading-relaxed">
+            Builders can participate by reviewing the whitepaper, testing the demo once it is
+            live on devnet, and proposing concrete integrations where a VERITAS legal and audit
+            layer can help them win enterprise or institutional users. Legal and compliance
+            partners can help shape the wrapper for different regions, and grant bodies can
+            support the open source work so the protocol reaches production strength without
+            depending on aggressive token speculation.
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- FOOTER NOTE -->
+    <footer class="pb-6 border-t border-slate-800/80 pt-5">
+      <p class="text-[0.7rem] sm:text-xs text-slate-400/90 leading-relaxed">
+        This FAQ is an overview of design intent, not legal, financial or investment advice.
+        Any business or individual considering the use of VERITAS should obtain independent
+        legal and financial guidance, and should verify the current state of the protocol,
+        smart contracts and documentation before integrating or deploying in production.
+      </p>
+    </footer>
+  </div>
+
+</body>
+</html>

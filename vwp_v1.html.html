@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERITAS – Whitepaper v1.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .bg-veritas {
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 40%, #001b1f 75%, #000814 100%);
+    }
+    .card-veritas {
+      background: linear-gradient(145deg, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+      border: 1px solid rgba(56,189,248,0.18);
+      box-shadow:
+        0 0 30px rgba(15,118,110,0.25),
+        0 0 80px rgba(15,23,42,0.85);
+    }
+    /* border-glow no longer applies green gradient border */
+    .border-glow {
+      border-image: none;
+    }
+    .text-gradient-veritas {
+      background: linear-gradient(120deg, #22c55e, #a5f3fc, #22c55e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: titleGlow 7s ease-in-out infinite;
+    }
+    .logo-emboss {
+      text-shadow:
+        0 0 18px rgba(34,197,94,0.6),
+        0 0 40px rgba(8,145,178,0.7),
+        0 2px 0 rgba(0,0,0,0.9);
+      letter-spacing: 0.22em;
+    }
+    .subtitle-soft {
+      text-shadow: 0 0 12px rgba(59,130,246,0.55);
+    }
+    @keyframes titleGlow {
+      0% {
+        text-shadow:
+          0 0 12px rgba(34,197,94,0.4),
+          0 0 28px rgba(8,145,178,0.45),
+          0 0 60px rgba(8,47,73,0.9);
+        filter: drop-shadow(0 0 8px rgba(8,47,73,0.8));
+      }
+      50% {
+        text-shadow:
+          0 0 24px rgba(45,212,191,0.9),
+          0 0 60px rgba(8,145,178,0.9),
+          0 0 80px rgba(8,47,73,1);
+        filter: drop-shadow(0 0 16px rgba(8,145,178,0.9));
+      }
+      100% {
+        text-shadow:
+          0 0 12px rgba(34,197,94,0.4),
+          0 0 28px rgba(8,145,178,0.45),
+          0 0 60px rgba(8,47,73,0.9);
+        filter: drop-shadow(0 0 8px rgba(8,47,73,0.8));
+      }
+    }
+
+    .section-shell {
+      position: relative;
+      overflow: hidden;
+    }
+    .section-shell::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.08), transparent 60%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .glass-line {
+      background: radial-gradient(circle, rgba(34,197,94,0.35), transparent 70%);
+      opacity: 0.7;
+    }
+
+    .toc-fab {
+      background: radial-gradient(circle at 20% 0%, #22c55e 0%, #0284c7 40%, #0369a1 100%);
+      box-shadow:
+        0 0 18px rgba(34,197,94,0.65),
+        0 0 32px rgba(8,145,178,0.75);
+    }
+    .toc-panel {
+      background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(2,6,23,0.98));
+      border: 1px solid rgba(56,189,248,0.4);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.9),
+        0 0 50px rgba(8,47,73,0.85);
+    }
+    .toc-link {
+      transition: all 0.18s ease-out;
+    }
+    .toc-link:hover {
+      color: #a5f3fc;
+      transform: translateX(2px);
+      text-shadow: 0 0 12px rgba(56,189,248,0.65);
+    }
+    .token-table th {
+      background: rgba(15,23,42,0.98);
+    }
+    .token-table tr:nth-child(even) {
+      background-color: rgba(15,23,42,0.85);
+    }
+    .token-table tr:nth-child(odd) {
+      background-color: rgba(2,6,23,0.95);
+    }
+  </style>
+</head>
+<body class="bg-veritas text-slate-100 antialiased min-h-screen relative">
+
+  <!-- Floating TOC Button + Panel -->
+  <button
+    id="tocToggle"
+    class="fixed bottom-6 right-6 z-30 h-12 w-12 rounded-full toc-fab flex items-center justify-center border border-emerald-300/40 hover:scale-105 transition-transform duration-150"
+    aria-label="Open sections"
+  >
+    <span class="text-slate-50 text-xl font-semibold">≡</span>
+  </button>
+
+  <div
+    id="tocPanel"
+    class="fixed bottom-20 right-6 z-30 w-64 rounded-2xl toc-panel p-4 hidden"
+  >
+    <p class="text-xs uppercase tracking-[0.22em] text-emerald-300/70 mb-3">
+      Sections
+    </p>
+    <nav class="space-y-1.5 text-sm">
+      <a href="#executive-summary" class="toc-link block text-slate-200">Executive Summary</a>
+      <a href="#core-components" class="toc-link block text-slate-200">Core Protocol Components</a>
+      <a href="#legal-wrapper" class="toc-link block text-slate-200 ml-2">Legal Wrapper</a>
+      <a href="#payroll" class="toc-link block text-slate-200 ml-2">Payroll Infrastructure</a>
+      <a href="#oracle-indexer" class="toc-link block text-slate-200 ml-2">Compliance Oracle &amp; Indexer</a>
+      <a href="#nft-rwa" class="toc-link block text-slate-200 ml-2">NFT Credit Card &amp; RWA</a>
+      <a href="#tokenomics" class="toc-link block text-slate-200">Tokenomics</a>
+      <a href="#vesting" class="toc-link block text-slate-200 ml-2">Vesting Schedule</a>
+      <a href="#governance" class="toc-link block text-slate-200">Governance</a>
+      <a href="#roadmap" class="toc-link block text-slate-200">Roadmap</a>
+      <a href="#why-veritas" class="toc-link block text-slate-200">Why Veritas Matters</a>
+      <a href="#conclusion" class="toc-link block text-slate-200">Conclusion</a>
+    </nav>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 relative">
+    <div class="absolute inset-0 opacity-40 pointer-events-none">
+      <div class="glass-line w-1 h-40 absolute left-12 top-24 blur-xl"></div>
+      <div class="glass-line w-1 h-32 absolute right-20 top-80 blur-xl"></div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="relative mb-10">
+      <div class="flex flex-col items-center text-center gap-3">
+        <div class="inline-flex flex-col items-center">
+          <span class="text-gradient-veritas logo-emboss text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[0.24em] uppercase">
+            VERITAS
+          </span>
+          <span class="mt-2 text-sm sm:text-base text-cyan-200/85 subtitle-soft">
+            Regulatory compliant on chain payments infrastructure
+          </span>
+        </div>
+        <div class="mt-4 text-xs sm:text-sm uppercase tracking-[0.28em] text-emerald-300/70">
+          Whitepaper v1.0 · 2025 · Solana Network
+        </div>
+      </div>
+    </header>
+
+    <!-- EXECUTIVE SUMMARY -->
+    <section
+      id="executive-summary"
+      class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8 mb-8"
+    >
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Executive Summary
+      </h2>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        Veritas is a compliance driven payments and identity protocol built on Solana. It provides a legal wrapper, a compliance oracle and indexer, and reference implementations for on chain payroll, NFT based credit cards and real world asset connected credit lines. The protocol is designed so that every critical action can be tied to a clear legal context, a known entity classification and an auditable trail.
+      </p>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        The core idea is to move compliance from a manual, off chain process into a machine readable, on chain layer. Veritas does this by combining entity aware smart contract shells, jurisdiction aware configuration and a standardized event model that can be consumed by internal finance teams, regulators and external auditors without rebuilding bespoke systems for each project.
+      </p>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed">
+        Veritas is structured as infrastructure. It is not a marketplace or a speculative product. Its purpose is to give builders, businesses and institutions a way to adopt Solana for regulated financial workflows without losing transparency, composability or self custody.
+      </p>
+    </section>
+
+    <!-- CORE PROTOCOL COMPONENTS WRAPPER -->
+    <section
+      id="core-components"
+      class="space-y-8 mb-10"
+    >
+      <!-- LEGAL WRAPPER -->
+      <div
+        id="legal-wrapper"
+        class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8"
+      >
+        <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-1">
+          Core Protocol Components
+        </h2>
+        <h3 class="text-base sm:text-lg md:text-xl font-semibold text-cyan-200 mt-3 mb-3">
+          1. Legal Wrapper Framework
+        </h3>
+        <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+          The Legal Wrapper is the structural backbone of Veritas. It defines how an on chain program, account or NFT is linked to a real world entity and a defined set of rules. The wrapper does not hold user funds. It describes who is acting, under which legal shell and with which jurisdictional constraints.
+        </p>
+        <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-2 font-medium">
+          Key functions:
+        </p>
+        <ul class="list-disc list-inside text-sm sm:text-base text-slate-200/90 space-y-1.5 mb-3">
+          <li>Connects a digital asset or contract to an entity based structure such as an LLC, DAO LLC, foundation or other recognized legal form.</li>
+          <li>Captures jurisdictional parameters such as country, applicable regimes and high level obligations, including SEC, FinCEN, FATF and EU MiCA driven considerations where relevant.</li>
+          <li>Writes a structured configuration into Solana accounts so that downstream programs and off chain systems can read and enforce the same rule set consistently.</li>
+        </ul>
+        <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed">
+          The Legal Wrapper is intended to be reusable. A single business or protocol can anchor multiple products, cards or workflows under a common shell and still expose a machine readable view of its structure to compliance teams, banking partners and regulators.
+        </p>
+      </div>
+
+      <!-- PAYROLL -->
+      <div
+        id="payroll"
+        class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8"
+      >
+        <h3 class="text-base sm:text-lg md:text-xl font-semibold text-cyan-200 mb-3">
+          2. Payroll Infrastructure
+        </h3>
+        <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+          The Veritas payroll system is a reference implementation that shows how compliant, entity aware payouts can run directly on Solana. It treats every payment as a structured event with an employer, a worker classification, a jurisdiction and an associated record in the Legal Wrapper and oracle layers.
+        </p>
+        <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-2 font-medium">
+          How it works:
+        </p>
+        <ol class="list-decimal list-inside text-sm sm:text-base text-slate-200/90 space-y-1.5 mb-3">
+          <li><span class="font-semibold text-emerald-300">Business onboarding:</span> A company or DAO onboards through the Veritas dashboard, connects a legal entity and deploys a Legal Wrapper configuration mapped to that entity.</li>
+          <li><span class="font-semibold text-emerald-300">Worker setup:</span> Each worker, contractor or beneficiary completes KYC or KYB through integrated providers. Their receiving wallet is linked to a Program Derived Address that stores classification, country, status and other metadata required for internal and external reporting.</li>
+          <li><span class="font-semibold text-emerald-300">Programmed distribution:</span> On each payroll run, a Solana program distributes approved settlement assets, such as stablecoins or other whitelisted tokens, according to predefined schedules and amounts.</li>
+          <li><span class="font-semibold text-emerald-300">Compliance logging:</span> For every payment, the program records a compact hash of the relevant context, including jurisdiction, classification tags and timestamp, into Veritas PDAs for later retrieval.</li>
+          <li><span class="font-semibold text-emerald-300">Card and off chain integration:</span> Where allowed, workers can connect wallets or entity accounts to a Veritas enabled card or API integration so that the same audited flows can reach traditional payment rails without manual reconciliation.</li>
+        </ol>
+        <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-2 font-medium">
+          Key advantages:
+        </p>
+        <ul class="list-disc list-inside text-sm sm:text-base text-slate-200/90 space-y-1.5">
+          <li>Instant, borderless payouts that still retain tax and reporting context.</li>
+          <li>Machine readable classification of workers for internal policies and external review.</li>
+          <li>Consistent audit trails for finance, risk and external assurance providers.</li>
+          <li>A pattern that can be reused by other Solana builders for their own payout systems.</li>
+        </ul>
+      </div>
+
+      <!-- ORACLE + INDEXER -->
+      <div
+        id="oracle-indexer"
+        class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8"
+      >
+        <h3 class="text-base sm:text-lg md:text-xl font-semibold text-cyan-200 mb-3">
+          3. Compliance Oracle and Indexer Layer
+        </h3>
+        <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+          The compliance oracle and indexer layer connects real world verification and policy checks to the on chain state. Rather than storing sensitive documents on Solana, Veritas records structured attestations, references and outcomes that can be recomputed or reverified by authorized parties.
+        </p>
+        <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-2 font-medium">
+          Benefits:
+        </p>
+        <ul class="list-disc list-inside text-sm sm:text-base text-slate-200/90 space-y-1.5">
+          <li>Transforms KYC and KYB status, risk flags and sanctions screening results into a consistent set of tags that can be used by multiple applications.</li>
+          <li>Reduces reliance on one off, external audits by keeping data collected, normalized and queryable from the start.</li>
+          <li>Supports jurisdiction aware views, so that partners and regulators can filter events by country, entity type or risk level without bespoke exports.</li>
+          <li>Preserves the immutability of the history while still allowing off chain providers to refresh underlying checks where laws or status change.</li>
+        </ul>
+      </div>
+
+      <!-- NFT CREDIT CARD + RWA -->
+      <div
+        id="nft-rwa"
+        class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8"
+      >
+        <h3 class="text-base sm:text-lg md:text-xl font-semibold text-cyan-200 mb-3">
+          4. NFT Credit Card and RWA Integration
+        </h3>
+        <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+          Veritas introduces NFT based credit instruments as a way to represent verified financial profiles on chain. The NFT acts as an access key. The underlying credit logic, limits and risk constraints live in controlled PDAs and programs that are aware of the Legal Wrapper configuration.
+        </p>
+        <ul class="list-disc list-inside text-sm sm:text-base text-slate-200/90 space-y-1.5 mb-3">
+          <li>Each NFT can be tied to a profile that includes entity, jurisdiction, permitted merchant categories and a credit limit defined by governance or risk engines.</li>
+          <li>Transfers or lifecycle changes of the NFT trigger program logic so that only an eligible, verified holder can use the card or credit line.</li>
+          <li>Real world assets, such as invoices, equipment or other claims, can be tokenized as RWAs and locked to the profile as collateral for more advanced credit structures.</li>
+        </ul>
+        <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed">
+          The goal is not to recreate existing card networks but to give builders a way to create programmable, auditable credit relationships that can interface with them. By grounding each card and RWA in the Legal Wrapper and oracle layers, Veritas keeps visibility over who is using the rails and under what rules.
+        </p>
+      </div>
+    </section>
+
+    <!-- TOKENOMICS -->
+    <section
+      id="tokenomics"
+      class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8 mb-8"
+    >
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Tokenomics
+      </h2>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        Token name: VERITAS  
+        Role: Attestation bond token for regulated protocol functions  
+        Network: Solana SPL  
+        Total functional cap: 1,000,000,000 VERITAS units, subject to governance controlled mint and burn rules.
+      </p>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        The VERITAS token is designed as an attestation bond. It is used inside the protocol to open, maintain and retire configurations that carry regulatory or operational significance. Examples include enabling a Legal Wrapper for an entity, registering a jurisdiction aware payroll configuration, issuing NFT credit profiles or anchoring RWA vaults. In each case, a defined amount of VERITAS must be bonded to signal responsibility and support predictable behavior.The total functional cap of 1,000,000,000 VERITAS units is sized to accommodate a projected TCVL necessary to underwrite the Legal Wrapper Framework for an estimated 1,000 enterprise partners.
+      </p>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        These bonds are not custodial deposits by end users. They are protocol level commitments that can be placed and managed by integrators, service providers or governance controlled contracts. Misuse, misconfiguration or confirmed policy violations can trigger partial or full slashing of the bond according to rules approved by the DAO, while correct operation over time can allow bonds to be released or reallocated.
+      </p>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        The token is not required to read data, view dashboards or perform low risk analytical operations. It is only required where the protocol exposes actions that change the state of regulated workflows or create ongoing responsibilities that benefit from an explicit, on chain attestation and bond.
+      </p>
+      <div class="overflow-x-auto mt-4">
+        <table class="min-w-full text-left text-xs sm:text-sm token-table border border-emerald-400/40 rounded-2xl overflow-hidden">
+          <thead class="text-emerald-200 uppercase text-[0.7rem] sm:text-xs tracking-wide">
+            <tr>
+              <th class="px-3 sm:px-4 py-2 border-b border-emerald-400/40">Allocation</th>
+              <th class="px-3 sm:px-4 py-2 border-b border-emerald-400/40">Percentage</th>
+              <th class="px-3 sm:px-4 py-2 border-b border-emerald-400/40">Purpose</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-100/90">
+            <tr>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">Protocol usage buffer</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">35%</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">
+                Bonds and working balances held at the protocol level to underwrite Legal Wrappers, attested configurations and controlled migrations between protocol versions.
+              </td>
+            </tr>
+            <tr>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">Compliance operations and research</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">20%</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">
+                Legal analysis, standards work, audits and coordination with service providers that keep the protocol aligned with evolving regulations.
+              </td>
+            </tr>
+            <tr>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">Ecosystem integrations and grants</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">20%</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">
+                Support for builders, enterprises and infrastructure teams that integrate the Legal Wrapper, oracle or indexer layers into their own products.
+              </td>
+            </tr>
+            <tr>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">Governance and participation incentives</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">15%</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">
+                Reimburses and support for delegates, domain experts and working groups that review proposals, run research and help operate the governance process.
+              </td>
+            </tr>
+            <tr>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">Stewardship and maintenance</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">5%</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">
+                Compensation and time-bound budgets for core
+contributors and infrastructure providers responsible for day to day reliability and security of protocol components. This compensation is for services rendered and is not intended as an investment return.
+              </td>
+            </tr>
+            <tr>
+              <td class="px-3 sm:px-4 py-2">Risk reserve and incident response</td>
+              <td class="px-3 sm:px-4 py-2">5%</td>
+              <td class="px-3 sm:px-4 py-2">
+                A reserve held under strict governance controls to address critical incidents, remediation work and other unforeseen obligations that protect ecosystem stability.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VESTING SCHEDULE -->
+    <section
+      id="vesting"
+      class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8 mb-8"
+    >
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Vesting Schedule
+      </h2>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        The release of VERITAS is structured to favor protocol continuity, accountable governance and careful expansion of the ecosystem. No part of this schedule is intended as a forecast or representation of value. It describes how different functional pools become available for use over time.
+      </p>
+      <div class="overflow-x-auto mt-2">
+        <table class="min-w-full text-left text-xs sm:text-sm token-table border border-emerald-400/40 rounded-2xl overflow-hidden">
+          <thead class="text-emerald-200 uppercase text-[0.7rem] sm:text-xs tracking-wide">
+            <tr>
+              <th class="px-3 sm:px-4 py-2 border-b border-emerald-400/40">Category</th>
+              <th class="px-3 sm:px-4 py-2 border-b border-emerald-400/40">Allocation</th>
+              <th class="px-3 sm:px-4 py-2 border-b border-emerald-400/40">Vesting model</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-100/90">
+            <tr>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">Protocol usage buffer</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">35%</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">
+                Activated gradually as more Legal Wrappers, attested configurations and credit profiles come online, with parameters set and monitored by the DAO.
+              </td>
+            </tr>
+            <tr>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">Compliance operations and research</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">20%</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">
+                Streamed over time to pre approved legal, audit and research partners under transparent mandates and documented deliverables.
+              </td>
+            </tr>
+            <tr>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">Ecosystem integrations and grants</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">20%</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">
+                Released in tranches tied to measurable integration milestones, such as protocol deployments, volume thresholds or regulatory approvals obtained by partners.
+              </td>
+            </tr>
+            <tr>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">Governance and participation incentives</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">15%</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">
+                Distributed on an ongoing basis to contributors who participate in governance, review proposals, maintain documentation or operate approved public goods.
+              </td>
+            </tr>
+            <tr>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">Stewardship and maintenance</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">5%</td>
+              <td class="px-3 sm:px-4 py-2 border-b border-emerald-400/25">
+                One year cliff followed by linear release over four years to support long term protocol maintenance by core technical and operational teams until renouncing to decentralized multi-sig.
+              </td>
+            </tr>
+            <tr>
+              <td class="px-3 sm:px-4 py-2">Risk reserve and incident response</td>
+              <td class="px-3 sm:px-4 py-2">5%</td>
+              <td class="px-3 sm:px-4 py-2">
+                Held offline under multi signature control, with activation only possible through specific, governance approved procedures in response to defined incident classes.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- GOVERNANCE -->
+    <section
+      id="governance"
+      class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8 mb-8"
+    >
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Governance Model
+      </h2>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        Veritas is governed by a DAO that focuses on protocol parameters, safety thresholds and alignment with applicable regulations. VERITAS token holders can submit and vote on proposals affecting the Legal Wrapper framework, oracle integrations, indexer schemas and allocation of functional pools described in this document.
+      </p>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        Governance is intended to be transparent and evidence based. Proposals are expected to include technical specifications, risk assessments and, where relevant, commentary from legal and compliance advisors. This gives builders and external observers a clear view into how rules are set and how tradeoffs are considered.
+      </p>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed">
+        Execution of approved decisions is carried out by multi signature smart contracts and operational teams that have been identified and authorized by the DAO. This separation of policy setting, implementation and review is meant to reduce centralization risk and make Veritas easier to understand for institutions and regulators.
+      </p>
+    </section>
+
+    <!-- ROADMAP -->
+    <section
+      id="roadmap"
+      class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8 mb-8"
+    >
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Sustainability and Roadmap
+      </h2>
+
+      <h3 class="text-base sm:text-lg md:text-xl font-semibold text-cyan-200 mb-2">
+        Short term
+      </h3>
+      <ul class="list-disc list-inside text-sm sm:text-base text-slate-200/90 space-y-1.5 mb-4">
+        <li>Launch a Veritas devnet sandbox demonstrating the Legal Wrapper, oracle, indexer and payroll reference implementation on Solana.</li>
+        <li>Publish the Legal Wrapper specification and example contracts as open source modules that other projects can review and extend.</li>
+        <li>Integrate Solana token extensions and account level controls needed for constrained assets and permissioned flows.</li>
+        <li>Begin collaborations with compliance focused partners, research groups and grant programs that align with the Veritas mission.</li>
+      </ul>
+
+      <h3 class="text-base sm:text-lg md:text-xl font-semibold text-cyan-200 mb-2">
+        Mid term
+      </h3>
+      <ul class="list-disc list-inside text-sm sm:text-base text-slate-200/90 space-y-1.5 mb-4">
+        <li>Deploy a production grade compliance oracle and indexer stack that can support multiple independent integrators.</li>
+        <li>Expand connectivity to payment, payroll and reporting systems where regulations and partner agreements permit.</li>
+        <li>Transition critical parameters, including bonding rules and configuration templates, to DAO governance.</li>
+        <li>Demonstrate NFT credit and RWA backed credit rails with limited, carefully scoped partners and clear oversight mechanisms.</li>
+      </ul>
+
+      <h3 class="text-base sm:text-lg md:text-xl font-semibold text-cyan-200 mb-2">
+        Long term
+      </h3>
+      <ul class="list-disc list-inside text-sm sm:text-base text-slate-200/90 space-y-1.5">
+        <li>Position Veritas as a default compliance middleware option for Solana builders that need predictable, regulator friendly patterns.</li>
+        <li>Support a growing network of independent auditors, service providers and institutional users that rely on Veritas data and standards.</li>
+        <li>Expand coverage of real world assets, credit structures and entity types while keeping the protocol focused on transparency and safety.</li>
+      </ul>
+    </section>
+
+    <!-- WHY VERITAS MATTERS -->
+    <section
+      id="why-veritas"
+      class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8 mb-8"
+    >
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Why Veritas Matters
+      </h2>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        For many builders and institutions, the main barrier to using public blockchains is not throughput or fees. It is the absence of clear, reusable patterns for compliance, classification and audit. Each new project is forced to recreate its own interpretation of regulatory obligations, which is expensive for teams and difficult for regulators to evaluate.
+      </p>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        Veritas addresses this by turning compliance sensitive concepts into shared infrastructure. Legal Wrappers make entity structures visible. The oracle layer turns checks into attestations. The indexer layer makes events easy to trace, filter and explain. Reference implementations for payroll, cards and RWAs show how these pieces can be combined in practice.
+      </p>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed">
+        Any protocol or business that adopts Veritas gains a more consistent legal posture and a clearer audit story, while still benefiting from Solana’s speed and composability. In the long term, this kind of common infrastructure can make it easier for regulators and institutions to engage with the ecosystem in a structured, constructive way.
+      </p>
+    </section>
+
+    <!-- CONCLUSION -->
+    <section
+      id="conclusion"
+      class="section-shell card-veritas border-glow rounded-3xl px-5 sm:px-7 md:px-9 py-6 sm:py-7 md:py-8 mb-12"
+    >
+      <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-emerald-300 mb-4">
+        Conclusion
+      </h2>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed mb-3">
+        Veritas is intended as a blueprint for decentralized compliance on Solana. It combines Legal Wrappers, attestation based oracles, indexer driven transparency and a functional attestation bond token into a single, coherent protocol. Each part can be used independently, but together they provide a path for more regulated and risk conscious participants to use public infrastructure responsibly.
+      </p>
+      <p class="text-sm sm:text-base text-slate-200/90 leading-relaxed">
+        The objective is not to predict outcomes or promise results. It is to provide a set of tools that make it easier for builders, businesses and regulators to share the same view of what is happening on chain. If Veritas can make Solana safer to adopt without sacrificing openness, it will have served its purpose as a public good for the ecosystem.
+      </p>
+    </section>
+  </div>
+
+  <script>
+    const tocToggle = document.getElementById("tocToggle");
+    const tocPanel = document.getElementById("tocPanel");
+
+    tocToggle.addEventListener("click", () => {
+      tocPanel.classList.toggle("hidden");
+    });
+
+    tocPanel.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        tocPanel.classList.add("hidden");
+      });
+    });
+  </script>
+  <footer class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 mt-12 text-[0.65rem] sm:text-xs text-slate-400/70 leading-relaxed text-center border-t border-emerald-400/20 pt-6">
+    <p>
+      This white paper is presented for informational and illustrative purposes only. It is not, under any circumstances, to be construed as an offering, solicitation, or legal, financial, or investment advice. The cryptocurrency market is an inherently volatile and high-risk environment subject to significant risks, including, but not limited to, market manipulation, regulatory changes, and technological failures. The information provided herein is subject to change without notice.
+    </p>
+    <p class="mt-3">
+      The team behind Veritas assumes no liability for any losses incurred due to market fluctuations or technological issues, and all participants are solely responsible for compliance with their local laws and regulations regarding digital assets. Based on the projects functional design as an attestation bond for protocol access, VERITAS believes its token is not required to be registered as a security under
+U.S. law. Users are strongly advised to conduct their own thorough research and consult with a qualified financial advisor before making any decisions.
+    </p>
+  </footer>
+
+  <script>
+    const tocToggle = document.getElementById("tocToggle");
+    const tocPanel = document.getElementById("tocPanel");
+    tocToggle.addEventListener("click", () => tocPanel.classList.toggle("hidden"));
+    tocPanel.querySelectorAll("a").forEach(link => link.addEventListener("click", () => tocPanel.classList.add("hidden")));
+  </script>
+</body>
+</html>

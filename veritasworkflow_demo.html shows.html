@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERITAS — Native Compliance Workflow Simulation</title>
+
+  <!-- Tailwind CDN (optional, page still renders without it) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Fallback base styling */
+    body {
+      margin: 0;
+      padding: 1.5rem;
+      background: radial-gradient(circle at top left, #020617 0%, #00040a 55%, #000000 100%);
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+      border-radius: 1.3rem;
+      border: 1px solid rgba(34,197,94,0.35);
+      box-shadow:
+        0 0 32px rgba(15,23,42,0.95),
+        0 0 64px rgba(8,145,178,0.55);
+      padding: 1.4rem;
+    }
+
+    .card-soft {
+      background: rgba(2,6,23,0.96);
+      border-radius: 1.1rem;
+      border: 1px solid rgba(30,64,175,0.55);
+      box-shadow: 0 0 22px rgba(15,23,42,0.85);
+      padding: 1.1rem;
+    }
+
+    .title-gradient {
+      background: linear-gradient(120deg, #22c55e, #4ade80, #06b6d4);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 24px rgba(34,197,94,0.7),
+        0 0 40px rgba(8,145,178,0.65);
+      letter-spacing: 0.28em;
+    }
+
+    .subtitle {
+      font-size: 0.72rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: rgba(165,243,252,0.9);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(15,23,42,0.6));
+    }
+
+    .pill-ok {
+      border-color: rgba(34,197,94,0.9);
+      color: #bbf7d0;
+    }
+
+    .pill-warn {
+      border-color: rgba(250,204,21,0.95);
+      color: #fef9c3;
+    }
+
+    .pill-risk {
+      border-color: rgba(248,113,113,0.95);
+      color: #fee2e2;
+    }
+
+    .btn {
+      background: radial-gradient(circle at 10% 0%, #22c55e 0%, #06b6d4 45%, #0369a1 100%);
+      padding: 0.55rem 1.1rem;
+      border-radius: 0.8rem;
+      color: white;
+      font-weight: 600;
+      font-size: 0.8rem;
+      border: 1px solid rgba(34,197,94,0.5);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 12px rgba(34,197,94,0.7),
+        0 0 28px rgba(8,145,178,0.7);
+    }
+
+    .btn-ghost {
+      background: rgba(15,23,42,0.95);
+      border-color: rgba(148,163,184,0.8);
+      color: #e5e7eb;
+    }
+
+    .btn-danger {
+      background: radial-gradient(circle at 10% 0%, #ef4444 0%, #b91c1c 100%);
+      border-color: rgba(248,113,113,0.8);
+    }
+
+    .label {
+      font-size: 0.75rem;
+      color: rgba(148,163,184,0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    .value {
+      font-size: 0.85rem;
+      color: #e5e7eb;
+    }
+
+    .badge-step {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: rgba(148,163,184,0.9);
+      background: rgba(15,23,42,0.9);
+      transition: all 0.18s ease;
+    }
+
+    .badge-step-active {
+      border-color: rgba(34,197,94,1);
+      color: #bbf7d0;
+      background: radial-gradient(circle at 10% 0%, rgba(34,197,94,0.22), rgba(15,23,42,1));
+      box-shadow:
+        0 0 12px rgba(34,197,94,0.9),
+        0 0 28px rgba(8,145,178,0.7);
+    }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(30,64,175,0.7), rgba(15,118,110,0.9));
+      opacity: 0.7;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.98), rgba(2,6,23,0.98));
+      border-radius: 0.8rem;
+      border: 1px solid rgba(30,64,175,0.7);
+      padding: 0.7rem;
+      font-size: 0.78rem;
+      color: #e5e7eb;
+      margin: 0;
+      max-height: 180px;
+      overflow: auto;
+    }
+
+    .panel-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: rgba(148,163,184,0.9);
+      margin-bottom: 0.25rem;
+    }
+
+    .panel-heading {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #a7f3d0;
+      margin-bottom: 0.3rem;
+    }
+
+    .panel-copy {
+      font-size: 0.75rem;
+      color: rgba(148,163,184,0.9);
+      margin-bottom: 0.6rem;
+    }
+
+    .log-area {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.74rem;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.98), rgba(2,6,23,0.96));
+      border-radius: 0.9rem;
+      border: 1px solid rgba(30,64,175,0.9);
+      padding: 0.7rem;
+      max-height: 190px;
+      overflow: auto;
+      color: #e5e7eb;
+    }
+
+    .log-entry {
+      margin-bottom: 0.25rem;
+    }
+
+    .log-ts {
+      color: rgba(148,163,184,0.9);
+    }
+
+    .log-tag {
+      color: #a5f3fc;
+    }
+
+    .log-msg {
+      color: #e5e7eb;
+    }
+
+    .metric-chip {
+      font-size: 0.72rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(75,85,99,0.9);
+      color: rgba(209,213,219,0.95);
+      background: rgba(17,24,39,0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .metric-dot-green {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34,197,94,0.8);
+    }
+
+    .metric-dot-sky {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #0ea5e9;
+      box-shadow: 0 0 10px rgba(14,165,233,0.8);
+    }
+
+    .metric-dot-amber {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #f59e0b;
+      box-shadow: 0 0 10px rgba(245,158,11,0.8);
+    }
+
+    .metric-dot-rose {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #fb7185;
+      box-shadow: 0 0 10px rgba(248,113,113,0.8);
+    }
+
+    @keyframes glowPulse {
+      0% {
+        box-shadow:
+          0 0 18px rgba(34,197,94,0.5),
+          0 0 32px rgba(8,145,178,0.5);
+      }
+      50% {
+        box-shadow:
+          0 0 30px rgba(34,197,94,0.9),
+          0 0 60px rgba(8,145,178,0.9);
+      }
+      100% {
+        box-shadow:
+          0 0 18px rgba(34,197,94,0.5),
+          0 0 32px rgba(8,145,178,0.5);
+      }
+    }
+
+    .glow-ring {
+      position: absolute;
+      inset: -40px;
+      border-radius: 999px;
+      border: 1px solid rgba(34,197,94,0.2);
+      opacity: 0.55;
+      filter: blur(4px);
+      pointer-events: none;
+      animation: glowPulse 11s ease-in-out infinite;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <!-- HEADER -->
+    <header class="mb-6 relative">
+      <div class="absolute -top-10 -right-6 w-40 h-40 rounded-full opacity-40"
+           style="background: radial-gradient(circle, rgba(34,197,94,0.3), transparent 65%);"></div>
+      <div class="absolute -bottom-10 -left-10 w-44 h-44 rounded-full opacity-30"
+           style="background: radial-gradient(circle, rgba(8,145,178,0.25), transparent 70%);"></div>
+
+      <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 class="title-gradient text-3xl sm:text-4xl md:text-5xl font-semibold uppercase">
+            VERITAS
+          </h1>
+          <p class="subtitle mt-2">
+            Native compliance workflow simulation
+          </p>
+          <p class="mt-3 text-xs sm:text-sm text-slate-300 max-w-xl">
+            This touchable demo simulates the VERITAS legal wrapper flow,
+            from KYC approval to PDA creation, NFT compliance card, wrapper
+            attachment and indexed audit state, in one continuous system.
+          </p>
+        </div>
+        <div class="flex flex-col items-end gap-2 text-xs">
+          <span class="pill">
+            Simulated data only, no live funds, safe to demo
+          </span>
+          <span id="statusBadge" class="pill pill-warn">
+            Status, idle, no workflow executed
+          </span>
+          <div class="flex flex-wrap gap-2 mt-1 justify-end">
+            <span class="metric-chip">
+              <span class="metric-dot-green"></span>
+              Native, end to end
+            </span>
+            <span class="metric-chip">
+              <span class="metric-dot-sky"></span>
+              Devnet compatible model
+            </span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN GRID -->
+    <main class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+      <!-- LEFT: FLOW AND CONTROLS -->
+      <section class="lg:col-span-2">
+        <div class="card relative">
+          <div class="glow-ring"></div>
+
+          <!-- Flowline -->
+          <div class="mb-5">
+            <div class="label mb-1">Workflow</div>
+            <div class="text-xs text-slate-300 mb-2">
+              From fragmented, off chain records to a single native compliance state that is ready for auditors and regulators.
+            </div>
+
+            <div class="flex items-center gap-2 mt-3">
+              <div id="step-1" class="badge-step badge-step-active">1</div>
+              <div class="step-line"></div>
+              <div id="step-2" class="badge-step">2</div>
+              <div class="step-line"></div>
+              <div id="step-3" class="badge-step">3</div>
+              <div class="step-line"></div>
+              <div id="step-4" class="badge-step">4</div>
+              <div class="step-line"></div>
+              <div id="step-5" class="badge-step">5</div>
+            </div>
+
+            <div class="grid grid-cols-5 gap-2 mt-2 text-[0.65rem] text-slate-400">
+              <div class="text-left">KYC pass</div>
+              <div class="text-center">Legal PDA</div>
+              <div class="text-center">Compliance NFT</div>
+              <div class="text-center">Wrapper attach</div>
+              <div class="text-right">Indexed audit</div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="card-soft">
+              <div class="panel-title">Actions</div>
+              <div class="panel-heading">Run the native flow</div>
+              <p class="panel-copy">
+                Each click progresses the same business through the compliance stack,
+                so an investor or regulator can see the full lifecycle in one place.
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <button class="btn" onclick="runKYC()">1, Run KYC</button>
+                <button class="btn" onclick="generatePDA()">2, Create PDA</button>
+                <button class="btn" onclick="mintNFT()">3, Mint NFT</button>
+                <button class="btn" onclick="applyWrapper()">4, Attach wrapper</button>
+                <button class="btn" onclick="storeIndexer()">5, Index state</button>
+              </div>
+            </div>
+
+            <div class="card-soft">
+              <div class="panel-title">Shortcuts</div>
+              <div class="panel-heading">End to end and reset</div>
+              <p class="panel-copy">
+                Use the one click sequence for a fast demo, or reset the state to
+                start again with a different audience or example.
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <button class="btn btn-ghost" onclick="runFullSequence()">
+                  Run full sequence
+                </button>
+                <button class="btn btn-danger" onclick="resetAll()">
+                  Reset workflow
+                </button>
+              </div>
+              <div class="mt-3 text-[0.7rem] text-slate-400">
+                This simulation mirrors the devnet demo, where these steps are driven by
+                actual Anchor instructions and indexer events, but here everything is
+                generated locally for frictionless testing.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event log -->
+        <div class="mt-4 card-soft">
+          <div class="panel-title">Live view</div>
+          <div class="panel-heading">Simulated VERITAS event log</div>
+          <p class="panel-copy">
+            This shows how a native system writes a consistent narrative across KYC,
+            legal wrapper, payment rail and indexer, instead of scattering it across
+            separate systems.
+          </p>
+          <div id="logArea" class="log-area">
+            <div class="log-entry">
+              <span class="log-ts">[pending]</span>
+              <span class="log-msg"> No events yet, start with KYC or full sequence.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: STATE PANELS -->
+      <section class="lg:col-span-3 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- KYC PANEL -->
+          <div class="card-soft">
+            <div class="panel-title">Stage one</div>
+            <div class="panel-heading">KYC decision</div>
+            <p class="panel-copy">
+              A synthetic identity check, representing how an approved subject is
+              allowed to enter the VERITAS legal and payment perimeter.
+            </p>
+            <pre id="kycBox">No KYC run yet.</pre>
+          </div>
+
+          <!-- PDA PANEL -->
+          <div class="card-soft">
+            <div class="panel-title">Stage two</div>
+            <div class="panel-heading">Legal wrapper PDA</div>
+            <p class="panel-copy">
+              A derived account that encodes entity, jurisdiction and compliance
+              scope, ready to anchor payroll and RWA flows.
+            </p>
+            <pre id="pdaBox">No PDA created yet.</pre>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- NFT PANEL -->
+          <div class="card-soft">
+            <div class="panel-title">Stage three</div>
+            <div class="panel-heading">Compliance NFT</div>
+            <p class="panel-copy">
+              A digital compliance card that proves this subject is transacting
+              under the VERITAS ruleset, not a random wallet.
+            </p>
+            <pre id="nftBox">No NFT minted yet.</pre>
+          </div>
+
+          <!-- WRAPPER PANEL -->
+          <div class="card-soft">
+            <div class="panel-title">Stage four</div>
+            <div class="panel-heading">Wrapper state</div>
+            <p class="panel-copy">
+              The DAO level legal wrapper that binds business, NFT and policy into
+              something a regulator can review and approve.
+            </p>
+            <pre id="wrapBox">No wrapper attached yet.</pre>
+          </div>
+        </div>
+
+        <!-- INDEXER PANEL -->
+        <div class="card-soft">
+          <div class="panel-title">Stage five</div>
+          <div class="panel-heading">Indexed audit snapshot</div>
+          <p class="panel-copy">
+            Instead of digging through fragmented logs, a single structured record
+            captures the life of this relationship, ready for one click audit export.
+          </p>
+          <pre id="indexBox">No indexed entries yet.</pre>
+          <div class="mt-2 flex flex-wrap gap-2 text-[0.7rem] text-slate-400">
+            <span class="metric-chip">
+              <span class="metric-dot-amber"></span>
+              Ready for CSV or PDF export in the real system
+            </span>
+            <span class="metric-chip">
+              <span class="metric-dot-rose"></span>
+              Mirrors devnet legal wrapper demo
+            </span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    // State
+    let kyc = null;
+    let pda = null;
+    let nft = null;
+    let wrapper = null;
+    let index = [];
+
+    // UI helpers
+    function writeBox(id, value) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (typeof value === "string") {
+        el.textContent = value;
+      } else {
+        el.textContent = JSON.stringify(value, null, 2);
+      }
+    }
+
+    function nowIso() {
+      return new Date().toISOString();
+    }
+
+    function logEvent(tag, message) {
+      const logArea = document.getElementById("logArea");
+      if (!logArea) return;
+
+      const ts = new Date().toLocaleTimeString();
+      const entry = document.createElement("div");
+      entry.className = "log-entry";
+
+      const spanTs = document.createElement("span");
+      spanTs.className = "log-ts";
+      spanTs.textContent = "[" + ts + "] ";
+
+      const spanTag = document.createElement("span");
+      spanTag.className = "log-tag";
+      spanTag.textContent = tag + " ";
+
+      const spanMsg = document.createElement("span");
+      spanMsg.className = "log-msg";
+      spanMsg.textContent = message;
+
+      entry.appendChild(spanTs);
+      entry.appendChild(spanTag);
+      entry.appendChild(spanMsg);
+
+      if (logArea.firstChild) {
+        logArea.insertBefore(entry, logArea.firstChild);
+      } else {
+        logArea.appendChild(entry);
+      }
+    }
+
+    function setStatus(text, ok) {
+      const badge = document.getElementById("statusBadge");
+      if (!badge) return;
+      badge.textContent = text;
+      badge.className = "pill " + (ok ? "pill-ok" : "pill-warn");
+    }
+
+    function setActiveStep(stepNumber) {
+      for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById("step-" + i);
+        if (!el) continue;
+        if (i === stepNumber) {
+          el.className = "badge-step badge-step-active";
+        } else {
+          el.className = "badge-step";
+        }
+      }
+    }
+
+    // Generators
+    function randomWallet() {
+      return "Wallet_" + Math.random().toString(36).slice(2, 12);
+    }
+
+    function randomId(prefix) {
+      return prefix + "_" + Math.random().toString(36).slice(2, 10);
+    }
+
+    // Actions
+    function runKYC() {
+      kyc = {
+        subjectWallet: randomWallet(),
+        status: "Approved",
+        provider: "Persona, simulated",
+        riskBand: "Low",
+        jurisdiction: "US",
+        createdAt: nowIso()
+      };
+      writeBox("kycBox", kyc);
+      logEvent("[KYC]", "Subject approved under simulated provider, low risk.");
+      setStatus("KYC completed, subject allowed into VERITAS perimeter", true);
+      setActiveStep(1);
+    }
+
+    function generatePDA() {
+      if (!kyc) {
+        alert("Run KYC first.");
+        return;
+      }
+      pda = {
+        pdaKey: randomId("PDA"),
+        wallet: kyc.subjectWallet,
+        businessName: "Apex Holdings LLC",
+        jurisdiction: "US, FinCEN and IRS scope",
+        scope: ["Payroll", "RWA", "Crypto, fiat bridge"],
+        createdAt: nowIso()
+      };
+      writeBox("pdaBox", pda);
+      logEvent("[PDA]", "Legal wrapper PDA created for Apex Holdings LLC, US scope.");
+      setStatus("Legal wrapper PDA established, ready for payments and RWA", true);
+      setActiveStep(2);
+    }
+
+    function mintNFT() {
+      if (!pda) {
+        alert("Create the legal PDA first.");
+        return;
+      }
+      nft = {
+        mintAddress: randomId("NFT"),
+        ownerWallet: pda.wallet,
+        linkedPda: pda.pdaKey,
+        metadata: {
+          jurisdiction: pda.jurisdiction,
+          business: pda.businessName,
+          riskTier: "Low",
+          issuer: "VERITAS DAO, simulated"
+        },
+        mintedAt: nowIso()
+      };
+      writeBox("nftBox", nft);
+      logEvent("[NFT]", "Compliance NFT minted and linked to legal wrapper PDA.");
+      setStatus("Compliance NFT issued, subject is visibly inside VERITAS rails", true);
+      setActiveStep(3);
+    }
+
+    function applyWrapper() {
+      if (!nft) {
+        alert("Mint the NFT before attaching the wrapper.");
+        return;
+      }
+      wrapper = {
+        wrapperId: "VERITAS-DAO-LLC",
+        entity: pda.businessName,
+        nftMint: nft.mintAddress,
+        policyRegion: "US primary, multi region ready",
+        controls: [
+          "Audit trail required for payouts",
+          "KYC status required for employees",
+          "RWA registry integration ready"
+        ],
+        active: true,
+        updatedAt: nowIso()
+      };
+      writeBox("wrapBox", wrapper);
+      logEvent("[WRAP]", "DAO wrapper attached, policy set for this entity connection.");
+      setStatus("Legal wrapper and policy active for this entity", true);
+      setActiveStep(4);
+    }
+
+    function storeIndexer() {
+      if (!wrapper) {
+        alert("Apply the wrapper first.");
+        return;
+      }
+      const snapshot = {
+        snapshotId: randomId("SNAP"),
+        timestamp: nowIso(),
+        kyc,
+        pda,
+        nft,
+        wrapper
+      };
+      index.push(snapshot);
+      writeBox("indexBox", index);
+      logEvent("[INDEX]", "Snapshot written to simulated indexer for audit export.");
+      setStatus("Full compliance story captured in a single indexed record", true);
+      setActiveStep(5);
+    }
+
+    function resetAll() {
+      kyc = null;
+      pda = null;
+      nft = null;
+      wrapper = null;
+      index = [];
+      writeBox("kycBox", "No KYC run yet.");
+      writeBox("pdaBox", "No PDA created yet.");
+      writeBox("nftBox", "No NFT minted yet.");
+      writeBox("wrapBox", "No wrapper attached yet.");
+      writeBox("indexBox", "No indexed entries yet.");
+      const logArea = document.getElementById("logArea");
+      if (logArea) {
+        logArea.innerHTML = `
+          <div class="log-entry">
+            <span class="log-ts">[reset]</span>
+            <span class="log-msg"> Workflow cleared, start again with KYC or full sequence.</span>
+          </div>
+        `;
+      }
+      setStatus("Status, idle, no workflow executed", false);
+      setActiveStep(1);
+    }
+
+    function runFullSequence() {
+      resetAll();
+      // Small stagger for a more cinematic feel without long waits
+      setTimeout(runKYC, 120);
+      setTimeout(generatePDA, 300);
+      setTimeout(mintNFT, 480);
+      setTimeout(applyWrapper, 660);
+      setTimeout(storeIndexer, 840);
+    }
+
+    // Initialize default step indicator
+    setActiveStep(1);
+  </script>
+</body>
+</html>
