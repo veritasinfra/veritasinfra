@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeBtn = wrapper.querySelector("#veritas-sidebar-close");
 
   function openMobile() {
-    mobilePanel.classList.remove("translate-x-full");
+    mobilePanel.classList.toggle("translate-x-full");
   }
   function closeMobile() {
     mobilePanel.classList.add("translate-x-full");
